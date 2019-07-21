@@ -84,3 +84,4 @@ Release/*
 */.idea
 */.project
 */.settings
+*/.gitignore
