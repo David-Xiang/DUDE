@@ -69,9 +69,6 @@ fastlane/readme.md
 *.mnn
 *.h5
 *.tflite
-*.bin
-*.param
-*.onnx
 *.pb
 *.a 
 *.so
