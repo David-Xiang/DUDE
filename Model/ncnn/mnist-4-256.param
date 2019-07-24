@@ -12,4 +12,4 @@ InnerProduct     25                       1 1 24 25 0=256 1=1 2=65536
 ReLU             26                       1 1 25 26
 InnerProduct     27                       1 1 26 27 0=10 1=1 2=2560
 Log              28                       1 1 27 28
-Softmax          29                       1 1 28 29 0=1
+Softmax          29                       1 1 28 29 0=0
