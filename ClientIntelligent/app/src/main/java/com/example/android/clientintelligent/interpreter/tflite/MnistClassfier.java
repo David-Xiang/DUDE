@@ -1,8 +1,6 @@
-package com.example.android.clientintelligent.interpretor.tflite;
+package com.example.android.clientintelligent.interpreter.tflite;
 
 import android.app.Activity;
-
-import com.example.android.clientintelligent.interpretor.tflite.Classifier;
 
 import java.io.IOException;
 

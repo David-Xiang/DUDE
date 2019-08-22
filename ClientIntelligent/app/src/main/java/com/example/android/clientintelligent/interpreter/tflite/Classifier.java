@@ -1,4 +1,4 @@
-package com.example.android.clientintelligent.interpretor.tflite;
+package com.example.android.clientintelligent.interpreter.tflite;
 
 import android.app.Activity;
 import android.content.res.AssetFileDescriptor;

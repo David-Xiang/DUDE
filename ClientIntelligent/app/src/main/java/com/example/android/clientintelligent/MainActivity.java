@@ -19,6 +19,7 @@ import android.view.Menu;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    private static final String TAG = "MainActivity";
     private Handler handler;
     private HandlerThread handlerThread;
 
@@ -114,7 +115,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        Log.v(TAG, "onResume().");
+        Log.d(TAG, "onResume: Enter");
         handlerThread = new HandlerThread("inference");
         handlerThread.start();
         handler = new Handler(handlerThread.getLooper());
@@ -122,7 +123,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public synchronized void onPause() {
-        Log.v(TAG, "onPause()");
+        Log.d(TAG, "onPause: Enter");
 
         handlerThread.quitSafely();
         try {
