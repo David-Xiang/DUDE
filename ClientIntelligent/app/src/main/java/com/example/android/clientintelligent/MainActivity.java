@@ -22,11 +22,13 @@ public class MainActivity extends AppCompatActivity
     private static final String TAG = "MainActivity";
     private Handler handler;
     private HandlerThread handlerThread;
+    private IntelligentEngine mEngine;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initRootViews();
+        mEngine = new
         initMainPageView();
     }
 

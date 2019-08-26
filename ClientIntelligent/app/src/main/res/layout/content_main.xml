@@ -1,20 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".MainActivity"
-    tools:showIn="@layout/app_bar_main">
+    tools:showIn="@layout/app_bar_main"
+    android:orientation="vertical">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <ProgressBar
+        android:id="@+id/pb_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <GridLayout
+        android:id="@+id/gl_form"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:rowCount="5"
+        android:columnCount="4"
+        android:orientation="horizontal">
 
-</android.support.constraint.ConstraintLayout>
+        <TextView
+            android:id="@+id/tv_instruc"
+            android:layout_columnSpan="4"
+            android:text="Client Intelligent"
+            android:padding="5dp"
+            android:textSize="24sp"
+            android:textAlignment="center"
+            android:layout_gravity = "fill"/>
+
+        <TextView
+            android:id="@+id/tv_interpreter"
+            android:text="Interpreter"
+            android:gravity="center"
+            android:layout_columnWeight="1"
+            android:layout_columnSpan="1"
+            android:layout_height="40dp"/>
+
+
+        <Spinner
+            android:id="@+id/sp_interpreter"
+            android:layout_columnSpan="3"
+            android:layout_columnWeight="3"
+            android:gravity="center"
+            android:layout_height="40dp"/>
+
+        <TextView
+            android:id="@+id/tv_engine"
+            android:text="Engine"
+            android:gravity="center"
+            android:layout_columnWeight="1"
+            android:layout_columnSpan="1"
+            android:layout_height="40dp"/>
+
+
+        <Spinner
+            android:id="@+id/sp_engine"
+            android:layout_columnSpan="3"
+            android:layout_columnWeight="3"
+            android:gravity="center"
+            android:layout_height="40dp"/>
+
+        <TextView
+            android:id="@+id/tv_model"
+            android:text="Model"
+            android:gravity="center"
+            android:layout_columnWeight="1"
+            android:layout_columnSpan="1"
+            android:layout_height="40dp"/>
+
+
+        <Spinner
+            android:id="@+id/sp_model"
+            android:layout_columnSpan="3"
+            android:layout_columnWeight="3"
+            android:gravity="center"
+            android:layout_height="40dp"/>
+
+        <TextView
+            android:id="@+id/tv_time"
+            android:text="Time"
+            android:gravity="center"
+            android:layout_columnWeight="1"
+            android:layout_columnSpan="1"
+            android:layout_height="40dp"/>
+
+
+        <SeekBar
+            android:id="@+id/sb_time"
+            android:layout_columnSpan="3"
+            android:layout_columnWeight="3"
+            android:gravity="center"
+            android:max="300"
+            android:progress="5"
+            android:layout_height="40dp" />
+
+    </GridLayout>
+
+</LinearLayout>
