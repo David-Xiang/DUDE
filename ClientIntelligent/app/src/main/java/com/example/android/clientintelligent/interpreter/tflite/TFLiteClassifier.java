@@ -1,60 +1,52 @@
 package com.example.android.clientintelligent.interpreter.tflite;
 
-import android.app.Activity;
+import com.example.android.clientintelligent.IntelligentTask;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
-/** This TensorFlowLite classifier works with the float Mnist model. */
-public class MnistClassfier extends Classifier {
-    private String path;
-
-    /**
-     * An array to hold inference results, to be feed into Tensorflow Lite as outputs. This isn't part
-     * of the super class, because we need a primitive array here.
-     */
+public class TFLiteClassifier extends BaseClassifier {
     private float[][] labelProbArray = null;
+    private IntelligentTask task;
 
-    /**
-     * Initializes a {@code ClassifierFloatMobileNet}.
-     *
-     * @param activity
-     */
-    public MnistClassfier(Activity activity, String path) throws IOException {
-        super(activity, path);
-        this.path = path;
-        labelProbArray = new float[1][getNumLabels()];
+    TFLiteClassifier(IntelligentTask task) throws IOException {
+        super(task.getActivity(), task.getDeviceName(), task.getnThreads());
+        this.task = task;
     }
 
     @Override
     public int getImageSizeX() {
-        return 28;
+        return task.getnImageSizeX();
     }
 
     @Override
     public int getImageSizeY() {
-        return 28;
+        return task.getnImageSizeY();
     }
 
     @Override
     protected String getModelPath() {
-        // you can download this file from
-        // see build.gradle for where to obtain this file. It should be auto
-        // downloaded into assets.
-        return path;
+        return task.getModelFilePath();
     }
 
     @Override
     protected String getLabelPath() {
-        return "labels/mnist.txt";
+        return task.getLabelFilePath();
     }
 
     @Override
     protected int getNumBytesPerChannel() {
-        return 4; // Float.SIZE / Byte.SIZE;
+        return task.getnBytesPerChannel();
+    }
+
+    @Override
+    protected int getNumChannelsPerPixel() {
+        return task.getnChannelsPerPixel();
     }
 
     @Override
     protected void addPixelValue(int pixelValue) {
+        // for mnist currently
         imgData.putFloat((pixelValue & 0xFF) / 255.f);
     }
 
@@ -76,5 +68,9 @@ public class MnistClassfier extends Classifier {
     @Override
     protected void runInference() {
         tflite.run(imgData, labelProbArray);
+    }
+
+    void runInference(ByteBuffer data){
+        tflite.run(data, labelProbArray);
     }
 }

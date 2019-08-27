@@ -16,19 +16,28 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+
+import com.example.android.clientintelligent.interfaces.IntelligentEngine;
+import com.example.android.clientintelligent.interfaces.IntelligentInterpreter;
+import com.example.android.clientintelligent.interfaces.ProgressListener;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, ProgressListener {
     private static final String TAG = "MainActivity";
     private Handler handler;
     private HandlerThread handlerThread;
     private IntelligentEngine mEngine;
+    private Spinner mInterpreterSpinner;
+    private Spinner mDeviceSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initRootViews();
-        mEngine = new
+        mEngine = new IntelligentEngineImpl(this);
         initMainPageView();
     }
 
@@ -37,13 +46,8 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show());
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -54,7 +58,26 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initMainPageView(){
+        mInterpreterSpinner = findViewById(R.id.sp_interpreter);
+        mDeviceSpinner = findViewById(R.id.sp_device);
 
+        ArrayAdapter<String> interpreterAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, mEngine.getInterpreterList());
+        mInterpreterSpinner.setAdapter(interpreterAdapter);
+        mInterpreterSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                IntelligentInterpreter interpreter = mEngine.getInterpreter(mEngine.getInterpreterList().get(position));
+                ArrayAdapter<String> deviceAdapter = new ArrayAdapter<>(MainActivity.this,
+                        android.R.layout.simple_spinner_item, interpreter.getDevices());
+                mDeviceSpinner.setAdapter(deviceAdapter);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     @Override
@@ -143,5 +166,15 @@ public class MainActivity extends AppCompatActivity
         if (handler != null) {
             handler.post(r);
         }
+    }
+
+    @Override
+    public void onProgress(int progress) {
+        // TODO
+    }
+
+    @Override
+    public void onFinish(long enduredTime) {
+        // TODO
     }
 }
