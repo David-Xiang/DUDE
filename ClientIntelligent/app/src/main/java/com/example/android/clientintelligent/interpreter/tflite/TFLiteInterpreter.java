@@ -6,7 +6,7 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.SystemClock;
 
-import com.example.android.clientintelligent.interfaces.IntelligentInterpreter;
+import com.example.android.clientintelligent.interfaces.Interpreter;
 import com.example.android.clientintelligent.IntelligentTask;
 import com.example.android.clientintelligent.interfaces.ProgressListener;
 
@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class TFLiteInterpreter implements IntelligentInterpreter {
+public class TFLiteInterpreter implements Interpreter {
     private Context mContext;
     public TFLiteInterpreter(Context context){
         mContext = context;
@@ -46,7 +46,7 @@ public class TFLiteInterpreter implements IntelligentInterpreter {
             InputStream in = mContext.getAssets().open(task.getDataPathList().get(s));
             Bitmap bitmap = BitmapFactory.decodeStream(in);
             ByteBuffer imgData = ByteBuffer.allocateDirect(
-                    task.getnImageSizeX() * task.getnImageSizeY() * task.getnChannelsPerPixel() * task.getnBytesPerChannel());
+                    task.getnImageSizeX() * task.getnImageSizeY() * task.getChannelsPerPixel() * task.getBytesPerChannel());
             imgData.order(ByteOrder.nativeOrder());
             imgData.rewind();
             bitmap.getPixels(intValues, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());

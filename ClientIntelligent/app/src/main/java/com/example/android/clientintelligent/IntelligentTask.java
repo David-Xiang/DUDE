@@ -2,44 +2,28 @@ package com.example.android.clientintelligent;
 
 import android.app.Activity;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class IntelligentTask {
     private final Activity activity;
-
-    private final String modelFilePath;
-    private final String labelFilePath;
-
-    private final ArrayList<String> dataPathList;
 
     private final String deviceName;
 
     private final int nThreads;
     private final int nTime;
-    private final int nImageSizeX;
-    private final int nImageSizeY;
-    private final int nBytesPerChannel;
-    private final int nChannelsPerPixel;
 
-    IntelligentTask(Activity activity, String modelFilePath, String labelFilePath,
-                    ArrayList<String> dataPathList, String deviceName, int nThreads, int nTime,
-                    int nImageSizeX, int nImageSizeY, int nBytesPerChannel, int nChannelsPerPixel){
+    private final IntelligentModel mModel;
+
+    IntelligentTask(Activity activity, IntelligentModel model,
+                    String deviceName, int nThreads, int nTime){
         this.activity = activity;
 
-        this.modelFilePath = modelFilePath;
-        this.labelFilePath = labelFilePath;
-
-        this.dataPathList = dataPathList;
+        this.mModel = model;
 
         this.deviceName = deviceName;
 
         this.nThreads = nThreads;
         this.nTime = nTime;
-
-        this.nImageSizeX = nImageSizeX;
-        this.nImageSizeY = nImageSizeY;
-        this.nBytesPerChannel = nBytesPerChannel;
-        this.nChannelsPerPixel = nChannelsPerPixel;
     }
 
     public Activity getActivity() {
@@ -47,11 +31,11 @@ public class IntelligentTask {
     }
 
     public String getModelFilePath() {
-        return modelFilePath;
+        return mModel.getFilePath();
     }
 
-    public ArrayList<String> getDataPathList() {
-        return dataPathList;
+    public List<String> getDataPathList() {
+        return mModel.getDataPathList();
     }
 
     public int getnThreads() {
@@ -63,26 +47,26 @@ public class IntelligentTask {
     }
 
     public int getnImageSizeX() {
-        return nImageSizeX;
+        return mModel.getImageSizeX();
     }
 
     public int getnImageSizeY() {
-        return nImageSizeY;
+        return mModel.getImageSizeY();
     }
 
     public String getLabelFilePath() {
-        return labelFilePath;
+        return mModel.getLabelFilePath();
     }
 
-    public int getnBytesPerChannel() {
-        return nBytesPerChannel;
+    public int getBytesPerChannel() {
+        return mModel.getBytesPerChannel();
     }
 
     public String getDeviceName() {
         return deviceName;
     }
 
-    public int getnChannelsPerPixel() {
-        return nChannelsPerPixel;
+    public int getChannelsPerPixel() {
+        return mModel.getChannelsPerPixel();
     }
 }

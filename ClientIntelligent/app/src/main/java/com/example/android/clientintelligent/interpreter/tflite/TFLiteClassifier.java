@@ -36,12 +36,12 @@ public class TFLiteClassifier extends BaseClassifier {
 
     @Override
     protected int getNumBytesPerChannel() {
-        return task.getnBytesPerChannel();
+        return task.getBytesPerChannel();
     }
 
     @Override
     protected int getNumChannelsPerPixel() {
-        return task.getnChannelsPerPixel();
+        return task.getChannelsPerPixel();
     }
 
     @Override

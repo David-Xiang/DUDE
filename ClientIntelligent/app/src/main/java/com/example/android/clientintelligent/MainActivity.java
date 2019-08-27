@@ -20,8 +20,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-import com.example.android.clientintelligent.interfaces.IntelligentEngine;
-import com.example.android.clientintelligent.interfaces.IntelligentInterpreter;
+import com.example.android.clientintelligent.interfaces.Engine;
+import com.example.android.clientintelligent.interfaces.Interpreter;
 import com.example.android.clientintelligent.interfaces.ProgressListener;
 
 public class MainActivity extends AppCompatActivity
@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity
     private static final String TAG = "MainActivity";
     private Handler handler;
     private HandlerThread handlerThread;
-    private IntelligentEngine mEngine;
+    private Engine mEngine;
     private Spinner mInterpreterSpinner;
     private Spinner mDeviceSpinner;
 
@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initRootViews();
-        mEngine = new IntelligentEngineImpl(this);
+        mEngine = new IntelligentEngine(this);
         initMainPageView();
     }
 
@@ -67,10 +67,12 @@ public class MainActivity extends AppCompatActivity
         mInterpreterSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                IntelligentInterpreter interpreter = mEngine.getInterpreter(mEngine.getInterpreterList().get(position));
+                Interpreter interpreter = mEngine.getInterpreter(mEngine.getInterpreterList().get(position));
                 ArrayAdapter<String> deviceAdapter = new ArrayAdapter<>(MainActivity.this,
                         android.R.layout.simple_spinner_item, interpreter.getDevices());
                 mDeviceSpinner.setAdapter(deviceAdapter);
+
+
             }
 
             @Override
