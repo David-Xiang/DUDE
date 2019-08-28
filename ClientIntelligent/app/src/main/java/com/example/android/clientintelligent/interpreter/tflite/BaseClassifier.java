@@ -6,6 +6,8 @@ import android.graphics.Bitmap;
 import android.graphics.RectF;
 import android.util.Log;
 
+import com.example.android.clientintelligent.IntelligentTask;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -37,8 +39,10 @@ public abstract class BaseClassifier {
     /** Dimensions of inputs. */
     private static final int DIM_BATCH_SIZE = 1;
 
+    protected final IntelligentTask task;
+
     /** Preallocated buffers for storing image data in. */
-    private final int[] intValues = new int[getImageSizeX() * getImageSizeY()];
+    private final int[] intValues;
 
     /** The loaded TensorFlow Lite model. */
     private MappedByteBuffer tfliteModel;
@@ -143,21 +147,23 @@ public abstract class BaseClassifier {
         }
     }
 
-    protected BaseClassifier(Activity activity, String device, int numThreads) throws IOException {
+    protected BaseClassifier(Activity activity, IntelligentTask task) throws IOException {
+        this.task = task;
         tfliteModel = loadModelFile(activity);
+        intValues = new int[getImageSizeX() * getImageSizeY()];
         Interpreter.Options tfliteOptions = new Interpreter.Options();
-        switch (device) {
-            case "NNAPI":
+        switch (task.getDevice()) {
+            case NNAPI:
                 tfliteOptions.setUseNNAPI(true);
                 break;
-            case "GPU":
+            case GPU:
                 gpuDelegate = new GpuDelegate();
                 tfliteOptions.addDelegate(gpuDelegate);
                 break;
-            case "CPU":
+            case CPU:
                 break;
         }
-        tfliteOptions.setNumThreads(numThreads);
+        tfliteOptions.setNumThreads(task.getnThreads());
         tflite = new Interpreter(tfliteModel, tfliteOptions);
         labels = loadLabelList(activity);
         imgData =

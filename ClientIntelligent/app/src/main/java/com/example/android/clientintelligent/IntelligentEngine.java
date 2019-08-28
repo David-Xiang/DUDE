@@ -43,8 +43,7 @@ public abstract class IntelligentEngine implements Engine {
     }
 
     @Override
-    public boolean executeTask(String interpreterName, IntelligentTask task, ProgressListener progressListener) {
-        Interpreter interpreter = getInterpreter(interpreterName);
+    public boolean executeTask(Interpreter interpreter, IntelligentTask task, ProgressListener progressListener) {
         if (interpreter == null){
             // TODO Toast
             return false;
@@ -59,7 +58,7 @@ public abstract class IntelligentEngine implements Engine {
         return false;
     }
 
-    abstract void initInterpreters();
-    abstract void initData();
-    abstract void initModels();
+    public abstract void initInterpreters();
+    public abstract void initData();
+    public abstract void initModels();
 }

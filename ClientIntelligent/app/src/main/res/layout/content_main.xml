@@ -19,7 +19,7 @@
         android:id="@+id/gl_form"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:rowCount="5"
+        android:rowCount="6"
         android:columnCount="4"
         android:orientation="horizontal">
 
@@ -40,25 +40,8 @@
             android:layout_columnSpan="1"
             android:layout_height="40dp"/>
 
-
         <Spinner
             android:id="@+id/sp_interpreter"
-            android:layout_columnSpan="3"
-            android:layout_columnWeight="3"
-            android:gravity="center"
-            android:layout_height="40dp"/>
-
-        <TextView
-            android:id="@+id/tv_device"
-            android:text="Device"
-            android:gravity="center"
-            android:layout_columnWeight="1"
-            android:layout_columnSpan="1"
-            android:layout_height="40dp"/>
-
-
-        <Spinner
-            android:id="@+id/sp_device"
             android:layout_columnSpan="3"
             android:layout_columnWeight="3"
             android:gravity="center"
@@ -72,9 +55,23 @@
             android:layout_columnSpan="1"
             android:layout_height="40dp"/>
 
-
         <Spinner
             android:id="@+id/sp_model"
+            android:layout_columnSpan="3"
+            android:layout_columnWeight="3"
+            android:gravity="center"
+            android:layout_height="40dp"/>
+
+        <TextView
+            android:id="@+id/tv_device"
+            android:text="Device"
+            android:gravity="center"
+            android:layout_columnWeight="1"
+            android:layout_columnSpan="1"
+            android:layout_height="40dp"/>
+
+        <Spinner
+            android:id="@+id/sp_device"
             android:layout_columnSpan="3"
             android:layout_columnWeight="3"
             android:gravity="center"
@@ -88,7 +85,6 @@
             android:layout_columnSpan="1"
             android:layout_height="40dp"/>
 
-
         <SeekBar
             android:id="@+id/sb_time"
             android:layout_columnSpan="3"
@@ -96,6 +92,23 @@
             android:gravity="center"
             android:max="300"
             android:progress="5"
+            android:layout_height="40dp" />
+
+        <TextView
+            android:id="@+id/tv_thread"
+            android:text="Threads"
+            android:gravity="center"
+            android:layout_columnWeight="1"
+            android:layout_columnSpan="1"
+            android:layout_height="40dp"/>
+
+        <SeekBar
+            android:id="@+id/sb_thread"
+            android:layout_columnSpan="3"
+            android:layout_columnWeight="3"
+            android:gravity="center"
+            android:max="8"
+            android:progress="1"
             android:layout_height="40dp" />
 
     </GridLayout>

@@ -1,9 +1,9 @@
 package com.example.android.clientintelligent;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class IntelligentData {
-    private final ArrayList<String> mPathList;
+    private final List<String> mPathList;
     private final String mLabelFilePath;
 
     private final int nImageSizeX;
@@ -11,7 +11,7 @@ public class IntelligentData {
     private final int nBytesPerChannel;
     private final int nChannelsPerPixel;
 
-    public IntelligentData(ArrayList<String> mPathList, String mLabelFilePath, int nImageSizeX, int nImageSizeY, int nBytesPerChannel, int nChannelsPerPixel) {
+    public IntelligentData(List<String> mPathList, String mLabelFilePath, int nImageSizeX, int nImageSizeY, int nBytesPerChannel, int nChannelsPerPixel) {
         this.mPathList = mPathList;
         this.mLabelFilePath = mLabelFilePath;
         this.nImageSizeX = nImageSizeX;
@@ -20,7 +20,7 @@ public class IntelligentData {
         this.nChannelsPerPixel = nChannelsPerPixel;
     }
 
-    public ArrayList<String> getPathList() {
+    public List<String> getPathList() {
         return mPathList;
     }
 

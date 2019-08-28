@@ -7,11 +7,10 @@ import java.nio.ByteBuffer;
 
 public class TFLiteClassifier extends BaseClassifier {
     private float[][] labelProbArray = null;
-    private IntelligentTask task;
 
     TFLiteClassifier(IntelligentTask task) throws IOException {
-        super(task.getActivity(), task.getDeviceName(), task.getnThreads());
-        this.task = task;
+        super(task.getActivity(), task);
+        labelProbArray = new float[1][getNumLabels()];
     }
 
     @Override

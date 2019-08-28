@@ -2,12 +2,14 @@ package com.example.android.clientintelligent;
 
 import android.app.Activity;
 
+import com.example.android.clientintelligent.interfaces.Interpreter;
+
 import java.util.List;
 
 public class IntelligentTask {
     private final Activity activity;
 
-    private final String deviceName;
+    private final Interpreter.Device device;
 
     private final int nThreads;
     private final int nTime;
@@ -15,12 +17,12 @@ public class IntelligentTask {
     private final IntelligentModel mModel;
 
     IntelligentTask(Activity activity, IntelligentModel model,
-                    String deviceName, int nThreads, int nTime){
+                    Interpreter.Device device, int nThreads, int nTime){
         this.activity = activity;
 
         this.mModel = model;
 
-        this.deviceName = deviceName;
+        this.device = device;
 
         this.nThreads = nThreads;
         this.nTime = nTime;
@@ -62,8 +64,8 @@ public class IntelligentTask {
         return mModel.getBytesPerChannel();
     }
 
-    public String getDeviceName() {
-        return deviceName;
+    public Interpreter.Device getDevice() {
+        return device;
     }
 
     public int getChannelsPerPixel() {

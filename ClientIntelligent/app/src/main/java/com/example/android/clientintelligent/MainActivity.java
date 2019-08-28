@@ -1,5 +1,6 @@
 package com.example.android.clientintelligent;
 
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -18,26 +19,57 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ProgressBar;
+import android.widget.SeekBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.example.android.clientintelligent.interfaces.Engine;
 import com.example.android.clientintelligent.interfaces.Interpreter;
 import com.example.android.clientintelligent.interfaces.ProgressListener;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ProgressListener {
     private static final String TAG = "MainActivity";
+    private static final BiMap<Interpreter.Device, String> DEVICE_STRING_HASH_MAP;
+
     private Handler handler;
     private HandlerThread handlerThread;
+
     private Engine mEngine;
+    private Interpreter mInterpreter;
+    private List<String> mOriginModelPathList;
+
     private Spinner mInterpreterSpinner;
     private Spinner mDeviceSpinner;
+    private Spinner mModelSpinner;
+    private ProgressBar mProgressBar;
+    private SeekBar mTimeSeekBar;
+    private SeekBar mThreadSeekBar;
+    private TextView mTimeTextView;
+    private TextView mThreadTextView;
+    private FloatingActionButton mStartButton;
+
+    static {
+        DEVICE_STRING_HASH_MAP = HashBiMap.create();
+        DEVICE_STRING_HASH_MAP.put(Interpreter.Device.CPU, "CPU");
+        DEVICE_STRING_HASH_MAP.put(Interpreter.Device.GPU, "GPU");
+        DEVICE_STRING_HASH_MAP.put(Interpreter.Device.NNAPI, "NNAPI");
+        DEVICE_STRING_HASH_MAP.put(Interpreter.Device.VULKAN, "VULKAN");
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initRootViews();
-        mEngine = new IntelligentEngine(this);
+
+        mEngine = new IntelligentEngineImpl(this);
         initMainPageView();
     }
 
@@ -45,9 +77,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show());
+        mStartButton = findViewById(R.id.fab);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -60,6 +90,13 @@ public class MainActivity extends AppCompatActivity
     private void initMainPageView(){
         mInterpreterSpinner = findViewById(R.id.sp_interpreter);
         mDeviceSpinner = findViewById(R.id.sp_device);
+        mModelSpinner = findViewById(R.id.sp_model);
+        mProgressBar = findViewById(R.id.pb_progress);
+        mTimeSeekBar = findViewById(R.id.sb_time);
+        mThreadSeekBar = findViewById(R.id.sb_thread);
+        mTimeTextView = findViewById(R.id.tv_time);
+        mThreadTextView = findViewById(R.id.tv_thread);
+
 
         ArrayAdapter<String> interpreterAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, mEngine.getInterpreterList());
@@ -67,18 +104,90 @@ public class MainActivity extends AppCompatActivity
         mInterpreterSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Interpreter interpreter = mEngine.getInterpreter(mEngine.getInterpreterList().get(position));
+                mInterpreter = mEngine.getInterpreter(mEngine.getInterpreterList().get(position));
                 ArrayAdapter<String> deviceAdapter = new ArrayAdapter<>(MainActivity.this,
-                        android.R.layout.simple_spinner_item, interpreter.getDevices());
+                        android.R.layout.simple_spinner_item,
+                        mInterpreter.getDevices().stream().map(DEVICE_STRING_HASH_MAP::get).collect(Collectors.toList()));
                 mDeviceSpinner.setAdapter(deviceAdapter);
+                mDeviceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        if ("CPU".equals(((ArrayAdapter<String>) mDeviceSpinner.getAdapter())
+                                .getItem(mDeviceSpinner.getSelectedItemPosition()))) {
+                            mThreadTextView.getPaint().setFlags(0);
+                            mThreadSeekBar.setEnabled(true);
+                        } else {
+                            mThreadSeekBar.setEnabled(false);
+                            mThreadTextView.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+                            mThreadTextView.setText("Thread");
+                        }
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) { }
+                });
 
 
+                mOriginModelPathList = mInterpreter.getModels();
+                ArrayAdapter<String> modelAdapter = new ArrayAdapter<>(MainActivity.this,
+                        android.R.layout.simple_spinner_item,
+                        mOriginModelPathList.stream()
+                                .map(s->s.substring(s.lastIndexOf("/")+1))
+                                .collect(Collectors.toList()));
+                mModelSpinner.setAdapter(modelAdapter);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
             }
+        });
+
+        mTimeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                mTimeTextView.setText(String.format("Time: %ds", progress));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) { }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) { }
+        });
+        mTimeSeekBar.setProgress(30);
+
+        mThreadSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                mThreadTextView.setText(String.format("Thread: %d", progress));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) { }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) { }
+        });
+        mThreadSeekBar.setProgress(1);
+
+        mStartButton.setOnClickListener(v -> {
+            int time = mTimeSeekBar.getProgress();
+            int threads = mThreadSeekBar.getProgress();
+            String deviceName = ((ArrayAdapter<String>)mDeviceSpinner.getAdapter())
+                    .getItem(mDeviceSpinner.getSelectedItemPosition());
+            Interpreter.Device device = DEVICE_STRING_HASH_MAP.inverse().get(deviceName);
+            IntelligentModel model = mInterpreter.getModel(
+                                        mOriginModelPathList.get(
+                                            mModelSpinner.getSelectedItemPosition()));
+
+            if (time == 0 || device == null || (device == Interpreter.Device.CPU && threads == 0) ||
+                    mInterpreter == null || model == null){
+                Snackbar.make(v, "Oops, sth's wrong...", Snackbar.LENGTH_SHORT).show();
+                return;
+            }
+            IntelligentTask task = new IntelligentTask(MainActivity.this, model, device, threads, time);
+            mEngine.executeTask(mInterpreter, task, MainActivity.this);
         });
     }
 
@@ -172,11 +281,12 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onProgress(int progress) {
-        // TODO
+        mProgressBar.setProgress(progress);
     }
 
     @Override
-    public void onFinish(long enduredTime) {
-        // TODO
+    public void onFinish(int count, long enduredTime) {
+        Snackbar.make(mStartButton, String.format("Finished %d tasks in %d ms!", count ,enduredTime), Snackbar.LENGTH_INDEFINITE)
+                .setAction("Gotcha", v -> {}).show();
     }
 }
