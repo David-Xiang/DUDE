@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.List;
 
 public interface Interpreter {
-    enum Device {CPU, GPU, NNAPI, VULKAN}
+    enum Device {CPU, GPU, NNAPI, VULKAN, OPENGL, OPENCL}
 
     List<Device> getDevices();
     String getFramework();
