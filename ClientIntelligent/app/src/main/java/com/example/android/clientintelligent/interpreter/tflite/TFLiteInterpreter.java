@@ -5,9 +5,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.SystemClock;
+import android.util.Log;
 
 import com.example.android.clientintelligent.InferenceTask;
 import com.example.android.clientintelligent.IntelligentInterpreter;
+import com.example.android.clientintelligent.IntelligentModel;
 import com.example.android.clientintelligent.IntelligentTask;
 import com.example.android.clientintelligent.interfaces.ProgressListener;
 
@@ -20,6 +22,10 @@ import java.util.Arrays;
 import java.util.List;
 
 public class TFLiteInterpreter extends IntelligentInterpreter {
+    /** MobileNet requires additional normalization of the used input. */
+    private static final float IMAGE_MEAN = 127.5f;
+    private static final float IMAGE_STD = 127.5f;
+
     private static final String TAG = "TFLiteInterpreter";
 
     public TFLiteInterpreter(Context context){
@@ -41,8 +47,6 @@ public class TFLiteInterpreter extends IntelligentInterpreter {
         int[] intValues = new int[task.getnImageSizeX() * task.getnImageSizeY()];
         ArrayList<ByteBuffer> images = new ArrayList<>();
 
-        TFLiteClassifier classifier = new TFLiteClassifier(task);
-
         // convert data
         for (int s = 0; s < task.getDataPathList().size(); s++){
             InputStream in = mContext.getAssets().open(task.getDataPathList().get(s));
@@ -58,49 +62,73 @@ public class TFLiteInterpreter extends IntelligentInterpreter {
             for (int i = 0; i < task.getnImageSizeX(); ++i) {
                 for (int j = 0; j < task.getnImageSizeY(); ++j) {
                     final int val = intValues[pixel++];
-                    addPixelValue(imgData, val);
+                    addPixelValue(task.getModelMode(), task.getChannelsPerPixel(), imgData, val);
                 }
             }
             images.add(imgData);
         }
-        return new TFLiteInferenceTask(classifier, images, progressListener, task.getnTime());
+        return new TFLiteInferenceTask(task, images, progressListener, task.getnTime());
     }
 
-    private void addPixelValue(ByteBuffer imgData, int pixelValue) {
-        // for mnist currently
-        imgData.putFloat((pixelValue & 0xFF) / 255.f);
+    private void addPixelValue(IntelligentModel.Mode mode, int channels, ByteBuffer imgData, int pixelValue) {
+        if ((mode == IntelligentModel.Mode.FLOAT32 || mode == IntelligentModel.Mode.FLOAT16) && channels == 3) {
+            imgData.putFloat((((pixelValue >> 16) & 0xFF) - IMAGE_MEAN) / IMAGE_STD);
+            imgData.putFloat((((pixelValue >> 8) & 0xFF) - IMAGE_MEAN) / IMAGE_STD);
+            imgData.putFloat(((pixelValue & 0xFF) - IMAGE_MEAN) / IMAGE_STD);
+        } else if (mode == IntelligentModel.Mode.FLOAT32 && channels == 1){
+            imgData.putFloat(((pixelValue & 0xFF) - IMAGE_MEAN) / IMAGE_STD);
+        } else if (mode == IntelligentModel.Mode.QUANTIZED) {
+            imgData.put((byte) ((pixelValue >> 16) & 0xFF));
+            imgData.put((byte) ((pixelValue >> 8) & 0xFF));
+            imgData.put((byte) (pixelValue & 0xFF));
+        } else {
+            Log.w(TAG, "addPixelValue: Wrong model mode!");
+        }
     }
 
     private class TFLiteInferenceTask extends InferenceTask {
-        TFLiteClassifier mClassifier;
+        private static final String TAG = "TFLiteInferenceTask";
+        IntelligentTask mTask;
         ArrayList<ByteBuffer> mDataArray;
 
-        TFLiteInferenceTask(TFLiteClassifier classifier, ArrayList<ByteBuffer> dataArray, ProgressListener progressListener, int seconds){
+        TFLiteInferenceTask(IntelligentTask task, ArrayList<ByteBuffer> dataArray, ProgressListener progressListener, int seconds) throws IOException {
             super(progressListener, seconds);
-            mClassifier = classifier;
+            mTask = task;
             mDataArray = dataArray;
         }
 
         @Override
         protected Object doInBackground(Object... objects) {
+            TFLiteClassifier classifier;
+
+            try {
+                if (mTask.getModelMode() == IntelligentModel.Mode.FLOAT32 || mTask.getModelMode() == IntelligentModel.Mode.FLOAT16){
+                    classifier = new FloatTFLiteClassifier(mTask);
+                } else if (mTask.getModelMode() == IntelligentModel.Mode.QUANTIZED) {
+                    classifier = new QuantTFLiteClassifier(mTask);
+                } else {
+                    Log.w(TAG, "doInBackground: Wrong task model!");
+                    return null;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+
             int count = 0;
             int nImages = mDataArray.size();
             long now = SystemClock.uptimeMillis();
             while(now - nStartTime < nSeconds * 1000){
-                mClassifier.runInference(mDataArray.get(count%nImages));
-                if (count % 5000 == 0){
+                classifier.runInference(mDataArray.get(count%nImages));
+                Log.i(TAG, "doInBackground: count = " + count);
+                if (count % 50 == 0){
                     now = SystemClock.uptimeMillis();
                     publishProgress((int) ((now - nStartTime) / (nSeconds * 10)));
                 }
                 count++;
             }
+            classifier.close();
             return count;
-        }
-
-        @Override
-        protected void onPostExecute(Object result) {
-            super.onPostExecute(result);
-            mClassifier.close();
         }
     }
 }

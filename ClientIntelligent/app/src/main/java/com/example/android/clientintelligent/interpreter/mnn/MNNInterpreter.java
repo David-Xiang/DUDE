@@ -27,7 +27,7 @@ public class MNNInterpreter extends IntelligentInterpreter {
 
     @Override
     public List<Device> getDevices() {
-        return Arrays.asList(Device.CPU, Device.OPENGL, Device.OPENCL, Device.VULKAN);;
+        return Arrays.asList(Device.CPU, Device.OPENGL, Device.OPENCL, Device.VULKAN);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class MNNInterpreter extends IntelligentInterpreter {
             long now = SystemClock.uptimeMillis();
             while(now - nStartTime < nSeconds * 1000){
 
-                mClassifier.runInference(mDataArray.get(count%nImages));
+                //mClassifier.runInference(mDataArray.get(count%nImages));
                 if (count % 5000 == 0){
                     now = SystemClock.uptimeMillis();
                     publishProgress((int) ((now - nStartTime) / (nSeconds * 10)));

@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity
                 ArrayAdapter<String> modelAdapter = new ArrayAdapter<>(MainActivity.this,
                         android.R.layout.simple_spinner_item,
                         mOriginModelPathList.stream()
-                                .map(s->s.substring(s.lastIndexOf("/")+1))
+                                .map(s->s.substring(s.lastIndexOf("mobile"), s.lastIndexOf(".tflite")))
                                 .collect(Collectors.toList()));
                 mModelSpinner.setAdapter(modelAdapter);
             }
@@ -155,7 +155,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) { }
         });
-        mTimeSeekBar.setProgress(30);
+        mTimeSeekBar.setProgress(5);
 
         mThreadSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override

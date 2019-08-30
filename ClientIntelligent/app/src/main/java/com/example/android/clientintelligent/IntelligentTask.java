@@ -71,4 +71,6 @@ public class IntelligentTask {
     public int getChannelsPerPixel() {
         return mModel.getChannelsPerPixel();
     }
+
+    public IntelligentModel.Mode getModelMode() { return mModel.getMode(); }
 }

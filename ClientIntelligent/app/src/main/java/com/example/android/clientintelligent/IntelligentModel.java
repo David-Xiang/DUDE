@@ -6,15 +6,24 @@ import java.util.List;
 
 public class IntelligentModel {
     private static final String TAG = "IntelligentModel";
+
+    public enum Mode {FLOAT32, FLOAT16, QUANTIZED};
+
+    private Mode mMode;
     private IntelligentData mData;
     private final String mFilePath;
 
-    public IntelligentModel(IntelligentData mData, String mFilePath) {
+    public IntelligentModel(IntelligentData mData, String mFilePath, Mode mode) {
         this.mData = mData;
         this.mFilePath = mFilePath;
+        this.mMode = mode;
         if (mData == null){
             Log.e(TAG, "IntelligentModel: mData is null!");
         }
+    }
+
+    public Mode getMode() {
+        return mMode;
     }
 
     public String getFilePath() {

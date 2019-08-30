@@ -3,14 +3,10 @@ package com.example.android.clientintelligent.interpreter.tflite;
 import com.example.android.clientintelligent.IntelligentTask;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
-public class TFLiteClassifier extends BaseClassifier {
-    private float[][] labelProbArray = null;
-
+public abstract class TFLiteClassifier extends BaseClassifier {
     TFLiteClassifier(IntelligentTask task) throws IOException {
         super(task.getActivity(), task);
-        labelProbArray = new float[1][getNumLabels()];
     }
 
     @Override
@@ -43,33 +39,9 @@ public class TFLiteClassifier extends BaseClassifier {
         return task.getChannelsPerPixel();
     }
 
+    @Deprecated
     @Override
     protected void addPixelValue(int pixelValue) {
-        // for mnist currently
-        imgData.putFloat((pixelValue & 0xFF) / 255.f);
-    }
 
-    @Override
-    protected float getProbability(int labelIndex) {
-        return labelProbArray[0][labelIndex];
-    }
-
-    @Override
-    protected void setProbability(int labelIndex, Number value) {
-        labelProbArray[0][labelIndex] = value.floatValue();
-    }
-
-    @Override
-    protected float getNormalizedProbability(int labelIndex) {
-        return labelProbArray[0][labelIndex];
-    }
-
-    @Override
-    protected void runInference() {
-        tflite.run(imgData, labelProbArray);
-    }
-
-    void runInference(ByteBuffer data){
-        tflite.run(data, labelProbArray);
     }
 }

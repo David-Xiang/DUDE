@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.RectF;
 import android.util.Log;
 
+import com.example.android.clientintelligent.IntelligentModel;
 import com.example.android.clientintelligent.IntelligentTask;
 
 import java.io.BufferedReader;
@@ -26,10 +27,6 @@ import org.tensorflow.lite.gpu.GpuDelegate;
 /** A classifier specialized to label images using TensorFlow Lite. */
 public abstract class BaseClassifier {
     /** The model type used for classification. */
-//    public enum Model {
-//        FLOAT,
-//        QUANTIZED,
-//    }
 
     private static final String TAG = "BaseClassifier";
 
@@ -164,6 +161,9 @@ public abstract class BaseClassifier {
                 break;
         }
         tfliteOptions.setNumThreads(task.getnThreads());
+        if (task.getModelMode() == IntelligentModel.Mode.FLOAT16){
+            tfliteOptions.setAllowFp16PrecisionForFp32(true);
+        }
         tflite = new Interpreter(tfliteModel, tfliteOptions);
         labels = loadLabelList(activity);
         imgData =
@@ -201,6 +201,7 @@ public abstract class BaseClassifier {
         return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
     }
 
+    @Deprecated
     /** Writes Image data into a {@code ByteBuffer}. */
     private void convertBitmapToByteBuffer(Bitmap bitmap) {
         if (imgData == null) {
@@ -218,6 +219,7 @@ public abstract class BaseClassifier {
         }
     }
 
+    @Deprecated
     /** Runs inference and returns the classification results. */
     public List<Recognition> recognizeImage(final Bitmap bitmap) {
         // Log this method so that it can be analyzed with systrace.
@@ -325,6 +327,8 @@ public abstract class BaseClassifier {
      * primitive data types.
      */
     protected abstract void runInference();
+
+    protected abstract void runInference(ByteBuffer data);
 
     /**
      * Get the total number of labels.
