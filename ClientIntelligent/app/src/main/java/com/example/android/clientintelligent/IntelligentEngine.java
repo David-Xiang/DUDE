@@ -45,7 +45,7 @@ public abstract class IntelligentEngine implements Engine {
     @Override
     public boolean executeTask(Interpreter interpreter, IntelligentTask task, ProgressListener progressListener) {
         if (interpreter == null){
-            // TODO Toast
+            progressListener.onError("Interpreter param is null!");
             return false;
         }
 
@@ -54,6 +54,7 @@ public abstract class IntelligentEngine implements Engine {
             return true;
         } catch (IOException e) {
             e.printStackTrace();
+            progressListener.onError("Error in interpreter.buildTask().execute() !");
         }
         return false;
     }

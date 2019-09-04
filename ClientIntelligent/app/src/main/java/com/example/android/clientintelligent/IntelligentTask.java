@@ -7,6 +7,9 @@ import com.example.android.clientintelligent.interfaces.Interpreter;
 import java.util.List;
 
 public class IntelligentTask {
+    public enum Purpose {PERFORMANCE, ACCURACY};
+
+    private final Purpose purpose;
     private final Activity activity;
 
     private final Interpreter.Device device;
@@ -17,11 +20,11 @@ public class IntelligentTask {
     private final IntelligentModel mModel;
 
     IntelligentTask(Activity activity, IntelligentModel model,
-                    Interpreter.Device device, int nThreads, int nTime){
+                    Purpose purpose, Interpreter.Device device, int nThreads, int nTime){
         this.activity = activity;
-
         this.mModel = model;
 
+        this.purpose = purpose;
         this.device = device;
 
         this.nThreads = nThreads;
@@ -73,4 +76,10 @@ public class IntelligentTask {
     }
 
     public IntelligentModel.Mode getModelMode() { return mModel.getMode(); }
+
+    public String getTrueLabelIndexPath() { return mModel.getTrueLabelIndexPath(); }
+
+    public Purpose getPurpose() {
+        return purpose;
+    }
 }

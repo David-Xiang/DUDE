@@ -19,7 +19,7 @@
         android:id="@+id/gl_form"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:rowCount="6"
+        android:rowCount="7"
         android:columnCount="4"
         android:orientation="horizontal">
 
@@ -111,6 +111,35 @@
             android:progress="1"
             android:layout_height="40dp" />
 
+        <TextView
+            android:id="@+id/tv_purpose"
+            android:text="Purpose"
+            android:gravity="center"
+            android:layout_columnWeight="1"
+            android:layout_columnSpan="1"
+            android:layout_height="40dp"/>
+
+        <Switch
+            android:id="@+id/switch_purpose"
+            android:layout_columnSpan="1"
+            android:layout_columnWeight="1"
+            android:layout_gravity="start"
+            android:layout_height="40dp" />
+
+        <TextView
+            android:id="@+id/tv_purpose_text"
+            android:text="Performance"
+            android:gravity="center"
+            android:layout_columnWeight="1"
+            android:layout_columnSpan="1"
+            android:layout_height="40dp"/>
+
     </GridLayout>
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:srcCompat="@tools:sample/avatars" />
 
 </LinearLayout>

@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.support.v4.view.GravityCompat;
@@ -22,7 +23,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.clientintelligent.interfaces.Engine;
 import com.example.android.clientintelligent.interfaces.Interpreter;
@@ -54,6 +57,8 @@ public class MainActivity extends AppCompatActivity
     private SeekBar mThreadSeekBar;
     private TextView mTimeTextView;
     private TextView mThreadTextView;
+    private TextView mPurposeTextView;
+    private Switch mSwitch;
     private FloatingActionButton mStartButton;
 
     static {
@@ -96,6 +101,8 @@ public class MainActivity extends AppCompatActivity
         mThreadSeekBar = findViewById(R.id.sb_thread);
         mTimeTextView = findViewById(R.id.tv_time);
         mThreadTextView = findViewById(R.id.tv_thread);
+        mPurposeTextView = findViewById(R.id.tv_purpose_text);
+        mSwitch = findViewById(R.id.switch_purpose);
 
 
         ArrayAdapter<String> interpreterAdapter = new ArrayAdapter<>(this,
@@ -143,6 +150,24 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        mModelSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                IntelligentModel model = mInterpreter.getModel(
+                        mOriginModelPathList.get(
+                                mModelSpinner.getSelectedItemPosition()));
+                if (TextUtils.isEmpty(model.getTrueLabelIndexPath())) {
+                    mSwitch.setEnabled(false);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
         mTimeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -171,6 +196,14 @@ public class MainActivity extends AppCompatActivity
         });
         mThreadSeekBar.setProgress(1);
 
+        mSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                mPurposeTextView.setText("Accuracy");
+            } else {
+                mPurposeTextView.setText("Performance");
+            }
+        });
+
         mStartButton.setOnClickListener(v -> {
             int time = mTimeSeekBar.getProgress();
             int threads = mThreadSeekBar.getProgress();
@@ -186,7 +219,12 @@ public class MainActivity extends AppCompatActivity
                 Snackbar.make(v, "Oops, sth's wrong...", Snackbar.LENGTH_SHORT).show();
                 return;
             }
-            IntelligentTask task = new IntelligentTask(MainActivity.this, model, device, threads, time);
+
+            IntelligentTask.Purpose purpose = IntelligentTask.Purpose.PERFORMANCE;;
+            if (mPurposeTextView.getText().equals("Accuracy")){
+                purpose = IntelligentTask.Purpose.ACCURACY;
+            }
+            IntelligentTask task = new IntelligentTask(MainActivity.this, model, purpose, device, threads, time);
             mEngine.executeTask(mInterpreter, task, MainActivity.this);
         });
     }
@@ -280,8 +318,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onProgress(int progress) {
+    public void onProgress(int progress, String msg) {
         mProgressBar.setProgress(progress);
+        if (msg != null){
+            Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -289,4 +330,10 @@ public class MainActivity extends AppCompatActivity
         Snackbar.make(mStartButton, String.format("Finished %d tasks in %d ms!", count ,enduredTime), Snackbar.LENGTH_INDEFINITE)
                 .setAction("Gotcha", v -> {}).show();
     }
+
+    @Override
+    public void onError(String msg) {
+        Snackbar.make(mStartButton, msg, Snackbar.LENGTH_INDEFINITE).setAction("Gotcha", v -> {}).show();
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.example.android.clientintelligent.interpreter.tflite;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,11 +11,14 @@ import android.util.Log;
 import com.example.android.clientintelligent.InferenceTask;
 import com.example.android.clientintelligent.IntelligentInterpreter;
 import com.example.android.clientintelligent.IntelligentModel;
+import com.example.android.clientintelligent.IntelligentRecognition;
 import com.example.android.clientintelligent.IntelligentTask;
 import com.example.android.clientintelligent.interfaces.ProgressListener;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
@@ -44,6 +48,21 @@ public class TFLiteInterpreter extends IntelligentInterpreter {
 
     @Override
     public AsyncTask buildTask(IntelligentTask task, ProgressListener progressListener) throws IOException {
+        switch (task.getPurpose()) {
+            case PERFORMANCE:
+                return buildPerformanceTask(task, progressListener);
+            case ACCURACY:
+                return buildAccuracyTask(task, progressListener);
+            default:
+                progressListener.onError("Wrong Purpose!"); return null;
+        }
+    }
+
+    private AsyncTask buildAccuracyTask(IntelligentTask task, ProgressListener progressListener) throws IOException {
+        return new TFLiteAccuracyTask(task, progressListener, task.getnTime());
+    }
+
+    private AsyncTask buildPerformanceTask(IntelligentTask task, ProgressListener progressListener) throws IOException {
         int[] intValues = new int[task.getnImageSizeX() * task.getnImageSizeY()];
         ArrayList<ByteBuffer> images = new ArrayList<>();
 
@@ -67,7 +86,7 @@ public class TFLiteInterpreter extends IntelligentInterpreter {
             }
             images.add(imgData);
         }
-        return new TFLiteInferenceTask(task, images, progressListener, task.getnTime());
+        return new TFLitePerformanceTask(task, images, progressListener, task.getnTime());
     }
 
     private void addPixelValue(IntelligentModel.Mode mode, int channels, ByteBuffer imgData, int pixelValue) {
@@ -86,12 +105,90 @@ public class TFLiteInterpreter extends IntelligentInterpreter {
         }
     }
 
-    private class TFLiteInferenceTask extends InferenceTask {
-        private static final String TAG = "TFLiteInferenceTask";
+    private class TFLiteAccuracyTask extends InferenceTask {
+        private static final String TAG = "TFLitePerformanceTask";
+        IntelligentTask mTask;
+        List<Integer> mLabelIndexList;
+
+        TFLiteAccuracyTask(IntelligentTask task, ProgressListener progressListener, int seconds) throws IOException {
+            super(progressListener, seconds);
+            mTask = task;
+            mLabelIndexList = new ArrayList<>();
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(mContext.getAssets().open(mTask.getTrueLabelIndexPath())));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                mLabelIndexList.add(Integer.parseInt(line));
+            }
+            reader.close();
+        }
+
+        @Override
+        protected Object doInBackground(Object... objects) {
+            TFLiteClassifier classifier;
+
+            try {
+                if (mTask.getModelMode() == IntelligentModel.Mode.FLOAT32 || mTask.getModelMode() == IntelligentModel.Mode.FLOAT16){
+                    classifier = new FloatTFLiteClassifier(mTask);
+                } else if (mTask.getModelMode() == IntelligentModel.Mode.QUANTIZED) {
+                    classifier = new QuantTFLiteClassifier(mTask);
+                } else {
+                    Log.w(TAG, "doInBackground: Wrong task model!");
+                    return null;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+
+            int count = 0;
+            int top1count = 0;
+            int top5count = 0;
+            int dataAmount = mTask.getDataPathList().size();
+            long now = SystemClock.uptimeMillis();
+            while(now - nStartTime < nSeconds * 1000 && count < dataAmount){
+                Bitmap bitmap = null;
+                try {
+                    InputStream in = mContext.getAssets().open(mTask.getDataPathList().get(count));
+                    bitmap = BitmapFactory.decodeStream(in);
+                    in.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    mProgressListener.onError("Error in read data!");
+                    return count;
+                }
+                List<IntelligentRecognition> recognitionList = classifier.recognizeImage(bitmap);
+                if (mLabelIndexList.get(count) == recognitionList.get(0).getId()){
+                    top1count++;
+                }
+                int finalCount = count;
+                if (recognitionList
+                        .stream()
+                        .map(IntelligentRecognition::getId)
+                        .anyMatch(n-> n.equals(mLabelIndexList.get(finalCount)))) {
+                    top5count++;
+                }
+                Log.i(TAG, String.format("doInBackground: count = %d, top1count = %d, top5count = %d", count, top1count, top5count));
+                if (count > 0 && count % 50 == 0){
+                    now = SystemClock.uptimeMillis();
+                    @SuppressLint("DefaultLocale")
+                    String msg = String.format("Top 1 accuracy is %f%%, top 5 accuracy is %f%%",
+                            (float)(top1count) * 100 / count,
+                            (float)(top5count) * 100 / count);
+                    publishProgress((int) ((now - nStartTime) / (nSeconds * 10)), msg);
+                }
+                count++;
+            }
+            classifier.close();
+            return count;
+        }
+    }
+    private class TFLitePerformanceTask extends InferenceTask {
+        private static final String TAG = "TFLitePerformanceTask";
         IntelligentTask mTask;
         ArrayList<ByteBuffer> mDataArray;
 
-        TFLiteInferenceTask(IntelligentTask task, ArrayList<ByteBuffer> dataArray, ProgressListener progressListener, int seconds) throws IOException {
+        TFLitePerformanceTask(IntelligentTask task, ArrayList<ByteBuffer> dataArray, ProgressListener progressListener, int seconds) throws IOException {
             super(progressListener, seconds);
             mTask = task;
             mDataArray = dataArray;

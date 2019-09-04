@@ -33,7 +33,7 @@ public class IntelligentEngineImpl extends IntelligentEngine {
                 "mnist/images/6.png", "mnist/images/7.png", "mnist/images/8.png",
                 "mnist/images/9.png");
 
-        mDataMap.put("mnist", new IntelligentData(mnistDataPathList, "mnist/labels.txt",
+        mDataMap.put("mnist", new IntelligentData(mnistDataPathList, null,"mnist/labels.txt",
                 28, 28, 4, 1));
 
         // ImageNet 224*224
@@ -43,9 +43,9 @@ public class IntelligentEngineImpl extends IntelligentEngine {
                 "imagenet224/images/pic6.png", "imagenet224/images/pic7.png", "imagenet224/images/pic8.png",
                 "imagenet224/images/pic9.png"
         );
-        mDataMap.put("imagenet224_quant", new IntelligentData(imagenet224DataPathList, "imagenet224/labels.txt",
+        mDataMap.put("imagenet224_quant", new IntelligentData(imagenet224DataPathList, "imagenet224/answer.txt","imagenet224/labels.txt",
                 224, 224, 1, 3));
-        mDataMap.put("imagenet224", new IntelligentData(imagenet224DataPathList, "imagenet224/labels.txt",
+        mDataMap.put("imagenet224", new IntelligentData(imagenet224DataPathList, "imagenet224/answer.txt","imagenet224/labels.txt",
                 224, 224, 4, 3));
     }
 

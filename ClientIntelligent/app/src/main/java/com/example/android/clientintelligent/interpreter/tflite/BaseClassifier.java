@@ -7,6 +7,7 @@ import android.graphics.RectF;
 import android.util.Log;
 
 import com.example.android.clientintelligent.IntelligentModel;
+import com.example.android.clientintelligent.IntelligentRecognition;
 import com.example.android.clientintelligent.IntelligentTask;
 
 import java.io.BufferedReader;
@@ -31,7 +32,7 @@ public abstract class BaseClassifier {
     private static final String TAG = "BaseClassifier";
 
     /** Number of results to show in the UI. */
-    private static final int MAX_RESULTS = 3;
+    private static final int MAX_RESULTS = 5;
 
     /** Dimensions of inputs. */
     private static final int DIM_BATCH_SIZE = 1;
@@ -55,94 +56,6 @@ public abstract class BaseClassifier {
 
     /** A ByteBuffer to hold image data, to be feed into Tensorflow Lite as inputs. */
     ByteBuffer imgData;
-
-//    /**
-//     * Creates a classifier with the provided configuration.
-//     *
-//     * @param activity The current Activity.
-//     * @param model The model to use for classification.
-//     * @param device The device to use for classification.
-//     * @param numThreads The number of threads to use for classification.
-//     * @return A classifier with the desired configuration.
-//     */
-//    public static BaseClassifier create(Activity activity, Model model, Device device, int numThreads)
-//            throws IOException {
-//        if (model == Model.QUANTIZED) {
-//            return new ClassifierQuantizedMobileNet(activity, device, numThreads);
-//        } else {
-//            return new ClassifierFloatMobileNet(activity, device, numThreads);
-//        }
-//    }
-
-    /** An immutable result returned by a BaseClassifier describing what was recognized. */
-    public static class Recognition {
-        /**
-         * A unique identifier for what has been recognized. Specific to the class, not the instance of
-         * the object.
-         */
-        private final String id;
-
-        /** Display name for the recognition. */
-        private final String title;
-
-        /**
-         * A sortable score for how good the recognition is relative to others. Higher should be better.
-         */
-        private final Float confidence;
-
-        /** Optional location within the source image for the location of the recognized object. */
-        private RectF location;
-
-        Recognition(
-                final String id, final String title, final Float confidence, final RectF location) {
-            this.id = id;
-            this.title = title;
-            this.confidence = confidence;
-            this.location = location;
-        }
-
-        public String getId() {
-            return id;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        public Float getConfidence() {
-            return confidence;
-        }
-
-        public RectF getLocation() {
-            return new RectF(location);
-        }
-
-        public void setLocation(RectF location) {
-            this.location = location;
-        }
-
-        @Override
-        public String toString() {
-            String resultString = "";
-            if (id != null) {
-                resultString += "[" + id + "] ";
-            }
-
-            if (title != null) {
-                resultString += title + " ";
-            }
-
-            if (confidence != null) {
-                resultString += String.format("(%.1f%%) ", confidence * 100.0f);
-            }
-
-            if (location != null) {
-                resultString += location + " ";
-            }
-
-            return resultString.trim();
-        }
-    }
 
     protected BaseClassifier(Activity activity, IntelligentTask task) throws IOException {
         this.task = task;
@@ -201,7 +114,6 @@ public abstract class BaseClassifier {
         return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
     }
 
-    @Deprecated
     /** Writes Image data into a {@code ByteBuffer}. */
     private void convertBitmapToByteBuffer(Bitmap bitmap) {
         if (imgData == null) {
@@ -219,9 +131,8 @@ public abstract class BaseClassifier {
         }
     }
 
-    @Deprecated
     /** Runs inference and returns the classification results. */
-    public List<Recognition> recognizeImage(final Bitmap bitmap) {
+    public List<IntelligentRecognition> recognizeImage(final Bitmap bitmap) {
         // Log this method so that it can be analyzed with systrace.
         convertBitmapToByteBuffer(bitmap);
 
@@ -229,23 +140,22 @@ public abstract class BaseClassifier {
         runInference();
 
         // Find the best classifications.
-        PriorityQueue<Recognition> pq =
+        PriorityQueue<IntelligentRecognition> pq =
                 new PriorityQueue<>(
-                        3,
+                        5,
                         (lhs, rhs) -> {
                             // Intentionally reversed to put high confidence at the head of the queue.
                             return Float.compare(rhs.getConfidence(), lhs.getConfidence());
                         });
         for (int i = 0; i < labels.size(); ++i) {
-            labels.size();
             pq.add(
-                    new Recognition(
-                            "" + i,
+                    new IntelligentRecognition(
+                            i+1,
                             labels.get(i),
                             getNormalizedProbability(i),
                             null));
         }
-        final ArrayList<Recognition> recognitions = new ArrayList<>();
+        final ArrayList<IntelligentRecognition> recognitions = new ArrayList<>();
         int recognitionsSize = Math.min(pq.size(), MAX_RESULTS);
         for (int i = 0; i < recognitionsSize; ++i) {
             recognitions.add(pq.poll());

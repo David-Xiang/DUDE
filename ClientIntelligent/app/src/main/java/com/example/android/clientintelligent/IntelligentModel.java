@@ -53,4 +53,6 @@ public class IntelligentModel {
     public String getLabelFilePath() {
         return mData.getLabelFilePath();
     }
+
+    public String getTrueLabelIndexPath() {return mData.getTrueLabelIndexPath();}
 }

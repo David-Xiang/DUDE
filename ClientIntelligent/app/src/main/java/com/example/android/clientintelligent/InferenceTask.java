@@ -5,7 +5,7 @@ import android.os.SystemClock;
 
 import com.example.android.clientintelligent.interfaces.ProgressListener;
 
-public abstract class InferenceTask extends AsyncTask<Object, Integer, Object> {
+public abstract class InferenceTask extends AsyncTask<Object, Object, Object> {
     protected ProgressListener mProgressListener;
     protected long nStartTime;
     protected int nSeconds;
@@ -21,9 +21,9 @@ public abstract class InferenceTask extends AsyncTask<Object, Integer, Object> {
     }
 
     @Override
-    protected void onProgressUpdate(Integer... progress) {
-        super.onProgressUpdate(progress);
-        mProgressListener.onProgress(progress[0]);
+    protected void onProgressUpdate(Object... objects) {
+        super.onProgressUpdate(objects);
+        mProgressListener.onProgress((int)objects[0], (String)objects[1]);
     }
 
 

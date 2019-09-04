@@ -4,6 +4,7 @@ import java.util.List;
 
 public class IntelligentData {
     private final List<String> mPathList;
+    private final String mTrueLabelIndexPath;
     private final String mLabelFilePath;
 
     private final int nImageSizeX;
@@ -11,8 +12,9 @@ public class IntelligentData {
     private final int nBytesPerChannel;
     private final int nChannelsPerPixel;
 
-    public IntelligentData(List<String> mPathList, String mLabelFilePath, int nImageSizeX, int nImageSizeY, int nBytesPerChannel, int nChannelsPerPixel) {
+    public IntelligentData(List<String> mPathList, String mTrueLabelIndexPath, String mLabelFilePath, int nImageSizeX, int nImageSizeY, int nBytesPerChannel, int nChannelsPerPixel) {
         this.mPathList = mPathList;
+        this.mTrueLabelIndexPath = mTrueLabelIndexPath;
         this.mLabelFilePath = mLabelFilePath;
         this.nImageSizeX = nImageSizeX;
         this.nImageSizeY = nImageSizeY;
@@ -42,5 +44,9 @@ public class IntelligentData {
 
     public int getChannelsPerPixel() {
         return nChannelsPerPixel;
+    }
+
+    public String getTrueLabelIndexPath() {
+        return mTrueLabelIndexPath;
     }
 }
