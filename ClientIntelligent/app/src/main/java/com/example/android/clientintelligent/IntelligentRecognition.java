@@ -21,7 +21,8 @@ public class IntelligentRecognition {
     /** Optional location within the source image for the location of the recognized object. */
     private RectF location;
 
-    public IntelligentRecognition(final int id, final String title, final Float confidence, final RectF location) {
+    public IntelligentRecognition(final int id, final String title, final Float confidence,
+                                  final RectF location) {
         this.id = id;
         this.title = title;
         this.confidence = confidence;

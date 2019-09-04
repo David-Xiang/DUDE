@@ -36,7 +36,8 @@ public class MNNInterpreter extends IntelligentInterpreter {
     }
 
     @Override
-    public AsyncTask buildTask(IntelligentTask task, ProgressListener progressListener) throws IOException {
+    public AsyncTask buildTask(IntelligentTask task, ProgressListener progressListener)
+            throws IOException {
         MNNNetInstance instance = MNNNetInstance.createFromFile(task.getModelFilePath());
         MNNNetInstance.Config config= new MNNNetInstance.Config();
         switch(task.getDevice()){
@@ -56,7 +57,8 @@ public class MNNInterpreter extends IntelligentInterpreter {
         MNNNetInstance instance;
         ArrayList<ByteBuffer> mDataArray;
 
-        MNNInferenceTask(ArrayList<ByteBuffer> dataArray, ProgressListener progressListener, int seconds){
+        MNNInferenceTask(ArrayList<ByteBuffer> dataArray, ProgressListener progressListener,
+                         int seconds){
             super(progressListener, seconds);
             mDataArray = dataArray;
         }

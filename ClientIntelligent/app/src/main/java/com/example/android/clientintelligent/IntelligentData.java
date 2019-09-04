@@ -12,7 +12,9 @@ public class IntelligentData {
     private final int nBytesPerChannel;
     private final int nChannelsPerPixel;
 
-    public IntelligentData(List<String> mPathList, String mTrueLabelIndexPath, String mLabelFilePath, int nImageSizeX, int nImageSizeY, int nBytesPerChannel, int nChannelsPerPixel) {
+    public IntelligentData(List<String> mPathList, String mTrueLabelIndexPath,
+                           String mLabelFilePath, int nImageSizeX, int nImageSizeY,
+                           int nBytesPerChannel, int nChannelsPerPixel) {
         this.mPathList = mPathList;
         this.mTrueLabelIndexPath = mTrueLabelIndexPath;
         this.mLabelFilePath = mLabelFilePath;

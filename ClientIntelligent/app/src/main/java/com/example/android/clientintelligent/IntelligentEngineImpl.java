@@ -85,6 +85,7 @@ public class IntelligentEngineImpl extends IntelligentEngine {
     }
 
     private void addTFLiteModel(IntelligentData data, String modelFilePath, IntelligentModel.Mode mode){
-        this.getInterpreter("TensorFlow Lite").addModel(new IntelligentModel(data, modelFilePath, mode));
+        this.getInterpreter("TensorFlow Lite")
+                .addModel(new IntelligentModel(data, modelFilePath, mode));
     }
 }

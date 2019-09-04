@@ -114,11 +114,16 @@ public class MainActivity extends AppCompatActivity
                 mInterpreter = mEngine.getInterpreter(mEngine.getInterpreterList().get(position));
                 ArrayAdapter<String> deviceAdapter = new ArrayAdapter<>(MainActivity.this,
                         android.R.layout.simple_spinner_item,
-                        mInterpreter.getDevices().stream().map(DEVICE_STRING_HASH_MAP::get).collect(Collectors.toList()));
+                        mInterpreter
+                                .getDevices()
+                                .stream()
+                                .map(DEVICE_STRING_HASH_MAP::get)
+                                .collect(Collectors.toList()));
                 mDeviceSpinner.setAdapter(deviceAdapter);
                 mDeviceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    public void onItemSelected(AdapterView<?> parent,
+                                               View view, int position, long id) {
                         if ("CPU".equals(((ArrayAdapter<String>) mDeviceSpinner.getAdapter())
                                 .getItem(mDeviceSpinner.getSelectedItemPosition()))) {
                             mThreadTextView.getPaint().setFlags(0);
@@ -138,8 +143,11 @@ public class MainActivity extends AppCompatActivity
                 mOriginModelPathList = mInterpreter.getModels();
                 ArrayAdapter<String> modelAdapter = new ArrayAdapter<>(MainActivity.this,
                         android.R.layout.simple_spinner_item,
-                        mOriginModelPathList.stream()
-                                .map(s->s.substring(s.lastIndexOf("mobile"), s.lastIndexOf(".tflite")))
+                        mOriginModelPathList
+                                .stream()
+                                .map(s->s.substring(
+                                            s.lastIndexOf("mobile"),
+                                            s.lastIndexOf(".tflite")))
                                 .collect(Collectors.toList()));
                 mModelSpinner.setAdapter(modelAdapter);
             }
@@ -224,7 +232,8 @@ public class MainActivity extends AppCompatActivity
             if (mPurposeTextView.getText().equals("Accuracy")){
                 purpose = IntelligentTask.Purpose.ACCURACY;
             }
-            IntelligentTask task = new IntelligentTask(MainActivity.this, model, purpose, device, threads, time);
+            IntelligentTask task = new IntelligentTask(
+                    MainActivity.this, model, purpose, device, threads, time);
             mEngine.executeTask(mInterpreter, task, MainActivity.this);
         });
     }
@@ -327,13 +336,16 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onFinish(int count, long enduredTime) {
-        Snackbar.make(mStartButton, String.format("Finished %d tasks in %d ms!", count ,enduredTime), Snackbar.LENGTH_INDEFINITE)
+        Snackbar.make(mStartButton,
+                String.format("Finished %d tasks in %d ms!", count ,enduredTime),
+                Snackbar.LENGTH_INDEFINITE)
                 .setAction("Gotcha", v -> {}).show();
     }
 
     @Override
     public void onError(String msg) {
-        Snackbar.make(mStartButton, msg, Snackbar.LENGTH_INDEFINITE).setAction("Gotcha", v -> {}).show();
+        Snackbar.make(mStartButton, msg, Snackbar.LENGTH_INDEFINITE)
+                .setAction("Gotcha", v -> {}).show();
     }
 
 }

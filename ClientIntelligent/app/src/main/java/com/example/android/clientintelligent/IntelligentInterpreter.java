@@ -23,10 +23,18 @@ public abstract class IntelligentInterpreter implements Interpreter {
     }
 
     public IntelligentModel getModel(String modelName) {
-        return mModels.stream().filter(m->m.getFilePath().equals(modelName)).findFirst().orElse(null);
+        return mModels
+                .stream()
+                .filter(m->m.getFilePath()
+                            .equals(modelName))
+                .findFirst()
+                .orElse(null);
     }
 
     public List<String> getModels() {
-        return mModels.stream().map(IntelligentModel::getFilePath).collect(Collectors.toList());
+        return mModels
+                .stream()
+                .map(IntelligentModel::getFilePath)
+                .collect(Collectors.toList());
     }
 }

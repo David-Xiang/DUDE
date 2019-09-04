@@ -47,7 +47,8 @@ public class TFLiteInterpreter extends IntelligentInterpreter {
     }
 
     @Override
-    public AsyncTask buildTask(IntelligentTask task, ProgressListener progressListener) throws IOException {
+    public AsyncTask buildTask(IntelligentTask task, ProgressListener progressListener)
+            throws IOException {
         switch (task.getPurpose()) {
             case PERFORMANCE:
                 return buildPerformanceTask(task, progressListener);
@@ -58,11 +59,13 @@ public class TFLiteInterpreter extends IntelligentInterpreter {
         }
     }
 
-    private AsyncTask buildAccuracyTask(IntelligentTask task, ProgressListener progressListener) throws IOException {
+    private AsyncTask buildAccuracyTask(IntelligentTask task, ProgressListener progressListener)
+            throws IOException {
         return new TFLiteAccuracyTask(task, progressListener, task.getnTime());
     }
 
-    private AsyncTask buildPerformanceTask(IntelligentTask task, ProgressListener progressListener) throws IOException {
+    private AsyncTask buildPerformanceTask(IntelligentTask task, ProgressListener progressListener)
+            throws IOException {
         int[] intValues = new int[task.getnImageSizeX() * task.getnImageSizeY()];
         ArrayList<ByteBuffer> images = new ArrayList<>();
 
@@ -72,10 +75,14 @@ public class TFLiteInterpreter extends IntelligentInterpreter {
             Bitmap bitmap = BitmapFactory.decodeStream(in);
             in.close();
             ByteBuffer imgData = ByteBuffer.allocateDirect(
-                    task.getnImageSizeX() * task.getnImageSizeY() * task.getChannelsPerPixel() * task.getBytesPerChannel());
+                    task.getnImageSizeX() *
+                    task.getnImageSizeY() *
+                    task.getChannelsPerPixel() *
+                    task.getBytesPerChannel());
             imgData.order(ByteOrder.nativeOrder());
             imgData.rewind();
-            bitmap.getPixels(intValues, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+            bitmap.getPixels(intValues, 0, bitmap.getWidth(), 0, 0,
+                    bitmap.getWidth(), bitmap.getHeight());
             // Convert the image to floating point.
             int pixel = 0;
             for (int i = 0; i < task.getnImageSizeX(); ++i) {
@@ -89,8 +96,10 @@ public class TFLiteInterpreter extends IntelligentInterpreter {
         return new TFLitePerformanceTask(task, images, progressListener, task.getnTime());
     }
 
-    private void addPixelValue(IntelligentModel.Mode mode, int channels, ByteBuffer imgData, int pixelValue) {
-        if ((mode == IntelligentModel.Mode.FLOAT32 || mode == IntelligentModel.Mode.FLOAT16) && channels == 3) {
+    private void addPixelValue(IntelligentModel.Mode mode, int channels, ByteBuffer imgData,
+                               int pixelValue) {
+        if ((mode == IntelligentModel.Mode.FLOAT32 || mode == IntelligentModel.Mode.FLOAT16)
+                && channels == 3) {
             imgData.putFloat((((pixelValue >> 16) & 0xFF) - IMAGE_MEAN) / IMAGE_STD);
             imgData.putFloat((((pixelValue >> 8) & 0xFF) - IMAGE_MEAN) / IMAGE_STD);
             imgData.putFloat(((pixelValue & 0xFF) - IMAGE_MEAN) / IMAGE_STD);
@@ -110,12 +119,14 @@ public class TFLiteInterpreter extends IntelligentInterpreter {
         IntelligentTask mTask;
         List<Integer> mLabelIndexList;
 
-        TFLiteAccuracyTask(IntelligentTask task, ProgressListener progressListener, int seconds) throws IOException {
+        TFLiteAccuracyTask(IntelligentTask task, ProgressListener progressListener, int seconds)
+                throws IOException {
             super(progressListener, seconds);
             mTask = task;
             mLabelIndexList = new ArrayList<>();
             BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(mContext.getAssets().open(mTask.getTrueLabelIndexPath())));
+                    new InputStreamReader(
+                            mContext.getAssets().open(mTask.getTrueLabelIndexPath())));
             String line;
             while ((line = reader.readLine()) != null) {
                 mLabelIndexList.add(Integer.parseInt(line));
@@ -128,7 +139,8 @@ public class TFLiteInterpreter extends IntelligentInterpreter {
             TFLiteClassifier classifier;
 
             try {
-                if (mTask.getModelMode() == IntelligentModel.Mode.FLOAT32 || mTask.getModelMode() == IntelligentModel.Mode.FLOAT16){
+                if (mTask.getModelMode() == IntelligentModel.Mode.FLOAT32
+                        || mTask.getModelMode() == IntelligentModel.Mode.FLOAT16){
                     classifier = new FloatTFLiteClassifier(mTask);
                 } else if (mTask.getModelMode() == IntelligentModel.Mode.QUANTIZED) {
                     classifier = new QuantTFLiteClassifier(mTask);
@@ -168,7 +180,8 @@ public class TFLiteInterpreter extends IntelligentInterpreter {
                         .anyMatch(n-> n.equals(mLabelIndexList.get(finalCount)))) {
                     top5count++;
                 }
-                Log.i(TAG, String.format("doInBackground: count = %d, top1count = %d, top5count = %d", count, top1count, top5count));
+                Log.i(TAG, String.format("doInBackground: count = %d, top1count = %d, top5count = %d",
+                        count, top1count, top5count));
                 if (count > 0 && count % 50 == 0){
                     now = SystemClock.uptimeMillis();
                     @SuppressLint("DefaultLocale")
@@ -196,7 +209,8 @@ public class TFLiteInterpreter extends IntelligentInterpreter {
         IntelligentTask mTask;
         ArrayList<ByteBuffer> mDataArray;
 
-        TFLitePerformanceTask(IntelligentTask task, ArrayList<ByteBuffer> dataArray, ProgressListener progressListener, int seconds) throws IOException {
+        TFLitePerformanceTask(IntelligentTask task, ArrayList<ByteBuffer> dataArray,
+                              ProgressListener progressListener, int seconds) throws IOException {
             super(progressListener, seconds);
             mTask = task;
             mDataArray = dataArray;
@@ -207,7 +221,8 @@ public class TFLiteInterpreter extends IntelligentInterpreter {
             TFLiteClassifier classifier;
 
             try {
-                if (mTask.getModelMode() == IntelligentModel.Mode.FLOAT32 || mTask.getModelMode() == IntelligentModel.Mode.FLOAT16){
+                if (mTask.getModelMode() == IntelligentModel.Mode.FLOAT32
+                        || mTask.getModelMode() == IntelligentModel.Mode.FLOAT16){
                     classifier = new FloatTFLiteClassifier(mTask);
                 } else if (mTask.getModelMode() == IntelligentModel.Mode.QUANTIZED) {
                     classifier = new QuantTFLiteClassifier(mTask);

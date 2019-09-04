@@ -39,11 +39,17 @@ public abstract class IntelligentEngine implements Engine {
 
     @Override
     public Interpreter getInterpreter(String interpreterName) {
-        return mInterpreters.stream().filter(i->i.getFramework().equals(interpreterName)).findFirst().orElse(null);
+        return mInterpreters
+                .stream()
+                .filter(i->i.getFramework()
+                            .equals(interpreterName))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
-    public boolean executeTask(Interpreter interpreter, IntelligentTask task, ProgressListener progressListener) {
+    public boolean executeTask(Interpreter interpreter, IntelligentTask task,
+                               ProgressListener progressListener) {
         if (interpreter == null){
             progressListener.onError("Interpreter param is null!");
             return false;

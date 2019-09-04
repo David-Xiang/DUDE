@@ -155,7 +155,8 @@ public class MNNNetInstance {
             config = new Config();
         }
 
-        long sessionId = MNNNetNative.nativeCreateSession(mNetInstance, config.forwardType, config.numThread, config.saveTensors, config.outputTensors);
+        long sessionId = MNNNetNative.nativeCreateSession(mNetInstance, config.forwardType,
+                config.numThread, config.saveTensors, config.outputTensors);
         if (0 == sessionId) {
             Log.e(TAG, "Create Session Error");
             return null;

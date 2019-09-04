@@ -104,7 +104,9 @@ public class MNNImageProcess {
      * @param matrix 定义裁剪、缩放、旋转等
      * @return
      */
-    public static boolean convertBuffer(byte[] buffer, int width, int height, MNNNetInstance.Session.Tensor tensor, Config config, Matrix matrix) {
+    public static boolean convertBuffer(byte[] buffer, int width, int height,
+                                        MNNNetInstance.Session.Tensor tensor, Config config,
+                                        Matrix matrix) {
         if (matrix == null) {
             matrix = new Matrix();
         }
@@ -112,7 +114,8 @@ public class MNNImageProcess {
         matrix.getValues(value);
 
         return MNNNetNative.nativeConvertBufferToTensor(buffer, width, height, tensor.instance(),
-                config.source.type, config.dest.type, config.filter.type, config.wrap.type, value, config.mean, config.normal);
+                config.source.type, config.dest.type, config.filter.type, config.wrap.type, value,
+                config.mean, config.normal);
     }
 
     /**
@@ -124,7 +127,8 @@ public class MNNImageProcess {
      * @param matrix       定义裁剪、缩放、旋转等
      * @return
      */
-    public static boolean convertBitmap(Bitmap sourceBitmap, MNNNetInstance.Session.Tensor tensor, Config config, Matrix matrix) {
+    public static boolean convertBitmap(Bitmap sourceBitmap, MNNNetInstance.Session.Tensor tensor,
+                                        Config config, Matrix matrix) {
         if (matrix == null) {
             matrix = new Matrix();
         }
@@ -132,6 +136,7 @@ public class MNNImageProcess {
         matrix.getValues(value);
 
         return MNNNetNative.nativeConvertBitmapToTensor(sourceBitmap, tensor.instance(),
-                config.dest.type, config.filter.type, config.wrap.type, value, config.mean, config.normal);
+                config.dest.type, config.filter.type, config.wrap.type, value, config.mean,
+                config.normal);
     }
 }

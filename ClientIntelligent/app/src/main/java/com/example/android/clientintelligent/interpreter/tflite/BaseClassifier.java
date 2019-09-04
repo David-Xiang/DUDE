@@ -95,7 +95,8 @@ public abstract class BaseClassifier {
     private List<String> loadLabelList(Activity activity) throws IOException {
         List<String> labels = new ArrayList<>();
         BufferedReader reader =
-                new BufferedReader(new InputStreamReader(activity.getAssets().open(getLabelPath())));
+                new BufferedReader(
+                        new InputStreamReader(activity.getAssets().open(getLabelPath())));
         String line;
         while ((line = reader.readLine()) != null) {
             labels.add(line);
@@ -120,7 +121,8 @@ public abstract class BaseClassifier {
             return;
         }
         imgData.rewind();
-        bitmap.getPixels(intValues, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+        bitmap.getPixels(intValues, 0, bitmap.getWidth(), 0, 0,
+                bitmap.getWidth(), bitmap.getHeight());
         // Convert the image to floating point.
         int pixel = 0;
         for (int i = 0; i < getImageSizeX(); ++i) {
