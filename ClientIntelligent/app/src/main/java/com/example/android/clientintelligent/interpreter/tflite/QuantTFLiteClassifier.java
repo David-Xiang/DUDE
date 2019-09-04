@@ -33,4 +33,10 @@ public class QuantTFLiteClassifier extends TFLiteClassifier{
         tflite.run(data, labelProbArray);
     }
 
+    @Override
+    protected void addPixelValue(int pixelValue) {
+        imgData.put((byte) ((pixelValue >> 16) & 0xFF));
+        imgData.put((byte) ((pixelValue >> 8) & 0xFF));
+        imgData.put((byte) (pixelValue & 0xFF));
+    }
 }

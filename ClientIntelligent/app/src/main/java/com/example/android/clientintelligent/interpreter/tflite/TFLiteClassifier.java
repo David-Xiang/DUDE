@@ -38,10 +38,4 @@ public abstract class TFLiteClassifier extends BaseClassifier {
     protected int getNumChannelsPerPixel() {
         return task.getChannelsPerPixel();
     }
-
-    @Deprecated
-    @Override
-    protected void addPixelValue(int pixelValue) {
-
-    }
 }

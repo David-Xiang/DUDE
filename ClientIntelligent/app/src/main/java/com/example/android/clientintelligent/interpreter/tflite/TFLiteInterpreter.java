@@ -179,10 +179,18 @@ public class TFLiteInterpreter extends IntelligentInterpreter {
                 }
                 count++;
             }
+
+            now = SystemClock.uptimeMillis();
+            @SuppressLint("DefaultLocale")
+            String msg = String.format("Top 1 accuracy is %.2f%%, top 5 accuracy is %.2f%%",
+                    (float)(top1count) * 100 / count,
+                    (float)(top5count) * 100 / count);
+            publishProgress((int) ((now - nStartTime) / (nSeconds * 10)), msg);
             classifier.close();
             return count;
         }
     }
+
     private class TFLitePerformanceTask extends InferenceTask {
         private static final String TAG = "TFLitePerformanceTask";
         IntelligentTask mTask;
@@ -204,7 +212,7 @@ public class TFLiteInterpreter extends IntelligentInterpreter {
                 } else if (mTask.getModelMode() == IntelligentModel.Mode.QUANTIZED) {
                     classifier = new QuantTFLiteClassifier(mTask);
                 } else {
-                    Log.w(TAG, "doInBackground: Wrong task model!");
+                    mProgressListener.onError("doInBackground: Wrong task model!");
                     return null;
                 }
             } catch (IOException e) {
@@ -217,7 +225,6 @@ public class TFLiteInterpreter extends IntelligentInterpreter {
             long now = SystemClock.uptimeMillis();
             while(now - nStartTime < nSeconds * 1000){
                 classifier.runInference(mDataArray.get(count%nImages));
-                Log.i(TAG, "doInBackground: count = " + count);
                 if (count % 50 == 0){
                     now = SystemClock.uptimeMillis();
                     publishProgress((int) ((now - nStartTime) / (nSeconds * 10)));
