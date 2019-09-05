@@ -2,20 +2,20 @@ package com.example.android.clientintelligent.framework;
 
 import android.content.Context;
 
-import com.example.android.clientintelligent.framework.interfaces.Engine;
-import com.example.android.clientintelligent.framework.interfaces.Interpreter;
-import com.example.android.clientintelligent.framework.interfaces.ProgressListener;
+import com.example.android.clientintelligent.framework.interfaces.IEngine;
+import com.example.android.clientintelligent.framework.interfaces.IInterpreter;
+import com.example.android.clientintelligent.framework.interfaces.IProgressListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class IntelligentEngine implements Engine {
-    ArrayList<Interpreter> mInterpreters;
+public abstract class Engine implements IEngine {
+    ArrayList<IInterpreter> mInterpreters;
     Context mContext;
 
-    public IntelligentEngine(Context context){
+    public Engine(Context context){
         mInterpreters = new ArrayList<>();
         mContext = context;
         initInterpreters();
@@ -27,18 +27,18 @@ public abstract class IntelligentEngine implements Engine {
     public List<String> getInterpreterList() {
         return mInterpreters
                 .stream()
-                .map(Interpreter::getFramework)
+                .map(IInterpreter::getFramework)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public boolean addInterpreter(Interpreter interpreter) {
+    public boolean addInterpreter(IInterpreter interpreter) {
         mInterpreters.add(interpreter);
         return true;
     }
 
     @Override
-    public Interpreter getInterpreter(String interpreterName) {
+    public IInterpreter getInterpreter(String interpreterName) {
         return mInterpreters
                 .stream()
                 .filter(i->i.getFramework()
@@ -48,10 +48,10 @@ public abstract class IntelligentEngine implements Engine {
     }
 
     @Override
-    public boolean executeTask(Interpreter interpreter, IntelligentMission task,
-                               ProgressListener progressListener) {
+    public boolean executeTask(IInterpreter interpreter, Mission task,
+                               IProgressListener progressListener) {
         if (interpreter == null){
-            progressListener.onError("Interpreter param is null!");
+            progressListener.onError("IInterpreter param is null!");
             return false;
         }
 

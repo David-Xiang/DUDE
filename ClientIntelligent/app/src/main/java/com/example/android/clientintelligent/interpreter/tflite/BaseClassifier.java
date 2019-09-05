@@ -5,9 +5,9 @@ import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.util.Log;
 
-import com.example.android.clientintelligent.framework.IntelligentModel;
-import com.example.android.clientintelligent.framework.IntelligentRecognition;
-import com.example.android.clientintelligent.framework.IntelligentMission;
+import com.example.android.clientintelligent.framework.Model;
+import com.example.android.clientintelligent.framework.Recognition;
+import com.example.android.clientintelligent.framework.Mission;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -36,7 +36,7 @@ public abstract class BaseClassifier {
     /** Dimensions of inputs. */
     private static final int DIM_BATCH_SIZE = 1;
 
-    protected final IntelligentMission task;
+    protected final Mission task;
 
     /** Preallocated buffers for storing image data in. */
     private final int[] intValues;
@@ -56,7 +56,7 @@ public abstract class BaseClassifier {
     /** A ByteBuffer to hold image data, to be feed into Tensorflow Lite as inputs. */
     ByteBuffer imgData;
 
-    protected BaseClassifier(Activity activity, IntelligentMission task) throws IOException {
+    protected BaseClassifier(Activity activity, Mission task) throws IOException {
         this.task = task;
         tfliteModel = loadModelFile(activity);
         intValues = new int[getImageSizeX() * getImageSizeY()];
@@ -73,7 +73,7 @@ public abstract class BaseClassifier {
                 break;
         }
         tfliteOptions.setNumThreads(task.getnThreads());
-        if (task.getModelMode() == IntelligentModel.Mode.FLOAT16){
+        if (task.getModelMode() == Model.Mode.FLOAT16){
             tfliteOptions.setAllowFp16PrecisionForFp32(true);
         }
         tflite = new Interpreter(tfliteModel, tfliteOptions);
@@ -133,7 +133,7 @@ public abstract class BaseClassifier {
     }
 
     /** Runs inference and returns the classification results. */
-    public List<IntelligentRecognition> recognizeImage(final Bitmap bitmap) {
+    public List<Recognition> recognizeImage(final Bitmap bitmap) {
         // Log this method so that it can be analyzed with systrace.
         convertBitmapToByteBuffer(bitmap);
 
@@ -141,7 +141,7 @@ public abstract class BaseClassifier {
         runInference();
 
         // Find the best classifications.
-        PriorityQueue<IntelligentRecognition> pq =
+        PriorityQueue<Recognition> pq =
                 new PriorityQueue<>(
                         5,
                         (lhs, rhs) -> {
@@ -150,13 +150,13 @@ public abstract class BaseClassifier {
                         });
         for (int i = 0; i < labels.size(); ++i) {
             pq.add(
-                    new IntelligentRecognition(
+                    new Recognition(
                             i+1,
                             labels.get(i),
                             getNormalizedProbability(i),
                             null));
         }
-        final ArrayList<IntelligentRecognition> recognitions = new ArrayList<>();
+        final ArrayList<Recognition> recognitions = new ArrayList<>();
         int recognitionsSize = Math.min(pq.size(), MAX_RESULTS);
         for (int i = 0; i < recognitionsSize; ++i) {
             recognitions.add(pq.poll());

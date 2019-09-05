@@ -3,14 +3,14 @@ package com.example.android.clientintelligent.framework;
 import android.os.AsyncTask;
 import android.os.SystemClock;
 
-import com.example.android.clientintelligent.framework.interfaces.ProgressListener;
+import com.example.android.clientintelligent.framework.interfaces.IProgressListener;
 
-public abstract class InferenceTask extends AsyncTask<Object, Object, Object> {
-    protected ProgressListener mProgressListener;
+public abstract class Task extends AsyncTask<Object, Object, Object> {
+    protected IProgressListener mProgressListener;
     protected long nStartTime;
     protected int nSeconds;
 
-    protected InferenceTask(ProgressListener progressListener, int seconds) {
+    protected Task(IProgressListener progressListener, int seconds) {
         mProgressListener = progressListener;
         nSeconds = seconds;
     }

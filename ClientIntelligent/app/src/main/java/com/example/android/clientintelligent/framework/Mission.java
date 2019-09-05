@@ -2,25 +2,25 @@ package com.example.android.clientintelligent.framework;
 
 import android.app.Activity;
 
-import com.example.android.clientintelligent.framework.interfaces.Interpreter;
+import com.example.android.clientintelligent.framework.interfaces.IInterpreter;
 
 import java.util.List;
 
-public class IntelligentMission {
+public class Mission {
     public enum Purpose {PERFORMANCE, ACCURACY};
 
     private final Purpose purpose;
     private final Activity activity;
 
-    private final Interpreter.Device device;
+    private final IInterpreter.Device device;
 
     private final int nThreads;
     private final int nTime;
 
-    private final IntelligentModel mModel;
+    private final Model mModel;
 
-    public IntelligentMission(Activity activity, IntelligentModel model,
-                       Purpose purpose, Interpreter.Device device, int nThreads, int nTime){
+    public Mission(Activity activity, Model model,
+                   Purpose purpose, IInterpreter.Device device, int nThreads, int nTime){
         this.activity = activity;
         this.mModel = model;
 
@@ -67,7 +67,7 @@ public class IntelligentMission {
         return mModel.getBytesPerChannel();
     }
 
-    public Interpreter.Device getDevice() {
+    public IInterpreter.Device getDevice() {
         return device;
     }
 
@@ -75,7 +75,7 @@ public class IntelligentMission {
         return mModel.getChannelsPerPixel();
     }
 
-    public IntelligentModel.Mode getModelMode() { return mModel.getMode(); }
+    public Model.Mode getModelMode() { return mModel.getMode(); }
 
     public String getTrueLabelIndexPath() { return mModel.getTrueLabelIndexPath(); }
 

@@ -1,6 +1,6 @@
 package com.example.android.clientintelligent.interpreter.tflite;
 
-import com.example.android.clientintelligent.framework.IntelligentMission;
+import com.example.android.clientintelligent.framework.Mission;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -8,7 +8,7 @@ import java.nio.ByteBuffer;
 public class QuantTFLiteClassifier extends TFLiteClassifier{
     private byte[][] labelProbArray;
 
-    QuantTFLiteClassifier(IntelligentMission task) throws IOException {
+    QuantTFLiteClassifier(Mission task) throws IOException {
         super(task);
         labelProbArray = new byte[1][getNumLabels()];
     }

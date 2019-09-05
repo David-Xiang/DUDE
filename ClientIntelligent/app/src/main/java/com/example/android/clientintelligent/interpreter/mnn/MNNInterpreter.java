@@ -5,10 +5,10 @@ import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.util.Log;
 
-import com.example.android.clientintelligent.framework.InferenceTask;
-import com.example.android.clientintelligent.framework.IntelligentInterpreter;
-import com.example.android.clientintelligent.framework.IntelligentMission;
-import com.example.android.clientintelligent.framework.interfaces.ProgressListener;
+import com.example.android.clientintelligent.framework.Task;
+import com.example.android.clientintelligent.framework.Interpreter;
+import com.example.android.clientintelligent.framework.Mission;
+import com.example.android.clientintelligent.framework.interfaces.IProgressListener;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class MNNInterpreter extends IntelligentInterpreter {
+public class MNNInterpreter extends Interpreter {
     private static final String TAG = "MNNInterpreter";
 
     public MNNInterpreter(Context context) {
@@ -34,7 +34,7 @@ public class MNNInterpreter extends IntelligentInterpreter {
     }
 
     @Override
-    public AsyncTask buildTask(IntelligentMission task, ProgressListener progressListener)
+    public AsyncTask buildTask(Mission task, IProgressListener progressListener)
             throws IOException {
         MNNNetInstance instance = MNNNetInstance.createFromFile(task.getModelFilePath());
         MNNNetInstance.Config config= new MNNNetInstance.Config();
@@ -50,13 +50,13 @@ public class MNNInterpreter extends IntelligentInterpreter {
         return null;
     }
 
-    private class MNNInferenceTask extends InferenceTask {
+    private class MNNAccuracyTask extends Task {
         // TODO
         MNNNetInstance instance;
         ArrayList<ByteBuffer> mDataArray;
 
-        MNNInferenceTask(ArrayList<ByteBuffer> dataArray, ProgressListener progressListener,
-                         int seconds){
+        MNNAccuracyTask(ArrayList<ByteBuffer> dataArray, IProgressListener progressListener,
+                        int seconds){
             super(progressListener, seconds);
             mDataArray = dataArray;
         }

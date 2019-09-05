@@ -3,7 +3,7 @@ package com.example.android.clientintelligent.framework;
 import android.graphics.RectF;
 
 /** An immutable result returned by a BaseClassifier describing what was recognized. */
-public class IntelligentRecognition {
+public class Recognition {
     /**
      * A unique identifier for what has been recognized. Specific to the class, not the instance of
      * the object.
@@ -21,8 +21,8 @@ public class IntelligentRecognition {
     /** Optional location within the source image for the location of the recognized object. */
     private RectF location;
 
-    public IntelligentRecognition(final int id, final String title, final Float confidence,
-                                  final RectF location) {
+    public Recognition(final int id, final String title, final Float confidence,
+                       final RectF location) {
         this.id = id;
         this.title = title;
         this.confidence = confidence;

@@ -27,11 +27,11 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.android.clientintelligent.framework.IntelligentMission;
-import com.example.android.clientintelligent.framework.IntelligentModel;
-import com.example.android.clientintelligent.framework.interfaces.Engine;
-import com.example.android.clientintelligent.framework.interfaces.Interpreter;
-import com.example.android.clientintelligent.framework.interfaces.ProgressListener;
+import com.example.android.clientintelligent.framework.Mission;
+import com.example.android.clientintelligent.framework.Model;
+import com.example.android.clientintelligent.framework.interfaces.IEngine;
+import com.example.android.clientintelligent.framework.interfaces.IInterpreter;
+import com.example.android.clientintelligent.framework.interfaces.IProgressListener;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -40,15 +40,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, ProgressListener {
+        implements NavigationView.OnNavigationItemSelectedListener, IProgressListener {
     private static final String TAG = "MainActivity";
-    private static final BiMap<Interpreter.Device, String> DEVICE_STRING_HASH_MAP;
+    private static final BiMap<IInterpreter.Device, String> DEVICE_STRING_HASH_MAP;
 
     private Handler handler;
     private HandlerThread handlerThread;
 
-    private Engine mEngine;
-    private Interpreter mInterpreter;
+    private IEngine mEngine;
+    private IInterpreter mInterpreter;
     private List<String> mOriginModelPathList;
 
     private Spinner mInterpreterSpinner;
@@ -65,10 +65,10 @@ public class MainActivity extends AppCompatActivity
 
     static {
         DEVICE_STRING_HASH_MAP = HashBiMap.create();
-        DEVICE_STRING_HASH_MAP.put(Interpreter.Device.CPU, "CPU");
-        DEVICE_STRING_HASH_MAP.put(Interpreter.Device.GPU, "GPU");
-        DEVICE_STRING_HASH_MAP.put(Interpreter.Device.NNAPI, "NNAPI");
-        DEVICE_STRING_HASH_MAP.put(Interpreter.Device.VULKAN, "VULKAN");
+        DEVICE_STRING_HASH_MAP.put(IInterpreter.Device.CPU, "CPU");
+        DEVICE_STRING_HASH_MAP.put(IInterpreter.Device.GPU, "GPU");
+        DEVICE_STRING_HASH_MAP.put(IInterpreter.Device.NNAPI, "NNAPI");
+        DEVICE_STRING_HASH_MAP.put(IInterpreter.Device.VULKAN, "VULKAN");
     }
 
     @Override
@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         initRootViews();
 
-        mEngine = new IntelligentEngineImpl(this);
+        mEngine = new EngineImpl(this);
         initMainPageView();
     }
 
@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                IntelligentModel model = mInterpreter.getModel(
+                Model model = mInterpreter.getModel(
                         mOriginModelPathList.get(
                                 mModelSpinner.getSelectedItemPosition()));
                 if (TextUtils.isEmpty(model.getTrueLabelIndexPath())) {
@@ -219,22 +219,22 @@ public class MainActivity extends AppCompatActivity
             int threads = mThreadSeekBar.getProgress();
             String deviceName = ((ArrayAdapter<String>)mDeviceSpinner.getAdapter())
                     .getItem(mDeviceSpinner.getSelectedItemPosition());
-            Interpreter.Device device = DEVICE_STRING_HASH_MAP.inverse().get(deviceName);
-            IntelligentModel model = mInterpreter.getModel(
+            IInterpreter.Device device = DEVICE_STRING_HASH_MAP.inverse().get(deviceName);
+            Model model = mInterpreter.getModel(
                                         mOriginModelPathList.get(
                                             mModelSpinner.getSelectedItemPosition()));
 
-            if (time == 0 || device == null || (device == Interpreter.Device.CPU && threads == 0) ||
+            if (time == 0 || device == null || (device == IInterpreter.Device.CPU && threads == 0) ||
                     mInterpreter == null || model == null){
                 Snackbar.make(v, "Oops, sth's wrong...", Snackbar.LENGTH_SHORT).show();
                 return;
             }
 
-            IntelligentMission.Purpose purpose = IntelligentMission.Purpose.PERFORMANCE;;
+            Mission.Purpose purpose = Mission.Purpose.PERFORMANCE;;
             if (mPurposeTextView.getText().equals("Accuracy")){
-                purpose = IntelligentMission.Purpose.ACCURACY;
+                purpose = Mission.Purpose.ACCURACY;
             }
-            IntelligentMission task = new IntelligentMission(
+            Mission task = new Mission(
                     MainActivity.this, model, purpose, device, threads, time);
             mEngine.executeTask(mInterpreter, task, MainActivity.this);
         });

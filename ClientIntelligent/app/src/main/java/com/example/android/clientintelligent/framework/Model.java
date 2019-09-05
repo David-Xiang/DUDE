@@ -4,21 +4,21 @@ import android.util.Log;
 
 import java.util.List;
 
-public class IntelligentModel {
-    private static final String TAG = "IntelligentModel";
+public class Model {
+    private static final String TAG = "Model";
 
     public enum Mode {FLOAT32, FLOAT16, QUANTIZED};
 
     private Mode mMode;
-    private IntelligentData mData;
+    private Data mData;
     private final String mFilePath;
 
-    public IntelligentModel(IntelligentData mData, String mFilePath, Mode mode) {
+    public Model(Data mData, String mFilePath, Mode mode) {
         this.mData = mData;
         this.mFilePath = mFilePath;
         this.mMode = mode;
         if (mData == null){
-            Log.e(TAG, "IntelligentModel: mData is null!");
+            Log.e(TAG, "Model: mData is null!");
         }
     }
 

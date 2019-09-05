@@ -2,27 +2,27 @@ package com.example.android.clientintelligent.framework;
 
 import android.content.Context;
 
-import com.example.android.clientintelligent.framework.interfaces.Interpreter;
+import com.example.android.clientintelligent.framework.interfaces.IInterpreter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class IntelligentInterpreter implements Interpreter {
+public abstract class Interpreter implements IInterpreter {
     protected Context mContext;
-    protected List<IntelligentModel> mModels;
+    protected List<Model> mModels;
 
-    protected IntelligentInterpreter(Context context) {
+    protected Interpreter(Context context) {
         mContext = context;
         mModels = new ArrayList<>();
     }
 
-    public boolean addModel(IntelligentModel model) {
+    public boolean addModel(Model model) {
         mModels.add(model);
         return true;
     }
 
-    public IntelligentModel getModel(String modelName) {
+    public Model getModel(String modelName) {
         return mModels
                 .stream()
                 .filter(m->m.getFilePath()
@@ -34,7 +34,7 @@ public abstract class IntelligentInterpreter implements Interpreter {
     public List<String> getModels() {
         return mModels
                 .stream()
-                .map(IntelligentModel::getFilePath)
+                .map(Model::getFilePath)
                 .collect(Collectors.toList());
     }
 }

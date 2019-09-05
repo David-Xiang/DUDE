@@ -2,7 +2,7 @@ package com.example.android.clientintelligent.framework;
 
 import java.util.List;
 
-public class IntelligentData {
+public class Data {
     private final List<String> mPathList;
     private final String mTrueLabelIndexPath;
     private final String mLabelFilePath;
@@ -12,9 +12,9 @@ public class IntelligentData {
     private final int nBytesPerChannel;
     private final int nChannelsPerPixel;
 
-    public IntelligentData(List<String> mPathList, String mTrueLabelIndexPath,
-                           String mLabelFilePath, int nImageSizeX, int nImageSizeY,
-                           int nBytesPerChannel, int nChannelsPerPixel) {
+    public Data(List<String> mPathList, String mTrueLabelIndexPath,
+                String mLabelFilePath, int nImageSizeX, int nImageSizeY,
+                int nBytesPerChannel, int nChannelsPerPixel) {
         this.mPathList = mPathList;
         this.mTrueLabelIndexPath = mTrueLabelIndexPath;
         this.mLabelFilePath = mLabelFilePath;
