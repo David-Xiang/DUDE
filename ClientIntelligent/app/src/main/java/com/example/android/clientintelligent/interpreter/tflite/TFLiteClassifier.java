@@ -5,37 +5,37 @@ import com.example.android.clientintelligent.framework.Mission;
 import java.io.IOException;
 
 public abstract class TFLiteClassifier extends BaseClassifier {
-    TFLiteClassifier(Mission task) throws IOException {
-        super(task.getActivity(), task);
+    TFLiteClassifier(Mission mission) throws IOException {
+        super(mission.getActivity(), mission);
     }
 
     @Override
     public int getImageSizeX() {
-        return task.getnImageSizeX();
+        return mission.getnImageSizeX();
     }
 
     @Override
     public int getImageSizeY() {
-        return task.getnImageSizeY();
+        return mission.getnImageSizeY();
     }
 
     @Override
     protected String getModelPath() {
-        return task.getModelFilePath();
+        return mission.getModelFilePath();
     }
 
     @Override
     protected String getLabelPath() {
-        return task.getLabelFilePath();
+        return mission.getLabelFilePath();
     }
 
     @Override
     protected int getNumBytesPerChannel() {
-        return task.getBytesPerChannel();
+        return mission.getBytesPerChannel();
     }
 
     @Override
     protected int getNumChannelsPerPixel() {
-        return task.getChannelsPerPixel();
+        return mission.getChannelsPerPixel();
     }
 }

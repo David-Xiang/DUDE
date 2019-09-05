@@ -69,6 +69,8 @@ public class MainActivity extends AppCompatActivity
         DEVICE_STRING_HASH_MAP.put(IInterpreter.Device.GPU, "GPU");
         DEVICE_STRING_HASH_MAP.put(IInterpreter.Device.NNAPI, "NNAPI");
         DEVICE_STRING_HASH_MAP.put(IInterpreter.Device.VULKAN, "VULKAN");
+        DEVICE_STRING_HASH_MAP.put(IInterpreter.Device.OPENCL, "OPENCL");
+        DEVICE_STRING_HASH_MAP.put(IInterpreter.Device.OPENGL, "OPENGL");
     }
 
     @Override
@@ -147,9 +149,7 @@ public class MainActivity extends AppCompatActivity
                         android.R.layout.simple_spinner_item,
                         mOriginModelPathList
                                 .stream()
-                                .map(s->s.substring(
-                                            s.lastIndexOf("mobile"),
-                                            s.lastIndexOf(".tflite")))
+                                .map(s->s.substring(s.lastIndexOf("/")+1))
                                 .collect(Collectors.toList()));
                 mModelSpinner.setAdapter(modelAdapter);
             }

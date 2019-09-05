@@ -48,7 +48,7 @@ public abstract class Engine implements IEngine {
     }
 
     @Override
-    public boolean executeTask(IInterpreter interpreter, Mission task,
+    public boolean executeTask(IInterpreter interpreter, Mission mission,
                                IProgressListener progressListener) {
         if (interpreter == null){
             progressListener.onError("IInterpreter param is null!");
@@ -56,9 +56,9 @@ public abstract class Engine implements IEngine {
         }
 
         try {
-            interpreter.buildTask(task, progressListener).execute();
+            interpreter.buildTask(mission, progressListener).execute();
             return true;
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             progressListener.onError("Error in interpreter.buildTask().execute() !");
         }

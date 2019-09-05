@@ -36,7 +36,7 @@ public abstract class BaseClassifier {
     /** Dimensions of inputs. */
     private static final int DIM_BATCH_SIZE = 1;
 
-    protected final Mission task;
+    protected final Mission mission;
 
     /** Preallocated buffers for storing image data in. */
     private final int[] intValues;
@@ -56,12 +56,12 @@ public abstract class BaseClassifier {
     /** A ByteBuffer to hold image data, to be feed into Tensorflow Lite as inputs. */
     ByteBuffer imgData;
 
-    protected BaseClassifier(Activity activity, Mission task) throws IOException {
-        this.task = task;
+    protected BaseClassifier(Activity activity, Mission mission) throws IOException {
+        this.mission = mission;
         tfliteModel = loadModelFile(activity);
         intValues = new int[getImageSizeX() * getImageSizeY()];
         Interpreter.Options tfliteOptions = new Interpreter.Options();
-        switch (task.getDevice()) {
+        switch (mission.getDevice()) {
             case NNAPI:
                 tfliteOptions.setUseNNAPI(true);
                 break;
@@ -72,8 +72,8 @@ public abstract class BaseClassifier {
             case CPU:
                 break;
         }
-        tfliteOptions.setNumThreads(task.getnThreads());
-        if (task.getModelMode() == Model.Mode.FLOAT16){
+        tfliteOptions.setNumThreads(mission.getnThreads());
+        if (mission.getModelMode() == Model.Mode.FLOAT16){
             tfliteOptions.setAllowFp16PrecisionForFp32(true);
         }
         tflite = new Interpreter(tfliteModel, tfliteOptions);

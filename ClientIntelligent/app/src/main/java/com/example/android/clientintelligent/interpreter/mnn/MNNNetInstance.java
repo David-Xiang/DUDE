@@ -138,7 +138,7 @@ public class MNNNetInstance {
             return new Tensor(tensorPtr);
         }
 
-        //Release the session from net instance, it's not needed if you call net.release()
+        //Release the session from net mInstance, it's not needed if you call net.release()
         public void release() {
             checkValid();
             MNNNetNative.nativeReleaseSession(mNetInstance, mSessionInstance);

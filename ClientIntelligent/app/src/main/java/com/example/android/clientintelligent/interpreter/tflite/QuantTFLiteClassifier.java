@@ -8,8 +8,8 @@ import java.nio.ByteBuffer;
 public class QuantTFLiteClassifier extends TFLiteClassifier{
     private byte[][] labelProbArray;
 
-    QuantTFLiteClassifier(Mission task) throws IOException {
-        super(task);
+    QuantTFLiteClassifier(Mission mission) throws IOException {
+        super(mission);
         labelProbArray = new byte[1][getNumLabels()];
     }
 

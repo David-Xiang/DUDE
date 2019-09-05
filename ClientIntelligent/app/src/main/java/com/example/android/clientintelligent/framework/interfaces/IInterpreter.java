@@ -5,7 +5,6 @@ import android.os.AsyncTask;
 import com.example.android.clientintelligent.framework.Model;
 import com.example.android.clientintelligent.framework.Mission;
 
-import java.io.IOException;
 import java.util.List;
 
 public interface IInterpreter {
@@ -18,5 +17,5 @@ public interface IInterpreter {
     Model getModel(String modelName);
     List<String> getModels();
 
-    AsyncTask buildTask(Mission task, IProgressListener progressListener) throws IOException;
+    AsyncTask buildTask(Mission task, IProgressListener progressListener) throws Exception;
 }
