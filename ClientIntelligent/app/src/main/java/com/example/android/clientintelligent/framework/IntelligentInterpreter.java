@@ -1,8 +1,8 @@
-package com.example.android.clientintelligent;
+package com.example.android.clientintelligent.framework;
 
 import android.content.Context;
 
-import com.example.android.clientintelligent.interfaces.Interpreter;
+import com.example.android.clientintelligent.framework.interfaces.Interpreter;
 
 import java.util.ArrayList;
 import java.util.List;

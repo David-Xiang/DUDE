@@ -1,11 +1,11 @@
 package com.example.android.clientintelligent.interpreter.tflite;
 
-import com.example.android.clientintelligent.IntelligentTask;
+import com.example.android.clientintelligent.framework.IntelligentMission;
 
 import java.io.IOException;
 
 public abstract class TFLiteClassifier extends BaseClassifier {
-    TFLiteClassifier(IntelligentTask task) throws IOException {
+    TFLiteClassifier(IntelligentMission task) throws IOException {
         super(task.getActivity(), task);
     }
 

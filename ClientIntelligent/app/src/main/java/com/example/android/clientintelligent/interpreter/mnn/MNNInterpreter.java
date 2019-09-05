@@ -5,12 +5,10 @@ import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.util.Log;
 
-import com.example.android.clientintelligent.InferenceTask;
-import com.example.android.clientintelligent.IntelligentInterpreter;
-import com.example.android.clientintelligent.IntelligentModel;
-import com.example.android.clientintelligent.IntelligentTask;
-import com.example.android.clientintelligent.interfaces.ProgressListener;
-import com.example.android.clientintelligent.interpreter.tflite.TFLiteClassifier;
+import com.example.android.clientintelligent.framework.InferenceTask;
+import com.example.android.clientintelligent.framework.IntelligentInterpreter;
+import com.example.android.clientintelligent.framework.IntelligentMission;
+import com.example.android.clientintelligent.framework.interfaces.ProgressListener;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -36,7 +34,7 @@ public class MNNInterpreter extends IntelligentInterpreter {
     }
 
     @Override
-    public AsyncTask buildTask(IntelligentTask task, ProgressListener progressListener)
+    public AsyncTask buildTask(IntelligentMission task, ProgressListener progressListener)
             throws IOException {
         MNNNetInstance instance = MNNNetInstance.createFromFile(task.getModelFilePath());
         MNNNetInstance.Config config= new MNNNetInstance.Config();

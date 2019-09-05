@@ -3,12 +3,11 @@ package com.example.android.clientintelligent.interpreter.tflite;
 import android.app.Activity;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
-import android.graphics.RectF;
 import android.util.Log;
 
-import com.example.android.clientintelligent.IntelligentModel;
-import com.example.android.clientintelligent.IntelligentRecognition;
-import com.example.android.clientintelligent.IntelligentTask;
+import com.example.android.clientintelligent.framework.IntelligentModel;
+import com.example.android.clientintelligent.framework.IntelligentRecognition;
+import com.example.android.clientintelligent.framework.IntelligentMission;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -37,7 +36,7 @@ public abstract class BaseClassifier {
     /** Dimensions of inputs. */
     private static final int DIM_BATCH_SIZE = 1;
 
-    protected final IntelligentTask task;
+    protected final IntelligentMission task;
 
     /** Preallocated buffers for storing image data in. */
     private final int[] intValues;
@@ -57,7 +56,7 @@ public abstract class BaseClassifier {
     /** A ByteBuffer to hold image data, to be feed into Tensorflow Lite as inputs. */
     ByteBuffer imgData;
 
-    protected BaseClassifier(Activity activity, IntelligentTask task) throws IOException {
+    protected BaseClassifier(Activity activity, IntelligentMission task) throws IOException {
         this.task = task;
         tfliteModel = loadModelFile(activity);
         intValues = new int[getImageSizeX() * getImageSizeY()];

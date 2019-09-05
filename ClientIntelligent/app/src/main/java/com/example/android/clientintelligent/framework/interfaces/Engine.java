@@ -1,13 +1,16 @@
-package com.example.android.clientintelligent.interfaces;
+package com.example.android.clientintelligent.framework.interfaces;
 
-import com.example.android.clientintelligent.IntelligentTask;
+import android.content.Context;
+
+import com.example.android.clientintelligent.framework.IntelligentMission;
 
 import java.util.List;
 
 public interface Engine {
     List<String> getInterpreterList();
+    Context getContext();
     boolean addInterpreter(Interpreter interpreter);
     Interpreter getInterpreter(String interpreterName);
-    boolean executeTask(Interpreter interpreter, IntelligentTask task,
+    boolean executeTask(Interpreter interpreter, IntelligentMission task,
                         ProgressListener progressListener); // 检查task和interpreter compatible
 }

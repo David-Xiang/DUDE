@@ -27,9 +27,11 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.android.clientintelligent.interfaces.Engine;
-import com.example.android.clientintelligent.interfaces.Interpreter;
-import com.example.android.clientintelligent.interfaces.ProgressListener;
+import com.example.android.clientintelligent.framework.IntelligentMission;
+import com.example.android.clientintelligent.framework.IntelligentModel;
+import com.example.android.clientintelligent.framework.interfaces.Engine;
+import com.example.android.clientintelligent.framework.interfaces.Interpreter;
+import com.example.android.clientintelligent.framework.interfaces.ProgressListener;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -228,11 +230,11 @@ public class MainActivity extends AppCompatActivity
                 return;
             }
 
-            IntelligentTask.Purpose purpose = IntelligentTask.Purpose.PERFORMANCE;;
+            IntelligentMission.Purpose purpose = IntelligentMission.Purpose.PERFORMANCE;;
             if (mPurposeTextView.getText().equals("Accuracy")){
-                purpose = IntelligentTask.Purpose.ACCURACY;
+                purpose = IntelligentMission.Purpose.ACCURACY;
             }
-            IntelligentTask task = new IntelligentTask(
+            IntelligentMission task = new IntelligentMission(
                     MainActivity.this, model, purpose, device, threads, time);
             mEngine.executeTask(mInterpreter, task, MainActivity.this);
         });

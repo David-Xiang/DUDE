@@ -8,12 +8,12 @@ import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.util.Log;
 
-import com.example.android.clientintelligent.InferenceTask;
-import com.example.android.clientintelligent.IntelligentInterpreter;
-import com.example.android.clientintelligent.IntelligentModel;
-import com.example.android.clientintelligent.IntelligentRecognition;
-import com.example.android.clientintelligent.IntelligentTask;
-import com.example.android.clientintelligent.interfaces.ProgressListener;
+import com.example.android.clientintelligent.framework.InferenceTask;
+import com.example.android.clientintelligent.framework.IntelligentInterpreter;
+import com.example.android.clientintelligent.framework.IntelligentModel;
+import com.example.android.clientintelligent.framework.IntelligentRecognition;
+import com.example.android.clientintelligent.framework.IntelligentMission;
+import com.example.android.clientintelligent.framework.interfaces.ProgressListener;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -47,7 +47,7 @@ public class TFLiteInterpreter extends IntelligentInterpreter {
     }
 
     @Override
-    public AsyncTask buildTask(IntelligentTask task, ProgressListener progressListener)
+    public AsyncTask buildTask(IntelligentMission task, ProgressListener progressListener)
             throws IOException {
         switch (task.getPurpose()) {
             case PERFORMANCE:
@@ -59,12 +59,12 @@ public class TFLiteInterpreter extends IntelligentInterpreter {
         }
     }
 
-    private AsyncTask buildAccuracyTask(IntelligentTask task, ProgressListener progressListener)
+    private AsyncTask buildAccuracyTask(IntelligentMission task, ProgressListener progressListener)
             throws IOException {
         return new TFLiteAccuracyTask(task, progressListener, task.getnTime());
     }
 
-    private AsyncTask buildPerformanceTask(IntelligentTask task, ProgressListener progressListener)
+    private AsyncTask buildPerformanceTask(IntelligentMission task, ProgressListener progressListener)
             throws IOException {
         int[] intValues = new int[task.getnImageSizeX() * task.getnImageSizeY()];
         ArrayList<ByteBuffer> images = new ArrayList<>();
@@ -116,10 +116,10 @@ public class TFLiteInterpreter extends IntelligentInterpreter {
 
     private class TFLiteAccuracyTask extends InferenceTask {
         private static final String TAG = "TFLitePerformanceTask";
-        IntelligentTask mTask;
+        IntelligentMission mTask;
         List<Integer> mLabelIndexList;
 
-        TFLiteAccuracyTask(IntelligentTask task, ProgressListener progressListener, int seconds)
+        TFLiteAccuracyTask(IntelligentMission task, ProgressListener progressListener, int seconds)
                 throws IOException {
             super(progressListener, seconds);
             mTask = task;
@@ -206,10 +206,10 @@ public class TFLiteInterpreter extends IntelligentInterpreter {
 
     private class TFLitePerformanceTask extends InferenceTask {
         private static final String TAG = "TFLitePerformanceTask";
-        IntelligentTask mTask;
+        IntelligentMission mTask;
         ArrayList<ByteBuffer> mDataArray;
 
-        TFLitePerformanceTask(IntelligentTask task, ArrayList<ByteBuffer> dataArray,
+        TFLitePerformanceTask(IntelligentMission task, ArrayList<ByteBuffer> dataArray,
                               ProgressListener progressListener, int seconds) throws IOException {
             super(progressListener, seconds);
             mTask = task;

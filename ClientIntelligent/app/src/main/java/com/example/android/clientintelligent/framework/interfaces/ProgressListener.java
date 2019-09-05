@@ -1,4 +1,4 @@
-package com.example.android.clientintelligent.interfaces;
+package com.example.android.clientintelligent.framework.interfaces;
 
 public interface ProgressListener {
     void onProgress(int progress, String msg);

@@ -1,4 +1,4 @@
-package com.example.android.clientintelligent;
+package com.example.android.clientintelligent.framework;
 
 import java.util.List;
 

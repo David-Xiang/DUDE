@@ -1,9 +1,9 @@
-package com.example.android.clientintelligent;
+package com.example.android.clientintelligent.framework;
 
 import android.os.AsyncTask;
 import android.os.SystemClock;
 
-import com.example.android.clientintelligent.interfaces.ProgressListener;
+import com.example.android.clientintelligent.framework.interfaces.ProgressListener;
 
 public abstract class InferenceTask extends AsyncTask<Object, Object, Object> {
     protected ProgressListener mProgressListener;

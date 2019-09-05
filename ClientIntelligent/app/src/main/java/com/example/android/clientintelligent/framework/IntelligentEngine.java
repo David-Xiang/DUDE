@@ -1,10 +1,10 @@
-package com.example.android.clientintelligent;
+package com.example.android.clientintelligent.framework;
 
 import android.content.Context;
 
-import com.example.android.clientintelligent.interfaces.Engine;
-import com.example.android.clientintelligent.interfaces.Interpreter;
-import com.example.android.clientintelligent.interfaces.ProgressListener;
+import com.example.android.clientintelligent.framework.interfaces.Engine;
+import com.example.android.clientintelligent.framework.interfaces.Interpreter;
+import com.example.android.clientintelligent.framework.interfaces.ProgressListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ public abstract class IntelligentEngine implements Engine {
     ArrayList<Interpreter> mInterpreters;
     Context mContext;
 
-    IntelligentEngine(Context context){
+    public IntelligentEngine(Context context){
         mInterpreters = new ArrayList<>();
         mContext = context;
         initInterpreters();
@@ -48,7 +48,7 @@ public abstract class IntelligentEngine implements Engine {
     }
 
     @Override
-    public boolean executeTask(Interpreter interpreter, IntelligentTask task,
+    public boolean executeTask(Interpreter interpreter, IntelligentMission task,
                                ProgressListener progressListener) {
         if (interpreter == null){
             progressListener.onError("Interpreter param is null!");
@@ -63,6 +63,11 @@ public abstract class IntelligentEngine implements Engine {
             progressListener.onError("Error in interpreter.buildTask().execute() !");
         }
         return false;
+    }
+
+    @Override
+    public Context getContext() {
+        return mContext;
     }
 
     public abstract void initInterpreters();

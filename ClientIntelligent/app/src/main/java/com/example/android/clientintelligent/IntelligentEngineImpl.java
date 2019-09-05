@@ -2,6 +2,9 @@ package com.example.android.clientintelligent;
 
 import android.content.Context;
 
+import com.example.android.clientintelligent.framework.IntelligentData;
+import com.example.android.clientintelligent.framework.IntelligentEngine;
+import com.example.android.clientintelligent.framework.IntelligentModel;
 import com.example.android.clientintelligent.interpreter.tflite.TFLiteInterpreter;
 
 import java.util.ArrayList;
@@ -19,8 +22,7 @@ public class IntelligentEngineImpl extends IntelligentEngine {
 
     @Override
     public void initInterpreters() {
-        mInterpreters.clear();
-        mInterpreters.add(new TFLiteInterpreter(mContext));
+        addInterpreter(new TFLiteInterpreter(getContext()));
     }
 
     @Override

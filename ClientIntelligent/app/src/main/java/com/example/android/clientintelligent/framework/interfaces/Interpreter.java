@@ -1,9 +1,9 @@
-package com.example.android.clientintelligent.interfaces;
+package com.example.android.clientintelligent.framework.interfaces;
 
 import android.os.AsyncTask;
 
-import com.example.android.clientintelligent.IntelligentModel;
-import com.example.android.clientintelligent.IntelligentTask;
+import com.example.android.clientintelligent.framework.IntelligentModel;
+import com.example.android.clientintelligent.framework.IntelligentMission;
 
 import java.io.IOException;
 import java.util.List;
@@ -18,5 +18,5 @@ public interface Interpreter {
     IntelligentModel getModel(String modelName);
     List<String> getModels();
 
-    AsyncTask buildTask(IntelligentTask task, ProgressListener progressListener) throws IOException;
+    AsyncTask buildTask(IntelligentMission task, ProgressListener progressListener) throws IOException;
 }

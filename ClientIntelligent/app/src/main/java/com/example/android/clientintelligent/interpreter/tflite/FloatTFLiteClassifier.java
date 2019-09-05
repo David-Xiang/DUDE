@@ -1,6 +1,6 @@
 package com.example.android.clientintelligent.interpreter.tflite;
 
-import com.example.android.clientintelligent.IntelligentTask;
+import com.example.android.clientintelligent.framework.IntelligentMission;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -12,7 +12,7 @@ public class FloatTFLiteClassifier extends TFLiteClassifier{
 
     private float[][] labelProbArray;
 
-    FloatTFLiteClassifier(IntelligentTask task) throws IOException {
+    FloatTFLiteClassifier(IntelligentMission task) throws IOException {
         super(task);
         labelProbArray = new float[1][getNumLabels()];
     }

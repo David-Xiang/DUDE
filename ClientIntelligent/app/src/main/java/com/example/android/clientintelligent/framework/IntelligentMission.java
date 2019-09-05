@@ -1,12 +1,12 @@
-package com.example.android.clientintelligent;
+package com.example.android.clientintelligent.framework;
 
 import android.app.Activity;
 
-import com.example.android.clientintelligent.interfaces.Interpreter;
+import com.example.android.clientintelligent.framework.interfaces.Interpreter;
 
 import java.util.List;
 
-public class IntelligentTask {
+public class IntelligentMission {
     public enum Purpose {PERFORMANCE, ACCURACY};
 
     private final Purpose purpose;
@@ -19,8 +19,8 @@ public class IntelligentTask {
 
     private final IntelligentModel mModel;
 
-    IntelligentTask(Activity activity, IntelligentModel model,
-                    Purpose purpose, Interpreter.Device device, int nThreads, int nTime){
+    public IntelligentMission(Activity activity, IntelligentModel model,
+                       Purpose purpose, Interpreter.Device device, int nThreads, int nTime){
         this.activity = activity;
         this.mModel = model;
 
