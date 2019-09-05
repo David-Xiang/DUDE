@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.example.android.clientintelligent.interpreter.tflite.TFLiteInterpreter;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -47,6 +48,16 @@ public class IntelligentEngineImpl extends IntelligentEngine {
                 224, 224, 1, 3));
         mDataMap.put("imagenet224", new IntelligentData(imagenet224DataPathList, "imagenet224/answer.txt","imagenet224/labels.txt",
                 224, 224, 4, 3));
+
+        // ILSVRC2012
+        List<String> ilsvrcDataPathList = new ArrayList<>();
+        for (int i = 0; i < 1000; i++){
+            ilsvrcDataPathList.add(String.format("ilsvrc2012/images/ILSVRC2012_val_%08d.JPEG", i+1));
+        }
+        mDataMap.put("ilsvrc_quant", new IntelligentData(ilsvrcDataPathList, "ilsvrc2012/ILSVRC2012_validation_ground_truth_mapped.txt","ilsvrc2012/labels.txt",
+                224, 224, 1, 3));
+        mDataMap.put("ilsvrc", new IntelligentData(ilsvrcDataPathList, "ilsvrc2012/ILSVRC2012_validation_ground_truth_mapped.txt","ilsvrc2012/labels.txt",
+                224, 224, 4, 3));
     }
 
     @Override
@@ -56,28 +67,49 @@ public class IntelligentEngineImpl extends IntelligentEngine {
         //addTFLiteModel(mDataMap.get("imagenet224_quant"), "imagenet224/models/tflite/mobilenet_v1_1.0_224_quant.tflite", IntelligentModel.Mode.QUANTIZED);
         //addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/mobilenet_v1_1.0_224.tflite");
 
-        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/mobilenet.tflite");
-        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/mobilenet_bfloat16.tflite");
-        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/mobilenet_float32.tflite");
-        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/mobilenet_float16.tflite", IntelligentModel.Mode.FLOAT16);
-        //addTFLiteModel(mDataMap.get("imagenet224_quant"), "imagenet224/models/tflite/mobilenet_int32.tflite", IntelligentModel.Mode.QUANTIZED);
-        //addTFLiteModel(mDataMap.get("imagenet224_quant"), "imagenet224/models/tflite/mobilenet_int64.tflite", IntelligentModel.Mode.QUANTIZED);
-        addTFLiteModel(mDataMap.get("imagenet224_quant"), "imagenet224/models/tflite/mobilenet_uint8.tflite", IntelligentModel.Mode.QUANTIZED);
-        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/mobilenet_double.tflite");
-        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/mobilenet_optimize_latency.tflite");
-        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/mobilenet_optimize_size.tflite");
+//        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/mobilenet.tflite");
+//        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/mobilenet_bfloat16.tflite");
+//        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/mobilenet_float32.tflite");
+//        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/mobilenet_float16.tflite", IntelligentModel.Mode.FLOAT16);
+//        //addTFLiteModel(mDataMap.get("imagenet224_quant"), "imagenet224/models/tflite/mobilenet_int32.tflite", IntelligentModel.Mode.QUANTIZED);
+//        //addTFLiteModel(mDataMap.get("imagenet224_quant"), "imagenet224/models/tflite/mobilenet_int64.tflite", IntelligentModel.Mode.QUANTIZED);
+//        addTFLiteModel(mDataMap.get("imagenet224_quant"), "imagenet224/models/tflite/mobilenet_uint8.tflite", IntelligentModel.Mode.QUANTIZED);
+//        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/mobilenet_double.tflite");
+//        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/mobilenet_optimize_latency.tflite");
+//        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/mobilenet_optimize_size.tflite");
+//
+//        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/mobilenetV2.tflite");
+//        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/mobilenetV2_bfloat16.tflite");
+//        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/mobilenetV2_float32.tflite");
+//        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/mobilenetV2_float16.tflite", IntelligentModel.Mode.FLOAT16);
+//        //addTFLiteModel(mDataMap.get("imagenet224_quant"), "imagenet224/models/tflite/mobilenetV2_int32.tflite", IntelligentModel.Mode.QUANTIZED);
+//        //addTFLiteModel(mDataMap.get("imagenet224_quant"), "imagenet224/models/tflite/mobilenetV2_int64.tflite", IntelligentModel.Mode.QUANTIZED);
+//        addTFLiteModel(mDataMap.get("imagenet224_quant"), "imagenet224/models/tflite/mobilenetV2_uint8.tflite", IntelligentModel.Mode.QUANTIZED);
+//        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/mobilenetV2_double.tflite");
+//        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/mobilenetV2_optimize_latency.tflite");
+//        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/mobilenetV2_optimize_size.tflite");
 
-        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/mobilenetV2.tflite");
-        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/mobilenetV2_bfloat16.tflite");
-        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/mobilenetV2_float32.tflite");
-        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/mobilenetV2_float16.tflite", IntelligentModel.Mode.FLOAT16);
-        //addTFLiteModel(mDataMap.get("imagenet224_quant"), "imagenet224/models/tflite/mobilenetV2_int32.tflite", IntelligentModel.Mode.QUANTIZED);
-        //addTFLiteModel(mDataMap.get("imagenet224_quant"), "imagenet224/models/tflite/mobilenetV2_int64.tflite", IntelligentModel.Mode.QUANTIZED);
-        addTFLiteModel(mDataMap.get("imagenet224_quant"), "imagenet224/models/tflite/mobilenetV2_uint8.tflite", IntelligentModel.Mode.QUANTIZED);
-        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/mobilenetV2_double.tflite");
-        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/mobilenetV2_optimize_latency.tflite");
-        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/mobilenetV2_optimize_size.tflite");
+        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenet.tflite");
+        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenet_bfloat16.tflite");
+        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenet_float32.tflite");
+        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenet_float16.tflite", IntelligentModel.Mode.FLOAT16);
+        //addTFLiteModel(mDataMap.get("ilsvrc_quant"), "ilsvrc2012/models/tflite/mobilenet_int32.tflite", IntelligentModel.Mode.QUANTIZED);
+        //addTFLiteModel(mDataMap.get("ilsvrc_quant"), "ilsvrc2012/models/tflite/mobilenet_int64.tflite", IntelligentModel.Mode.QUANTIZED);
+        addTFLiteModel(mDataMap.get("ilsvrc_quant"), "ilsvrc2012/models/tflite/mobilenet_uint8.tflite", IntelligentModel.Mode.QUANTIZED);
+        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenet_double.tflite");
+        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenet_optimize_latency.tflite");
+        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenet_optimize_size.tflite");
 
+        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenetV2.tflite");
+        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenetV2_bfloat16.tflite");
+        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenetV2_float32.tflite");
+        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenetV2_float16.tflite", IntelligentModel.Mode.FLOAT16);
+        //addTFLiteModel(mDataMap.get("ilsvrc_quant"), "ilsvrc2012/models/tflite/mobilenetV2_int32.tflite", IntelligentModel.Mode.QUANTIZED);
+        //addTFLiteModel(mDataMap.get("ilsvrc_quant"), "ilsvrc2012/models/tflite/mobilenetV2_int64.tflite", IntelligentModel.Mode.QUANTIZED);
+        addTFLiteModel(mDataMap.get("ilsvrc_quant"), "ilsvrc2012/models/tflite/mobilenetV2_uint8.tflite", IntelligentModel.Mode.QUANTIZED);
+        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenetV2_double.tflite");
+        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenetV2_optimize_latency.tflite");
+        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenetV2_optimize_size.tflite");
     }
 
     private void addTFLiteModel(IntelligentData data, String modelFilePath){
