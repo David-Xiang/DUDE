@@ -1,1 +1,1 @@
-ls *.onnx | xargs -I {} basename {} .onnx | xargs -I {} ../../../MNN/tools/converter/build/MNNConvert -f ONNX --modelFile {}.onnx --MNNModel {}.mnn --bizCode MNN
+ls *.onnx | xargs -I {} basename {} .onnx | xargs -I {} ./MNNConvert -f ONNX --modelFile {}.onnx --MNNModel {}.mnn --bizCode MNN
