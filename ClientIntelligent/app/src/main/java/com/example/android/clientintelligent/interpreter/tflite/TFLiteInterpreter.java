@@ -116,17 +116,15 @@ public class TFLiteInterpreter extends Interpreter {
 
     private class TFLiteAccuracyTask extends Task {
         private static final String TAG = "TFLitePerformanceTask";
-        private Mission mMission;
         private List<Integer> mLabelIndexList;
 
         TFLiteAccuracyTask(Mission mission, IProgressListener progressListener, int seconds)
                 throws IOException {
-            super(progressListener, seconds);
-            mMission = mission;
+            super(mission, progressListener, seconds);
             mLabelIndexList = new ArrayList<>();
             BufferedReader reader = new BufferedReader(
                     new InputStreamReader(
-                            mContext.getAssets().open(mMission.getTrueLabelIndexPath())));
+                            mContext.getAssets().open(getMission().getTrueLabelIndexPath())));
             String line;
             while ((line = reader.readLine()) != null) {
                 mLabelIndexList.add(Integer.parseInt(line));
@@ -139,11 +137,11 @@ public class TFLiteInterpreter extends Interpreter {
             TFLiteClassifier classifier;
 
             try {
-                if (mMission.getModelMode() == Model.Mode.FLOAT32
-                        || mMission.getModelMode() == Model.Mode.FLOAT16){
-                    classifier = new FloatTFLiteClassifier(mMission);
-                } else if (mMission.getModelMode() == Model.Mode.QUANTIZED) {
-                    classifier = new QuantTFLiteClassifier(mMission);
+                if (getMission().getModelMode() == Model.Mode.FLOAT32
+                        || getMission().getModelMode() == Model.Mode.FLOAT16){
+                    classifier = new FloatTFLiteClassifier(getMission());
+                } else if (getMission().getModelMode() == Model.Mode.QUANTIZED) {
+                    classifier = new QuantTFLiteClassifier(getMission());
                 } else {
                     Log.w(TAG, "doInBackground: Wrong mission model!");
                     return null;
@@ -156,12 +154,12 @@ public class TFLiteInterpreter extends Interpreter {
             int count = 0;
             int top1count = 0;
             int top5count = 0;
-            int dataAmount = mMission.getDataPathList().size();
+            int dataAmount = getMission().getDataPathList().size();
             long now = SystemClock.uptimeMillis();
             while(now - nStartTime < nSeconds * 1000 && count < dataAmount){
                 Bitmap bitmap = null;
                 try {
-                    InputStream in = mContext.getAssets().open(mMission.getDataPathList().get(count));
+                    InputStream in = mContext.getAssets().open(getMission().getDataPathList().get(count));
                     bitmap = BitmapFactory.decodeStream(in);
                     in.close();
                 } catch (IOException e) {
@@ -206,13 +204,11 @@ public class TFLiteInterpreter extends Interpreter {
 
     private class TFLitePerformanceTask extends Task {
         private static final String TAG = "TFLitePerformanceTask";
-        private Mission mMission;
         private ArrayList<ByteBuffer> mDataArray;
 
         TFLitePerformanceTask(Mission mission, ArrayList<ByteBuffer> dataArray,
                               IProgressListener progressListener, int seconds) throws IOException {
-            super(progressListener, seconds);
-            mMission = mission;
+            super(mission, progressListener, seconds);
             mDataArray = dataArray;
         }
 
@@ -221,11 +217,11 @@ public class TFLiteInterpreter extends Interpreter {
             TFLiteClassifier classifier;
 
             try {
-                if (mMission.getModelMode() == Model.Mode.FLOAT32
-                        || mMission.getModelMode() == Model.Mode.FLOAT16){
-                    classifier = new FloatTFLiteClassifier(mMission);
-                } else if (mMission.getModelMode() == Model.Mode.QUANTIZED) {
-                    classifier = new QuantTFLiteClassifier(mMission);
+                if (getMission().getModelMode() == Model.Mode.FLOAT32
+                        || getMission().getModelMode() == Model.Mode.FLOAT16){
+                    classifier = new FloatTFLiteClassifier(getMission());
+                } else if (getMission().getModelMode() == Model.Mode.QUANTIZED) {
+                    classifier = new QuantTFLiteClassifier(getMission());
                 } else {
                     mProgressListener.onError("doInBackground: Wrong mission model!");
                     return null;

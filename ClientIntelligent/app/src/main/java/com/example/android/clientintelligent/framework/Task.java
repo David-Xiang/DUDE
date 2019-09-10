@@ -9,8 +9,10 @@ public abstract class Task extends AsyncTask<Object, Object, Object> {
     protected IProgressListener mProgressListener;
     protected long nStartTime;
     protected int nSeconds;
+    private Mission mMission;
 
-    protected Task(IProgressListener progressListener, int seconds) {
+    protected Task(Mission mission, IProgressListener progressListener, int seconds) {
+        mMission = mission;
         mProgressListener = progressListener;
         nSeconds = seconds;
     }
@@ -31,5 +33,9 @@ public abstract class Task extends AsyncTask<Object, Object, Object> {
     protected void onPostExecute(Object result) {
         long enduredTime = SystemClock.uptimeMillis() - nStartTime;
         mProgressListener.onFinish((int) result, enduredTime);
+    }
+
+    public Mission getMission() {
+        return mMission;
     }
 }

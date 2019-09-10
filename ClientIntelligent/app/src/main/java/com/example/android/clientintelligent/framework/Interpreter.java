@@ -1,8 +1,10 @@
 package com.example.android.clientintelligent.framework;
 
 import android.content.Context;
+import android.os.AsyncTask;
 
 import com.example.android.clientintelligent.framework.interfaces.IInterpreter;
+import com.example.android.clientintelligent.framework.interfaces.IProgressListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,4 +39,6 @@ public abstract class Interpreter implements IInterpreter {
                 .map(Model::getFilePath)
                 .collect(Collectors.toList());
     }
+
+    public abstract AsyncTask buildTask(Mission mission, IProgressListener progressListener) throws Exception;
 }

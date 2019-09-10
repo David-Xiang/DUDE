@@ -17,5 +17,5 @@ public interface IInterpreter {
     Model getModel(String modelName);
     List<String> getModels();
 
-    AsyncTask buildTask(Mission task, IProgressListener progressListener) throws Exception;
+    AsyncTask buildTask(Mission mission, IProgressListener progressListener) throws Exception;
 }
