@@ -107,7 +107,7 @@ public class MNNInterpreter extends Interpreter {
 
                 List<Recognition> recognitions = recognizeImage(bitmap);
 
-                processReconitions(count, recognitions, result);
+                processRecognitions(count, recognitions, result);
 
                 count++;
 
@@ -226,7 +226,7 @@ public class MNNInterpreter extends Interpreter {
         }
 
         @Override
-        protected void processReconitions(int index, List<Recognition> recognitions, AccuracyResult result) {
+        protected void processRecognitions(int index, List<Recognition> recognitions, AccuracyResult result) {
             result.total++;
 
             if (mLabelIndexList.get(index) == recognitions.get(0).getId()){
