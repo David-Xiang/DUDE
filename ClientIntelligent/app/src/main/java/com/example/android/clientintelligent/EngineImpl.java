@@ -6,6 +6,7 @@ import com.example.android.clientintelligent.framework.Data;
 import com.example.android.clientintelligent.framework.Engine;
 import com.example.android.clientintelligent.framework.Model;
 import com.example.android.clientintelligent.interpreter.mnn.MNNInterpreter;
+import com.example.android.clientintelligent.interpreter.ncnn.NCNNInterpreter;
 import com.example.android.clientintelligent.interpreter.tflite.TFLiteInterpreter;
 
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ public class EngineImpl extends Engine {
     public void initInterpreters() {
         addInterpreter(new TFLiteInterpreter(getContext()));
         addInterpreter(new MNNInterpreter(getContext()));
+//        addInterpreter(new NCNNInterpreter(getContext()));
     }
 
     @Override
@@ -55,7 +57,7 @@ public class EngineImpl extends Engine {
 
         // ILSVRC2012
         List<String> ilsvrcDataPathList = new ArrayList<>();
-        for (int i = 0; i < 1000; i++){
+        for (int i = 0; i < 100; i++){
             ilsvrcDataPathList.add(String.format("ilsvrc2012/images/ILSVRC2012_val_%08d.JPEG", i+1));
         }
         mDataMap.put("ilsvrc_quant", new Data(ilsvrcDataPathList, "ilsvrc2012/ILSVRC2012_validation_ground_truth_mapped.txt","ilsvrc2012/labels.txt",
@@ -115,8 +117,22 @@ public class EngineImpl extends Engine {
 //        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenetV2_optimize_latency.tflite");
 //        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenetV2_optimize_size.tflite");
 
-
-        addMNNModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/mnn/mobilenetV2.mnn");
+        addTFLiteModel(mDataMap.get("imagenet224"), "ilsvrc2012/models/tflite/cnn-1-1.mnn");
+        addTFLiteModel(mDataMap.get("imagenet224"), "ilsvrc2012/models/tflite/cnn-1-2.mnn");
+        addTFLiteModel(mDataMap.get("imagenet224"), "ilsvrc2012/models/tflite/cnn-1-4.mnn");
+        addTFLiteModel(mDataMap.get("imagenet224"), "ilsvrc2012/models/tflite/cnn-1-8.mnn");
+        addTFLiteModel(mDataMap.get("imagenet224"), "ilsvrc2012/models/tflite/cnn-2-1.mnn");
+        addTFLiteModel(mDataMap.get("imagenet224"), "ilsvrc2012/models/tflite/cnn-2-2.mnn");
+        addTFLiteModel(mDataMap.get("imagenet224"), "ilsvrc2012/models/tflite/cnn-2-4.mnn");
+        addTFLiteModel(mDataMap.get("imagenet224"), "ilsvrc2012/models/tflite/cnn-2-8.mnn");
+        addTFLiteModel(mDataMap.get("imagenet224"), "ilsvrc2012/models/tflite/cnn-4-1.mnn");
+        addTFLiteModel(mDataMap.get("imagenet224"), "ilsvrc2012/models/tflite/cnn-4-2.mnn");
+        addTFLiteModel(mDataMap.get("imagenet224"), "ilsvrc2012/models/tflite/cnn-4-4.mnn");
+        addTFLiteModel(mDataMap.get("imagenet224"), "ilsvrc2012/models/tflite/cnn-4-8.mnn");
+        addTFLiteModel(mDataMap.get("imagenet224"), "ilsvrc2012/models/tflite/cnn-8-1.mnn");
+        addTFLiteModel(mDataMap.get("imagenet224"), "ilsvrc2012/models/tflite/cnn-8-2.mnn");
+        addTFLiteModel(mDataMap.get("imagenet224"), "ilsvrc2012/models/tflite/cnn-8-4.mnn");
+        addTFLiteModel(mDataMap.get("imagenet224"), "ilsvrc2012/models/tflite/cnn-8-8.mnn");
     }
 
     private void addTFLiteModel(Data data, String modelFilePath){
@@ -134,6 +150,15 @@ public class EngineImpl extends Engine {
 
     private void addMNNModel(Data data, String modelFilePath, Model.Mode mode){
         this.getInterpreter("MNN")
+                .addModel(new Model(data, modelFilePath, mode));
+    }
+
+    private void addNCNNModel(Data data, String modelFilePath){
+        addNCNNModel(data, modelFilePath, Model.Mode.FLOAT32);
+    }
+
+    private void addNCNNModel(Data data, String modelFilePath, Model.Mode mode){
+        this.getInterpreter("NCNN")
                 .addModel(new Model(data, modelFilePath, mode));
     }
 }

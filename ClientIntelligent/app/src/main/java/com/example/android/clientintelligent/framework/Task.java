@@ -25,7 +25,11 @@ public abstract class Task extends AsyncTask<Object, Object, Object> {
     @Override
     protected void onProgressUpdate(Object... objects) {
         super.onProgressUpdate(objects);
-        mProgressListener.onProgress((int)objects[0], (String)objects[1]);
+        if (objects.length > 1) {
+            mProgressListener.onProgress((int)objects[0], (String)objects[1]);
+        } else {
+            mProgressListener.onProgress((int)objects[0], null);
+        }
     }
 
 

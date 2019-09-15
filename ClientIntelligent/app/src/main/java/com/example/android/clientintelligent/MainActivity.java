@@ -149,7 +149,10 @@ public class MainActivity extends AppCompatActivity
                         android.R.layout.simple_spinner_item,
                         mOriginModelPathList
                                 .stream()
-                                .map(s->s.substring(s.lastIndexOf("/")+1))
+                                .map(s->s.substring(
+                                            s.lastIndexOf("/")+1,
+                                            s.lastIndexOf("."))
+                                    )
                                 .collect(Collectors.toList()));
                 mModelSpinner.setAdapter(modelAdapter);
             }
@@ -190,7 +193,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) { }
         });
-        mTimeSeekBar.setProgress(5);
+        mTimeSeekBar.setProgress(30);
 
         mThreadSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
