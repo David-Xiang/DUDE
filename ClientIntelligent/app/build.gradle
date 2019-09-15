@@ -24,6 +24,7 @@ android {
         debug {
             ndk {
                 abiFilters 'armeabi-v7a'
+                version "3.15.3"
             }
         }
     }
@@ -32,12 +33,14 @@ android {
         targetCompatibility = 1.8
     }
     aaptOptions {
+        noCompress "lite"
         noCompress "tflite"
         noCompress "mnn"
     }
     externalNativeBuild {
         cmake {
             path "CMakeLists.txt"
+            version "3.15.3"
         }
     }
 

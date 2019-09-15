@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.4.1)
 
 set(lib_DIR ${CMAKE_SOURCE_DIR}/libs)
-include_directories(${lib_DIR}/include/MNN)
+include_directories(${lib_DIR}/include)
 
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fopenmp")
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
@@ -38,3 +38,22 @@ find_library( log-lib log )
 find_library( jnigraphics-lib jnigraphics )
 
 target_link_libraries( mnncore MNN MNN_CL MNN_Vulkan ${log-lib} ${jnigraphics-lib})
+
+#add_library( ncnn STATIC IMPORTED )
+#
+#set_target_properties(
+#        ncnn
+#        PROPERTIES IMPORTED_LOCATION
+#        ${lib_DIR}/${ANDROID_ABI}/libncnn.a
+#)
+#
+#find_library( android-lib android )
+#file(GLOB_RECURSE CPP_SRCS src/main/jni/ncnn/*.cpp )
+#
+#find_library( log-lib log)
+#
+##find_package(Vulkan REQUIRED)
+#
+#add_library( ncnncore SHARED ${CPP_SRCS} )
+#
+#target_link_libraries( ncnncore ncnn ${android-lib} ${log-lib} jnigraphics) # Vulkan::Vulkan)
