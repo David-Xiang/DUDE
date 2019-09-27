@@ -13,12 +13,12 @@ for n in num:
         modelName = "mnist-%d-%d" % (n, s)
         
         # Load the ONNX GraphProto object. Graph is a standard Python protobuf object
-        model = onnx.load("%s.onnx" % modelName)
+        # model = onnx.load("%s.onnx" % modelName)
 
-        init_net, predict_net = backend.onnx_graph_to_caffe2_net(model, device="CPU")
-        with open("%s-init.pb" % modelName, "wb") as f:
-            f.write(init_net.SerializeToString())
-        with open("%s-predict.pb" % modelName, "wb") as f:
-            f.write(predict_net.SerializeToString())
+        # init_net, predict_net = backend.onnx_graph_to_caffe2_net(model, device="CPU")
+        # with open("%s-init.pb" % modelName, "wb") as f:
+        #     f.write(init_net.SerializeToString())
+        # with open("%s-predict.pb" % modelName, "wb") as f:
+        #     f.write(predict_net.SerializeToString())
 
 
