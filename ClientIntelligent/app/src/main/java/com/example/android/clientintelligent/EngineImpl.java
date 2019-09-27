@@ -24,7 +24,7 @@ public class EngineImpl extends Engine {
 
     @Override
     public void initInterpreters() {
-        addInterpreter(new TFLiteInterpreter(getContext()));
+//        addInterpreter(new TFLiteInterpreter(getContext()));
         addInterpreter(new MNNInterpreter(getContext()));
 //        addInterpreter(new NCNNInterpreter(getContext()));
     }
@@ -57,7 +57,7 @@ public class EngineImpl extends Engine {
 
         // ILSVRC2012
         List<String> ilsvrcDataPathList = new ArrayList<>();
-        for (int i = 0; i < 100; i++){
+        for (int i = 0; i < 1000; i++){
             ilsvrcDataPathList.add(String.format("ilsvrc2012/images/ILSVRC2012_val_%08d.JPEG", i+1));
         }
         mDataMap.put("ilsvrc_quant", new Data(ilsvrcDataPathList, "ilsvrc2012/ILSVRC2012_validation_ground_truth_mapped.txt","ilsvrc2012/labels.txt",
@@ -117,22 +117,65 @@ public class EngineImpl extends Engine {
 //        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenetV2_optimize_latency.tflite");
 //        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenetV2_optimize_size.tflite");
 
-        addTFLiteModel(mDataMap.get("imagenet224"), "ilsvrc2012/models/tflite/cnn-1-1.mnn");
-        addTFLiteModel(mDataMap.get("imagenet224"), "ilsvrc2012/models/tflite/cnn-1-2.mnn");
-        addTFLiteModel(mDataMap.get("imagenet224"), "ilsvrc2012/models/tflite/cnn-1-4.mnn");
-        addTFLiteModel(mDataMap.get("imagenet224"), "ilsvrc2012/models/tflite/cnn-1-8.mnn");
-        addTFLiteModel(mDataMap.get("imagenet224"), "ilsvrc2012/models/tflite/cnn-2-1.mnn");
-        addTFLiteModel(mDataMap.get("imagenet224"), "ilsvrc2012/models/tflite/cnn-2-2.mnn");
-        addTFLiteModel(mDataMap.get("imagenet224"), "ilsvrc2012/models/tflite/cnn-2-4.mnn");
-        addTFLiteModel(mDataMap.get("imagenet224"), "ilsvrc2012/models/tflite/cnn-2-8.mnn");
-        addTFLiteModel(mDataMap.get("imagenet224"), "ilsvrc2012/models/tflite/cnn-4-1.mnn");
-        addTFLiteModel(mDataMap.get("imagenet224"), "ilsvrc2012/models/tflite/cnn-4-2.mnn");
-        addTFLiteModel(mDataMap.get("imagenet224"), "ilsvrc2012/models/tflite/cnn-4-4.mnn");
-        addTFLiteModel(mDataMap.get("imagenet224"), "ilsvrc2012/models/tflite/cnn-4-8.mnn");
-        addTFLiteModel(mDataMap.get("imagenet224"), "ilsvrc2012/models/tflite/cnn-8-1.mnn");
-        addTFLiteModel(mDataMap.get("imagenet224"), "ilsvrc2012/models/tflite/cnn-8-2.mnn");
-        addTFLiteModel(mDataMap.get("imagenet224"), "ilsvrc2012/models/tflite/cnn-8-4.mnn");
-        addTFLiteModel(mDataMap.get("imagenet224"), "ilsvrc2012/models/tflite/cnn-8-8.mnn");
+
+//        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-1-32.mnn");
+//        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-1-64.mnn");
+//        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-1-128.mnn");
+//        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-1-256.mnn");
+//        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-1-512.mnn");
+//        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-1-1024.mnn");
+//        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-2-32.mnn");
+//        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-2-64.mnn");
+//        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-2-128.mnn");
+//        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-2-256.mnn");
+//        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-2-512.mnn");
+//        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-2-1024.mnn");
+//        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-4-32.mnn");
+//        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-4-64.mnn");
+//        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-4-128.mnn");
+//        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-4-256.mnn");
+//        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-4-512.mnn");
+//        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-4-1024.mnn");
+//        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-8-32.mnn");
+//        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-8-64.mnn");
+//        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-8-128.mnn");
+//        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-8-256.mnn");
+//        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-8-512.mnn");
+//        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-8-1024.mnn");
+//        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-16-32.mnn");
+//        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-16-64.mnn");
+//        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-16-128.mnn");
+//        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-16-256.mnn");
+//        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-16-512.mnn");
+//        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-16-1024.mnn");
+//        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-32-32.mnn");
+//        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-32-64.mnn");
+//        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-32-128.mnn");
+//        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-32-256.mnn");
+//        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-32-512.mnn");
+//        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-32-1024.mnn");
+//
+//        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/cnn-1-1.mnn");
+//        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/cnn-1-2.mnn");
+//        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/cnn-1-4.mnn");
+//        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/cnn-1-8.mnn");
+//        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/cnn-2-1.mnn");
+//        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/cnn-2-2.mnn");
+//        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/cnn-2-4.mnn");
+//        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/cnn-2-8.mnn");
+//        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/cnn-4-1.mnn");
+//        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/cnn-4-2.mnn");
+//        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/cnn-4-4.mnn");
+//        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/cnn-4-8.mnn");
+//        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/cnn-8-1.mnn");
+//        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/cnn-8-2.mnn");
+//        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/cnn-8-4.mnn");
+//        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/cnn-8-8.mnn");
+
+
+        addMNNModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/mnn/mobilenetV2.mnn");
+        addMNNModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/mnn/shufflenet_v2_x1_0.mnn");
+        addMNNModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/mnn/resnet50.mnn");
     }
 
     private void addTFLiteModel(Data data, String modelFilePath){

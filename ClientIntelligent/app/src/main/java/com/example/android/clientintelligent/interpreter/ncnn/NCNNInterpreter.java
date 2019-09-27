@@ -117,7 +117,6 @@ public class NCNNInterpreter extends Interpreter {
             this.nThread = nThreads;
         }
 
-        @Override
         protected Bitmap loadValidImage(int index) throws IOException {
             InputStream in = mContext
                     .getAssets()
@@ -125,7 +124,6 @@ public class NCNNInterpreter extends Interpreter {
             return BitmapFactory.decodeStream(in);
         }
 
-        @Override
         protected List<Recognition> recognizeImage(Bitmap bitmap) {
             float[] result = NCNNNative.Detect(bitmap, useGPU, nThread);
 

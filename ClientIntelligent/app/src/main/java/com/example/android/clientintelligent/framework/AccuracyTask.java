@@ -18,8 +18,8 @@ public abstract class AccuracyTask extends Task {
     protected abstract void loadLabelIndexList(String path) throws IOException;
     protected abstract void loadModelFile(String path) throws IOException;
     protected abstract void configSession(IInterpreter.Device device, int nThreads);
-    protected abstract Bitmap loadValidImage(int index) throws IOException;
-    protected abstract List<Recognition> recognizeImage(Bitmap bitmap);
+//    protected abstract Bitmap loadValidImage(int index) throws IOException;
+//    protected abstract List<Recognition> recognizeImage(Bitmap bitmap);
     protected abstract void processRecognitions(int index, List<Recognition> recognitions, AccuracyResult result);
     protected abstract void publishResults(AccuracyResult result);
     protected abstract void releaseResources();

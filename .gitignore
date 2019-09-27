@@ -83,3 +83,6 @@ Release/*
 */.project
 */.settings
 */.gitignore
+
+ExperimentDB
+Model

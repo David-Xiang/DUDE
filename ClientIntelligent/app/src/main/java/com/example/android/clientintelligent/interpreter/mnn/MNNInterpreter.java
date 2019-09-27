@@ -188,7 +188,6 @@ public class MNNInterpreter extends Interpreter {
             mMatrix.invert(mMatrix); // TODO
         }
 
-        @Override
         protected Bitmap loadValidImage(int index) throws IOException {
             InputStream in = mContext
                     .getAssets()
@@ -196,7 +195,6 @@ public class MNNInterpreter extends Interpreter {
             return BitmapFactory.decodeStream(in);
         }
 
-        @Override
         protected List<Recognition> recognizeImage(Bitmap bitmap) {
             MNNImageProcess.convertBitmap(bitmap, mInputTensor, mImgConfig, mMatrix);
 
