@@ -86,3 +86,7 @@ Release/*
 
 ExperimentDB
 Model
+*.png
+*.JPEG
+*.JPEG
+*.md
