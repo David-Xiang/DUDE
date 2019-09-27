@@ -173,9 +173,62 @@ public class EngineImpl extends Engine {
 //        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/cnn-8-8.mnn");
 
 
-        addMNNModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/mnn/mobilenetV2.mnn");
-        addMNNModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/mnn/shufflenet_v2_x1_0.mnn");
-        addMNNModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/mnn/resnet50.mnn");
+//        addMNNModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/mnn/mobilenetV2.mnn");
+//        addMNNModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/mnn/shufflenet_v2_x1_0.mnn");
+//        addMNNModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/mnn/resnet50.mnn");
+        addMNNModel(mDataMap.get("mnist"), "mnist/models/mnn/mnist-1-32.mnn");
+        addMNNModel(mDataMap.get("mnist"), "mnist/models/mnn/mnist-1-64.mnn");
+        addMNNModel(mDataMap.get("mnist"), "mnist/models/mnn/mnist-1-128.mnn");
+        addMNNModel(mDataMap.get("mnist"), "mnist/models/mnn/mnist-1-256.mnn");
+        addMNNModel(mDataMap.get("mnist"), "mnist/models/mnn/mnist-1-512.mnn");
+        addMNNModel(mDataMap.get("mnist"), "mnist/models/mnn/mnist-1-1024.mnn");
+        addMNNModel(mDataMap.get("mnist"), "mnist/models/mnn/mnist-2-32.mnn");
+        addMNNModel(mDataMap.get("mnist"), "mnist/models/mnn/mnist-2-64.mnn");
+        addMNNModel(mDataMap.get("mnist"), "mnist/models/mnn/mnist-2-128.mnn");
+        addMNNModel(mDataMap.get("mnist"), "mnist/models/mnn/mnist-2-256.mnn");
+        addMNNModel(mDataMap.get("mnist"), "mnist/models/mnn/mnist-2-512.mnn");
+        addMNNModel(mDataMap.get("mnist"), "mnist/models/mnn/mnist-2-1024.mnn");
+        addMNNModel(mDataMap.get("mnist"), "mnist/models/mnn/mnist-4-32.mnn");
+        addMNNModel(mDataMap.get("mnist"), "mnist/models/mnn/mnist-4-64.mnn");
+        addMNNModel(mDataMap.get("mnist"), "mnist/models/mnn/mnist-4-128.mnn");
+        addMNNModel(mDataMap.get("mnist"), "mnist/models/mnn/mnist-4-256.mnn");
+        addMNNModel(mDataMap.get("mnist"), "mnist/models/mnn/mnist-4-512.mnn");
+        addMNNModel(mDataMap.get("mnist"), "mnist/models/mnn/mnist-4-1024.mnn");
+        addMNNModel(mDataMap.get("mnist"), "mnist/models/mnn/mnist-8-32.mnn");
+        addMNNModel(mDataMap.get("mnist"), "mnist/models/mnn/mnist-8-64.mnn");
+        addMNNModel(mDataMap.get("mnist"), "mnist/models/mnn/mnist-8-128.mnn");
+        addMNNModel(mDataMap.get("mnist"), "mnist/models/mnn/mnist-8-256.mnn");
+        addMNNModel(mDataMap.get("mnist"), "mnist/models/mnn/mnist-8-512.mnn");
+        addMNNModel(mDataMap.get("mnist"), "mnist/models/mnn/mnist-8-1024.mnn");
+        addMNNModel(mDataMap.get("mnist"), "mnist/models/mnn/mnist-16-32.mnn");
+        addMNNModel(mDataMap.get("mnist"), "mnist/models/mnn/mnist-16-64.mnn");
+        addMNNModel(mDataMap.get("mnist"), "mnist/models/mnn/mnist-16-128.mnn");
+        addMNNModel(mDataMap.get("mnist"), "mnist/models/mnn/mnist-16-256.mnn");
+        addMNNModel(mDataMap.get("mnist"), "mnist/models/mnn/mnist-16-512.mnn");
+        addMNNModel(mDataMap.get("mnist"), "mnist/models/mnn/mnist-16-1024.mnn");
+        addMNNModel(mDataMap.get("mnist"), "mnist/models/mnn/mnist-32-32.mnn");
+        addMNNModel(mDataMap.get("mnist"), "mnist/models/mnn/mnist-32-64.mnn");
+        addMNNModel(mDataMap.get("mnist"), "mnist/models/mnn/mnist-32-128.mnn");
+        addMNNModel(mDataMap.get("mnist"), "mnist/models/mnn/mnist-32-256.mnn");
+        addMNNModel(mDataMap.get("mnist"), "mnist/models/mnn/mnist-32-512.mnn");
+        addMNNModel(mDataMap.get("mnist"), "mnist/models/mnn/mnist-32-1024.mnn");
+
+        addMNNModel(mDataMap.get("imagenet224"), "imagenet224/models/mnn/cnn-1-1.mnn");
+        addMNNModel(mDataMap.get("imagenet224"), "imagenet224/models/mnn/cnn-1-2.mnn");
+        addMNNModel(mDataMap.get("imagenet224"), "imagenet224/models/mnn/cnn-1-4.mnn");
+        addMNNModel(mDataMap.get("imagenet224"), "imagenet224/models/mnn/cnn-1-8.mnn");
+        addMNNModel(mDataMap.get("imagenet224"), "imagenet224/models/mnn/cnn-2-1.mnn");
+        addMNNModel(mDataMap.get("imagenet224"), "imagenet224/models/mnn/cnn-2-2.mnn");
+        addMNNModel(mDataMap.get("imagenet224"), "imagenet224/models/mnn/cnn-2-4.mnn");
+        addMNNModel(mDataMap.get("imagenet224"), "imagenet224/models/mnn/cnn-2-8.mnn");
+        addMNNModel(mDataMap.get("imagenet224"), "imagenet224/models/mnn/cnn-4-1.mnn");
+        addMNNModel(mDataMap.get("imagenet224"), "imagenet224/models/mnn/cnn-4-2.mnn");
+        addMNNModel(mDataMap.get("imagenet224"), "imagenet224/models/mnn/cnn-4-4.mnn");
+        addMNNModel(mDataMap.get("imagenet224"), "imagenet224/models/mnn/cnn-4-8.mnn");
+        addMNNModel(mDataMap.get("imagenet224"), "imagenet224/models/mnn/cnn-8-1.mnn");
+        addMNNModel(mDataMap.get("imagenet224"), "imagenet224/models/mnn/cnn-8-2.mnn");
+        addMNNModel(mDataMap.get("imagenet224"), "imagenet224/models/mnn/cnn-8-4.mnn");
+        addMNNModel(mDataMap.get("imagenet224"), "imagenet224/models/mnn/cnn-8-8.mnn");
     }
 
     private void addTFLiteModel(Data data, String modelFilePath){

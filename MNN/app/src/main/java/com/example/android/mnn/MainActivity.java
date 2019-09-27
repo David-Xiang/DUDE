@@ -69,9 +69,9 @@ public class MainActivity extends AppCompatActivity {
         mEditText = findViewById(R.id.editText);
         mEditText.setText("30");
 
-//        platform = "cpu";
+        platform = "cpu";
 //        platform = "gpu"; // opencl
-        platform = "vulkan";
+//        platform = "vulkan";
 
         mArrayBitmap = new ArrayList<>();
         mArrayByte = new ArrayList<>();
