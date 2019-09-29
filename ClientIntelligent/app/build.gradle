@@ -33,9 +33,7 @@ android {
         targetCompatibility = 1.8
     }
     aaptOptions {
-        noCompress "lite"
-        noCompress "tflite"
-        noCompress "mnn"
+        noCompress "lite", "tflite", "mnn", "tf"
     }
     externalNativeBuild {
         cmake {
