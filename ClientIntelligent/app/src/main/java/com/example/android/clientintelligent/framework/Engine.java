@@ -56,7 +56,11 @@ public abstract class Engine implements IEngine {
         }
 
         try {
-            interpreter.buildTask(mission, progressListener).execute();
+            if (interpreter instanceof AsyncInterpreter) {
+                ((AsyncInterpreter) interpreter).buildTask(mission, progressListener).execute();
+            } else if (interpreter instanceof SyncInterpreter) {
+                ((SyncInterpreter) interpreter).executeMission(mission, progressListener);
+            }
             return true;
         } catch (Exception e) {
             e.printStackTrace();

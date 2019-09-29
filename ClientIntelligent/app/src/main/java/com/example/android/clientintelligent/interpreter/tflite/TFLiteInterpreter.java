@@ -8,9 +8,9 @@ import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.util.Log;
 
+import com.example.android.clientintelligent.framework.AsyncInterpreter;
 import com.example.android.clientintelligent.framework.Model;
 import com.example.android.clientintelligent.framework.Task;
-import com.example.android.clientintelligent.framework.Interpreter;
 import com.example.android.clientintelligent.framework.Recognition;
 import com.example.android.clientintelligent.framework.Mission;
 import com.example.android.clientintelligent.framework.interfaces.IProgressListener;
@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class TFLiteInterpreter extends Interpreter {
+public class TFLiteInterpreter extends AsyncInterpreter {
     /** MobileNet requires additional normalization of the used input. */
     private static final float IMAGE_MEAN = 127.5f;
     private static final float IMAGE_STD = 127.5f;

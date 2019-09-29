@@ -193,7 +193,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) { }
         });
-        mTimeSeekBar.setProgress(30);
+        mTimeSeekBar.setMax(30000);
+        mTimeSeekBar.setProgress(30000);
 
         mThreadSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -216,6 +217,7 @@ public class MainActivity extends AppCompatActivity
                 mPurposeTextView.setText("Performance");
             }
         });
+        mSwitch.setChecked(true);
 
         mStartButton.setOnClickListener(v -> {
             int time = mTimeSeekBar.getProgress();
@@ -237,9 +239,9 @@ public class MainActivity extends AppCompatActivity
             if (mPurposeTextView.getText().equals("Accuracy")){
                 purpose = Mission.Purpose.ACCURACY;
             }
-            Mission task = new Mission(
+            Mission mission = new Mission(
                     MainActivity.this, model, purpose, device, threads, time);
-            mEngine.executeTask(mInterpreter, task, MainActivity.this);
+            mEngine.executeTask(mInterpreter, mission, MainActivity.this);
         });
     }
 

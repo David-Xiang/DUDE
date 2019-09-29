@@ -7,6 +7,7 @@ import com.example.android.clientintelligent.framework.Engine;
 import com.example.android.clientintelligent.framework.Model;
 import com.example.android.clientintelligent.interpreter.mnn.MNNInterpreter;
 import com.example.android.clientintelligent.interpreter.ncnn.NCNNInterpreter;
+import com.example.android.clientintelligent.interpreter.tfjs.TFJSInterpreter;
 import com.example.android.clientintelligent.interpreter.tflite.TFLiteInterpreter;
 
 import java.util.ArrayList;
@@ -24,8 +25,9 @@ public class EngineImpl extends Engine {
 
     @Override
     public void initInterpreters() {
-        addInterpreter(new TFLiteInterpreter(getContext()));
-        addInterpreter(new MNNInterpreter(getContext()));
+//        addInterpreter(new TFLiteInterpreter(getContext()));
+//        addInterpreter(new MNNInterpreter(getContext()));
+        addInterpreter(new TFJSInterpreter(getContext()));
 //        addInterpreter(new NCNNInterpreter(getContext()));
     }
 
@@ -106,17 +108,18 @@ public class EngineImpl extends Engine {
 //        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenet_optimize_latency.tflite");
 //        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenet_optimize_size.tflite");
 //
-        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenetV2.tflite");
-        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenetV2_bfloat16.tflite");
-        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenetV2_float32.tflite");
-        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenetV2_float16.tflite", Model.Mode.FLOAT16);
-//        addTFLiteModel(mDataMap.get("ilsvrc_quant"), "ilsvrc2012/models/tflite/mobilenetV2_int32.tflite", Model.Mode.QUANTIZED);
-//        addTFLiteModel(mDataMap.get("ilsvrc_quant"), "ilsvrc2012/models/tflite/mobilenetV2_int64.tflite", Model.Mode.QUANTIZED);
-        addTFLiteModel(mDataMap.get("ilsvrc_quant"), "ilsvrc2012/models/tflite/mobilenetV2_uint8.tflite", Model.Mode.QUANTIZED);
-        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenetV2_double.tflite");
-        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenetV2_optimize_latency.tflite");
-        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenetV2_optimize_size.tflite");
+//        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenetV2.tflite");
+//        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenetV2_bfloat16.tflite");
+//        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenetV2_float32.tflite");
+//        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenetV2_float16.tflite", Model.Mode.FLOAT16);
+////        addTFLiteModel(mDataMap.get("ilsvrc_quant"), "ilsvrc2012/models/tflite/mobilenetV2_int32.tflite", Model.Mode.QUANTIZED);
+////        addTFLiteModel(mDataMap.get("ilsvrc_quant"), "ilsvrc2012/models/tflite/mobilenetV2_int64.tflite", Model.Mode.QUANTIZED);
+//        addTFLiteModel(mDataMap.get("ilsvrc_quant"), "ilsvrc2012/models/tflite/mobilenetV2_uint8.tflite", Model.Mode.QUANTIZED);
+//        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenetV2_double.tflite");
+//        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenetV2_optimize_latency.tflite");
+//        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenetV2_optimize_size.tflite");
 
+        addTFJSModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tfjs/mobilenetV2/model.json");
 
 //        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-1-32.tflite");
 //        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-1-64.tflite");
@@ -173,14 +176,14 @@ public class EngineImpl extends Engine {
 //        addTFLiteModel(mDataMap.get("imagenet224"), "imagenet224/models/tflite/cnn-8-8.tflite");
 
 
-        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenetV2.tflite");
-        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenetV2_quant.tflite");
-        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/resnet50.tflite");
-        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/resnet50_quant.tflite");
-        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/resnet50v2.tflite");
-        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/resnet50v2_quant.tflite");
-        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/densenet121.tflite");
-        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/densenet121_quant.tflite");
+//        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenetV2.tflite");
+//        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenetV2_quant.tflite");
+//        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/resnet50.tflite");
+//        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/resnet50_quant.tflite");
+//        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/resnet50v2.tflite");
+//        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/resnet50v2_quant.tflite");
+//        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/densenet121.tflite");
+//        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/densenet121_quant.tflite");
 //        addMNNModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/mnn/mobilenetV2.mnn");
 //        addMNNModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/mnn/shufflenet_v2_x1_0.mnn");
 //        addMNNModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/mnn/resnet50.mnn");
@@ -247,6 +250,15 @@ public class EngineImpl extends Engine {
 
     private void addTFLiteModel(Data data, String modelFilePath, Model.Mode mode){
         this.getInterpreter("TensorFlow Lite")
+                .addModel(new Model(data, modelFilePath, mode));
+    }
+
+    private void addTFJSModel(Data data, String modelFilePath){
+        addTFJSModel(data, modelFilePath, Model.Mode.FLOAT32);
+    }
+
+    private void addTFJSModel(Data data, String modelFilePath, Model.Mode mode){
+        this.getInterpreter("TensorFlow.js")
                 .addModel(new Model(data, modelFilePath, mode));
     }
 

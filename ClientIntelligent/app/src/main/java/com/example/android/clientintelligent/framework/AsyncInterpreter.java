@@ -10,11 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class Interpreter implements IInterpreter {
+public abstract class AsyncInterpreter implements IInterpreter {
     protected Context mContext;
     protected List<Model> mModels;
 
-    protected Interpreter(Context context) {
+    protected AsyncInterpreter(Context context) {
         mContext = context;
         mModels = new ArrayList<>();
     }
