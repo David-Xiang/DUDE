@@ -9,8 +9,8 @@ import java.util.List;
 public interface IEngine {
     List<String> getInterpreterList();
     Context getContext();
-    boolean addInterpreter(IInterpreter interpreter);
+    void addInterpreter(IInterpreter interpreter);
     IInterpreter getInterpreter(String interpreterName);
-    boolean executeTask(IInterpreter interpreter, Mission task,
-                        IProgressListener progressListener); // 检查task和interpreter compatible
+    void executeTask(IInterpreter interpreter, Mission task,
+                     IProgressListener progressListener); // 检查task和interpreter compatible
 }

@@ -68,7 +68,7 @@ public final class MNNPerformanceTask extends PerformanceTask {
     }
 
     @Override
-    protected Bitmap loadValidImage(int index) throws IOException {
+    protected Bitmap loadValidImage(int index) {
         return mBitmapList.get(index % mBitmapList.size());
     }
 
@@ -76,6 +76,7 @@ public final class MNNPerformanceTask extends PerformanceTask {
     protected void releaseResources() {
         mSession = null;
         mInstance.release();
+        mContext = null;
     }
 
     private Bitmap readImage(String path) {
@@ -106,21 +107,14 @@ public final class MNNPerformanceTask extends PerformanceTask {
 
         int count = 0;
         long now = SystemClock.uptimeMillis();
-        Bitmap bitmap = null;
+        Bitmap bitmap;
 
-        while(now - nStartTime < nSeconds * 1000){
-
-            try {
-                bitmap = loadValidImage(count);
-            } catch (IOException e) {
-                e.printStackTrace();
-                mProgressListener.onError("Error in read data!");
-                return count;
-            }
+        while(now - nStartTime < nSeconds * 100) {
+            bitmap = loadValidImage(count);
 
             MNNImageProcess.convertBitmap(bitmap, mInputTensor, mImgConfig, mMatrix);
             mSession.run();
-            MNNNetInstance.Session.Tensor output = mSession.getOutput(null);
+            mSession.getOutput(null);
 
             if (count % 50 == 0){
                 now = SystemClock.uptimeMillis();

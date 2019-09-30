@@ -34,7 +34,6 @@ public final class TFJSInterpreter extends AsyncInterpreter {
     private List<String> mLabels;
     private List<Integer> mLabelIndexList;
     private WebView mWebView;
-    private Context mContext;
     private Mission mMission;
     private IProgressListener mProgressListener;
     private long nStartTime;
@@ -58,8 +57,7 @@ public final class TFJSInterpreter extends AsyncInterpreter {
         }
     }
 
-    private void executeAccuracyMissionSync(Mission mission, IProgressListener progressListener) throws IOException {
-        mContext = mission.getActivity();
+    private void executeAccuracyMissionSync(Mission mission, IProgressListener progressListener) {
         mMission = mission;
         mProgressListener = progressListener;
 
@@ -76,7 +74,7 @@ public final class TFJSInterpreter extends AsyncInterpreter {
 
     @Override
     protected void loadModelFileAsync(String path) {
-        ((Activity) mContext).runOnUiThread(()->
+        ((Activity) getContext()).runOnUiThread(()->
                 mWebView.loadUrl(String.format("javascript:loadModelFile(\"%s\")", getMission().getModelFilePath())));
     }
 
@@ -88,7 +86,7 @@ public final class TFJSInterpreter extends AsyncInterpreter {
 
     @Override
     @JavascriptInterface
-    public void onModelLoaded() throws IOException {
+    public void onModelLoaded() {
         configSessionAsync(getMission().getDevice());
     }
 
@@ -99,7 +97,7 @@ public final class TFJSInterpreter extends AsyncInterpreter {
             backend = "webgl";
         }
         String finalBackend = backend;
-        ((Activity) mContext).runOnUiThread(()->
+        ((Activity) getContext()).runOnUiThread(()->
                 mWebView.loadUrl(String.format("javascript:setBackend(\"%s\")", finalBackend)));
     }
 
@@ -128,7 +126,7 @@ public final class TFJSInterpreter extends AsyncInterpreter {
     @Override
     @SuppressLint("DefaultLocale")
     protected void recognizeImageAsync(String picPath) {
-        ((Activity) mContext).runOnUiThread(()-> mWebView.loadUrl(
+        ((Activity) getContext()).runOnUiThread(()-> mWebView.loadUrl(
                 String.format("javascript:recognizeImage(\"%s\",%d,%d)",
                 picPath, getMission().getnImageSizeX(), getMission().getnImageSizeX())));
     }
@@ -144,15 +142,14 @@ public final class TFJSInterpreter extends AsyncInterpreter {
 
     @SuppressLint("SetJavaScriptEnabled")
     private void initWebView(){
-        mWebView = new WebView(mContext);
+        mWebView = new WebView(getContext());
         WebSettings webSettings = mWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setAllowFileAccessFromFileURLs(true);
         webSettings.setAllowFileAccess(true);
         webSettings.setAllowContentAccess(true);
         webSettings.setAllowUniversalAccessFromFileURLs(true);
-        // todo delete this
-        mWebView.setWebContentsDebuggingEnabled(true);
+        // mWebView.setWebContentsDebuggingEnabled(true);
         mWebView.addJavascriptInterface(this, "Android");
 
         // intercept data & model requests
@@ -166,13 +163,13 @@ public final class TFJSInterpreter extends AsyncInterpreter {
                 try {
                     if (url.contains("model.json")) {
                         return new WebResourceResponse("application/json", "utf-8",
-                                mContext.getAssets().open(Objects.requireNonNull(uri.getPath()).substring(1)));
+                                getContext().getAssets().open(Objects.requireNonNull(uri.getPath()).substring(1)));
                     } else if (url.contains(".bin")) {
                         return new WebResourceResponse("application/octet-stream", "utf-8",
-                                mContext.getAssets().open(Objects.requireNonNull(uri.getPath()).substring(1)));
+                                getContext().getAssets().open(Objects.requireNonNull(uri.getPath()).substring(1)));
                     } else if (url.contains(".jpeg")) {
                         return new WebResourceResponse("image/jpeg", "utf-8",
-                                mContext.getAssets().open(Objects.requireNonNull(uri.getPath()).substring(1)));
+                                getContext().getAssets().open(Objects.requireNonNull(uri.getPath()).substring(1)));
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -190,7 +187,7 @@ public final class TFJSInterpreter extends AsyncInterpreter {
         BufferedReader reader =
                 new BufferedReader(
                         new InputStreamReader(
-                                mContext.getAssets().open(getMission().getLabelFilePath())));
+                                getContext().getAssets().open(getMission().getLabelFilePath())));
         String line;
         while ((line = reader.readLine()) != null) {
             mLabels.add(line);
@@ -203,7 +200,7 @@ public final class TFJSInterpreter extends AsyncInterpreter {
         mLabelIndexList = new ArrayList<>();
         BufferedReader reader = new BufferedReader(
                 new InputStreamReader(
-                        mContext.getAssets().open(getMission().getTrueLabelIndexPath())));
+                        getContext().getAssets().open(getMission().getTrueLabelIndexPath())));
         String line;
         while ((line = reader.readLine()) != null) {
             mLabelIndexList.add(Integer.parseInt(line));

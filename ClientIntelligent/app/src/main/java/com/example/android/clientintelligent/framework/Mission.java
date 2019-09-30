@@ -7,7 +7,7 @@ import com.example.android.clientintelligent.framework.interfaces.IInterpreter;
 import java.util.List;
 
 public class Mission {
-    public enum Purpose {PERFORMANCE, ACCURACY};
+    public enum Purpose {PERFORMANCE, ACCURACY}
 
     private final Purpose purpose;
     private final Activity activity;

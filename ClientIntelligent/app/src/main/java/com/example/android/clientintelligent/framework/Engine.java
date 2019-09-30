@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public abstract class Engine implements IEngine {
-    ArrayList<IInterpreter> mInterpreters;
-    Context mContext;
+    private ArrayList<IInterpreter> mInterpreters;
+    private Context mContext;
 
     public Engine(Context context){
         mInterpreters = new ArrayList<>();
@@ -31,9 +31,8 @@ public abstract class Engine implements IEngine {
     }
 
     @Override
-    public boolean addInterpreter(IInterpreter interpreter) {
+    public void addInterpreter(IInterpreter interpreter) {
         mInterpreters.add(interpreter);
-        return true;
     }
 
     @Override
@@ -47,11 +46,11 @@ public abstract class Engine implements IEngine {
     }
 
     @Override
-    public boolean executeTask(IInterpreter interpreter, Mission mission,
-                               IProgressListener progressListener) {
+    public void executeTask(IInterpreter interpreter, Mission mission,
+                            IProgressListener progressListener) {
         if (interpreter == null){
             progressListener.onError("IInterpreter param is null!");
-            return false;
+            return;
         }
 
         try {
@@ -60,12 +59,10 @@ public abstract class Engine implements IEngine {
             } else if (interpreter instanceof AsyncInterpreter) {
                 ((AsyncInterpreter) interpreter).executeMissionAsync(mission, progressListener);
             }
-            return true;
         } catch (Exception e) {
             e.printStackTrace();
             progressListener.onError("Error in interpreter.buildTask().execute() !");
         }
-        return false;
     }
 
     @Override

@@ -6,7 +6,6 @@ import com.example.android.clientintelligent.framework.interfaces.IInterpreter;
 import com.example.android.clientintelligent.framework.interfaces.IProgressListener;
 
 import java.io.IOException;
-import java.util.List;
 
 public abstract class PerformanceTask extends Task {
 

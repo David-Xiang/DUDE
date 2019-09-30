@@ -1,7 +1,5 @@
 package com.example.android.clientintelligent.framework;
 
-import android.graphics.Bitmap;
-
 import com.example.android.clientintelligent.framework.interfaces.IInterpreter;
 import com.example.android.clientintelligent.framework.interfaces.IProgressListener;
 

@@ -11,17 +11,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public abstract class AsyncInterpreter implements IInterpreter {
-    protected Context mContext;
-    protected List<Model> mModels;
+    private Context mContext;
+    private List<Model> mModels;
 
     protected AsyncInterpreter(Context context) {
         mContext = context;
         mModels = new ArrayList<>();
     }
 
-    public boolean addModel(Model model) {
+    public void addModel(Model model) {
         mModels.add(model);
-        return true;
     }
 
     public Model getModel(String modelName) {
@@ -57,6 +56,10 @@ public abstract class AsyncInterpreter implements IInterpreter {
     protected abstract void processRecognitions(int index, List<Recognition> recognitions, AccuracyResult result);
     protected abstract void publishResults(AccuracyResult result);
     protected abstract void releaseResources();
+
+    public Context getContext() {
+        return mContext;
+    }
 
     public class AccuracyResult {
         public int total = 0;

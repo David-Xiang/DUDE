@@ -87,8 +87,8 @@ public class MNNImageProcess {
 
     public static class Config {
         // default
-        public float mean[] = {0f, 0f, 0f, 0f};
-        public float normal[] = {1f, 1f, 1f, 1f};
+        public float[] mean = {0f, 0f, 0f, 0f};
+        public float[] normal = {1f, 1f, 1f, 1f};
         public Format source = Format.RGBA;
         public Format dest = Format.BGR;
         public Filter filter = Filter.NEAREST;
@@ -102,7 +102,6 @@ public class MNNImageProcess {
      * @param tensor 输入的Tensor
      * @param config 配置mean、normal、图片目标格式
      * @param matrix 定义裁剪、缩放、旋转等
-     * @return
      */
     public static boolean convertBuffer(byte[] buffer, int width, int height,
                                         MNNNetInstance.Session.Tensor tensor, Config config,
@@ -110,7 +109,7 @@ public class MNNImageProcess {
         if (matrix == null) {
             matrix = new Matrix();
         }
-        float value[] = new float[9];
+        float[] value = new float[9];
         matrix.getValues(value);
 
         return MNNNetNative.nativeConvertBufferToTensor(buffer, width, height, tensor.instance(),
@@ -125,14 +124,13 @@ public class MNNImageProcess {
      * @param tensor       输入的Tensor
      * @param config       配置mean、normal、图片目标格式
      * @param matrix       定义裁剪、缩放、旋转等
-     * @return
      */
     public static boolean convertBitmap(Bitmap sourceBitmap, MNNNetInstance.Session.Tensor tensor,
                                         Config config, Matrix matrix) {
         if (matrix == null) {
             matrix = new Matrix();
         }
-        float value[] = new float[9];
+        float[] value = new float[9];
         matrix.getValues(value);
 
         return MNNNetNative.nativeConvertBitmapToTensor(sourceBitmap, tensor.instance(),

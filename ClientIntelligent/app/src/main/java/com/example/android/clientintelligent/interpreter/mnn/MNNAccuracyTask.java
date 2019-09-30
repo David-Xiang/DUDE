@@ -58,7 +58,7 @@ public final class MNNAccuracyTask extends AccuracyTask {
         int dataAmount = getMission().getDataPathList().size();
         long now = SystemClock.uptimeMillis();
         AccuracyResult result = new AccuracyResult();
-        Bitmap bitmap = null;
+        Bitmap bitmap;
 
         while(now - nStartTime < nSeconds * 1000 && count < dataAmount){
 
@@ -148,14 +148,14 @@ public final class MNNAccuracyTask extends AccuracyTask {
         mMatrix.invert(mMatrix);
     }
 
-    protected Bitmap loadValidImage(int index) throws IOException {
+    private Bitmap loadValidImage(int index) throws IOException {
         InputStream in = mContext
                 .getAssets()
                 .open(getMission().getDataPathList().get(index));
         return BitmapFactory.decodeStream(in);
     }
 
-    protected List<Recognition> recognizeImage(Bitmap bitmap) {
+    private List<Recognition> recognizeImage(Bitmap bitmap) {
         MNNImageProcess.convertBitmap(bitmap, mInputTensor, mImgConfig, mMatrix);
 
         mSession.run();
@@ -225,5 +225,6 @@ public final class MNNAccuracyTask extends AccuracyTask {
     protected void releaseResources() {
         mSession = null;
         mInstance.release();
+        mContext = null;
     }
 }

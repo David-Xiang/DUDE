@@ -1,23 +1,21 @@
 package com.example.android.clientintelligent;
 
+import android.annotation.SuppressLint;
 import android.graphics.Paint;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.View;
-import android.support.v4.view.GravityCompat;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.view.MenuItem;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
@@ -32,7 +30,6 @@ import com.example.android.clientintelligent.framework.Model;
 import com.example.android.clientintelligent.framework.interfaces.IEngine;
 import com.example.android.clientintelligent.framework.interfaces.IInterpreter;
 import com.example.android.clientintelligent.framework.interfaces.IProgressListener;
-
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
@@ -43,9 +40,6 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, IProgressListener {
     private static final String TAG = "MainActivity";
     private static final BiMap<IInterpreter.Device, String> DEVICE_STRING_HASH_MAP;
-
-    private Handler handler;
-    private HandlerThread handlerThread;
 
     private IEngine mEngine;
     private IInterpreter mInterpreter;
@@ -96,6 +90,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
     }
 
+    @SuppressLint("SetTextI18n")
     private void initMainPageView(){
         mInterpreterSpinner = findViewById(R.id.sp_interpreter);
         mDeviceSpinner = findViewById(R.id.sp_device);
@@ -125,6 +120,7 @@ public class MainActivity extends AppCompatActivity
                                 .collect(Collectors.toList()));
                 mDeviceSpinner.setAdapter(deviceAdapter);
                 mDeviceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @SuppressLint("SetTextI18n")
                     @Override
                     public void onItemSelected(AdapterView<?> parent,
                                                View view, int position, long id) {
@@ -182,6 +178,7 @@ public class MainActivity extends AppCompatActivity
         });
 
         mTimeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @SuppressLint("DefaultLocale")
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 mTimeTextView.setText(String.format("Time: %ds", progress));
@@ -197,6 +194,7 @@ public class MainActivity extends AppCompatActivity
         mTimeSeekBar.setProgress(30000);
 
         mThreadSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @SuppressLint("DefaultLocale")
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 mThreadTextView.setText(String.format("Thread: %d", progress));
@@ -235,7 +233,7 @@ public class MainActivity extends AppCompatActivity
                 return;
             }
 
-            Mission.Purpose purpose = Mission.Purpose.PERFORMANCE;;
+            Mission.Purpose purpose = Mission.Purpose.PERFORMANCE;
             if (mPurposeTextView.getText().equals("Accuracy")){
                 purpose = Mission.Purpose.ACCURACY;
             }
@@ -306,31 +304,13 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume: Enter");
-        handlerThread = new HandlerThread("inference");
-        handlerThread.start();
-        handler = new Handler(handlerThread.getLooper());
     }
 
     @Override
     public synchronized void onPause() {
         Log.d(TAG, "onPause: Enter");
 
-        handlerThread.quitSafely();
-        try {
-            handlerThread.join();
-            handlerThread = null;
-            handler = null;
-        } catch (final InterruptedException e) {
-            e.printStackTrace();
-        }
-
         super.onPause();
-    }
-
-    protected synchronized void runInBackground(final Runnable r) {
-        if (handler != null) {
-            handler.post(r);
-        }
     }
 
     @Override
@@ -341,6 +321,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    @SuppressLint("DefaultLocale")
     @Override
     public void onFinish(int count, long enduredTime) {
         Snackbar.make(mStartButton,

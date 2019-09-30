@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.PriorityQueue;
 
@@ -32,7 +32,7 @@ public class NCNNInterpreter extends Interpreter {
 
     @Override
     public List<Device> getDevices() {
-        return Arrays.asList(Device.CPU);//, Device.VULKAN);
+        return Collections.singletonList(Device.CPU);//, Device.VULKAN);
     }
 
     @Override
@@ -45,6 +45,7 @@ public class NCNNInterpreter extends Interpreter {
         return new NCNNAccuracyTask(mission, progressListener, mission.getnTime());
     }
 
+    @SuppressLint("StaticFieldLeak")
     private final class NCNNAccuracyTask extends AccuracyTask {
         private static final String TAG = "NCNNAccuracyTask";
         private List<String> mLabels;
@@ -52,7 +53,7 @@ public class NCNNInterpreter extends Interpreter {
         private Boolean useGPU = false;
         private int nThread = 1;
 
-        protected NCNNAccuracyTask(Mission mission, IProgressListener progressListener, int seconds)
+        NCNNAccuracyTask(Mission mission, IProgressListener progressListener, int seconds)
                 throws IOException {
             super(mission, progressListener, seconds);
             loadLabelList(getMission().getLabelFilePath());
@@ -65,7 +66,7 @@ public class NCNNInterpreter extends Interpreter {
             BufferedReader reader =
                     new BufferedReader(
                             new InputStreamReader(
-                                    mContext.getAssets().open(labelFilePath)));
+                                    getContext().getAssets().open(labelFilePath)));
             String line;
             while ((line = reader.readLine()) != null) {
                 mLabels.add(line);
@@ -78,7 +79,7 @@ public class NCNNInterpreter extends Interpreter {
             mLabelIndexList = new ArrayList<>();
             BufferedReader reader = new BufferedReader(
                     new InputStreamReader(
-                            mContext.getAssets().open(trueLabelIndexPath)));
+                            getContext().getAssets().open(trueLabelIndexPath)));
             String line;
             while ((line = reader.readLine()) != null) {
                 mLabelIndexList.add(Integer.parseInt(line));
@@ -89,18 +90,18 @@ public class NCNNInterpreter extends Interpreter {
         @Override
         protected void loadModelFile(String path) throws IOException {
             // todo parse path
-            byte[] param = null;
-            byte[] bin = null;
+            byte[] param;
+            byte[] bin;
             String paramPath = path.split("\\$")[0];
             String binPath = path.split("\\$")[1];
 
-            InputStream assetsInputStream = mContext.getAssets().open(paramPath);
+            InputStream assetsInputStream = getContext().getAssets().open(paramPath);
             int available = assetsInputStream.available();
             param = new byte[available];
             int byteCode = assetsInputStream.read(param);
             assetsInputStream.close();
 
-            assetsInputStream = mContext.getAssets().open(binPath);
+            assetsInputStream = getContext().getAssets().open(binPath);
             available = assetsInputStream.available();
             bin = new byte[available];
             byteCode = assetsInputStream.read(bin);
@@ -118,7 +119,7 @@ public class NCNNInterpreter extends Interpreter {
         }
 
         protected Bitmap loadValidImage(int index) throws IOException {
-            InputStream in = mContext
+            InputStream in = getContext()
                     .getAssets()
                     .open(getMission().getDataPathList().get(index));
             return BitmapFactory.decodeStream(in);
@@ -207,7 +208,7 @@ public class NCNNInterpreter extends Interpreter {
             int dataAmount = getMission().getDataPathList().size();
             long now = SystemClock.uptimeMillis();
             AccuracyResult result = new AccuracyResult();
-            Bitmap bitmap = null;
+            Bitmap bitmap;
 
             while(now - nStartTime < nSeconds * 1000 && count < dataAmount){
 

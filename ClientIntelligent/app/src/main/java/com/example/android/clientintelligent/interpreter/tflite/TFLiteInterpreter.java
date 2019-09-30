@@ -71,7 +71,7 @@ public class TFLiteInterpreter extends Interpreter {
 
         // convert data
         for (int s = 0; s < mission.getDataPathList().size(); s++){
-            InputStream in = mContext.getAssets().open(mission.getDataPathList().get(s));
+            InputStream in = getContext().getAssets().open(mission.getDataPathList().get(s));
             Bitmap bitmap = BitmapFactory.decodeStream(in);
             in.close();
             ByteBuffer imgData = ByteBuffer.allocateDirect(
@@ -114,6 +114,7 @@ public class TFLiteInterpreter extends Interpreter {
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class TFLiteAccuracyTask extends Task {
         private static final String TAG = "TFLitePerformanceTask";
         private List<Integer> mLabelIndexList;
@@ -124,7 +125,7 @@ public class TFLiteInterpreter extends Interpreter {
             mLabelIndexList = new ArrayList<>();
             BufferedReader reader = new BufferedReader(
                     new InputStreamReader(
-                            mContext.getAssets().open(getMission().getTrueLabelIndexPath())));
+                            getContext().getAssets().open(getMission().getTrueLabelIndexPath())));
             String line;
             while ((line = reader.readLine()) != null) {
                 mLabelIndexList.add(Integer.parseInt(line));
@@ -157,9 +158,9 @@ public class TFLiteInterpreter extends Interpreter {
             int dataAmount = getMission().getDataPathList().size();
             long now = SystemClock.uptimeMillis();
             while(now - nStartTime < nSeconds * 1000 && count < dataAmount){
-                Bitmap bitmap = null;
+                Bitmap bitmap;
                 try {
-                    InputStream in = mContext.getAssets().open(getMission().getDataPathList().get(count));
+                    InputStream in = getContext().getAssets().open(getMission().getDataPathList().get(count));
                     bitmap = BitmapFactory.decodeStream(in);
                     in.close();
                 } catch (IOException e) {
@@ -202,12 +203,13 @@ public class TFLiteInterpreter extends Interpreter {
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class TFLitePerformanceTask extends Task {
         private static final String TAG = "TFLitePerformanceTask";
         private ArrayList<ByteBuffer> mDataArray;
 
         TFLitePerformanceTask(Mission mission, ArrayList<ByteBuffer> dataArray,
-                              IProgressListener progressListener, int seconds) throws IOException {
+                              IProgressListener progressListener, int seconds) {
             super(mission, progressListener, seconds);
             mDataArray = dataArray;
         }

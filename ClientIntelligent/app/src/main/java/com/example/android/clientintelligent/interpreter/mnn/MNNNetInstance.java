@@ -6,7 +6,7 @@ import android.util.Log;
 import com.example.android.clientintelligent.interpreter.mnn.MNNForwardType;
 
 public class MNNNetInstance {
-    private static final String TAG = "MNNDemo";
+    private static final String TAG = "MNNNetInstance";
 
     public static MNNNetInstance createFromFile(String fileName) {
         long instance = MNNNetNative.nativeCreateNetFromFile(fileName);
@@ -145,7 +145,7 @@ public class MNNNetInstance {
             mSessionInstance = 0;
         }
 
-        private long mSessionInstance = 0;
+        private long mSessionInstance;
     }
 
     public Session createSession(Config config) {
