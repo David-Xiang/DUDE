@@ -161,7 +161,7 @@ public final class TFJSInterpreter extends AsyncInterpreter {
                 String url = uri.toString().toLowerCase();
                 Log.i(TAG, "shouldInterceptRequest: Url = " + url);
                 try {
-                    if (url.contains("model.json")) {
+                    if (url.contains(".json")) {
                         return new WebResourceResponse("application/json", "utf-8",
                                 getContext().getAssets().open(Objects.requireNonNull(uri.getPath()).substring(1)));
                     } else if (url.contains(".bin")) {
@@ -249,7 +249,7 @@ public final class TFJSInterpreter extends AsyncInterpreter {
 
     @Override
     public List<Device> getDevices() {
-        return Arrays.asList(Device.CPU, Device.GPU);
+        return Arrays.asList(Device.CPU, Device.WEBGL);
     }
 
     @Override

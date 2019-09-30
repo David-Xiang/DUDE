@@ -119,7 +119,9 @@ public class EngineImpl extends Engine {
 //        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenetV2_optimize_latency.tflite");
 //        addTFLiteModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tflite/mobilenetV2_optimize_size.tflite");
 
-        addTFJSModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tfjs/mobilenetV2/model.json");
+        addTFJSModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tfjs/mobilenetV2/mobilenetV2.json");
+        addTFJSModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tfjs/resnet50/resnet50.json");
+        addTFJSModel(mDataMap.get("ilsvrc"), "ilsvrc2012/models/tfjs/densenet121/densenet121.json");
 
 //        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-1-32.tflite");
 //        addTFLiteModel(mDataMap.get("mnist"), "mnist/models/tflite/mnist-1-64.tflite");

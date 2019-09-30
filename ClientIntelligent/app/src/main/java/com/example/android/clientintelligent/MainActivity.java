@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity
         DEVICE_STRING_HASH_MAP.put(IInterpreter.Device.VULKAN, "VULKAN");
         DEVICE_STRING_HASH_MAP.put(IInterpreter.Device.OPENCL, "OPENCL");
         DEVICE_STRING_HASH_MAP.put(IInterpreter.Device.OPENGL, "OPENGL");
+        DEVICE_STRING_HASH_MAP.put(IInterpreter.Device.WEBGL, "WEBGL");
     }
 
     @Override
