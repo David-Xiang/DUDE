@@ -8,7 +8,6 @@ import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
-import android.webkit.ValueCallback;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
@@ -17,7 +16,7 @@ import android.webkit.WebViewClient;
 
 import com.example.android.clientintelligent.framework.Mission;
 import com.example.android.clientintelligent.framework.Recognition;
-import com.example.android.clientintelligent.framework.SyncInterpreter;
+import com.example.android.clientintelligent.framework.AsyncInterpreter;
 import com.example.android.clientintelligent.framework.interfaces.IInterpreter;
 import com.example.android.clientintelligent.framework.interfaces.IProgressListener;
 
@@ -27,13 +26,13 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.PriorityQueue;
 
-public final class TFJSInterpreter extends SyncInterpreter {
+public final class TFJSInterpreter extends AsyncInterpreter {
     private static final String TAG = "TFJSInterpreter";
     private List<String> mLabels;
     private List<Integer> mLabelIndexList;
-    private Boolean useGPU = false;
     private WebView mWebView;
     private Context mContext;
     private Mission mMission;
@@ -48,18 +47,18 @@ public final class TFJSInterpreter extends SyncInterpreter {
     }
 
     @Override
-    public void executeMission(Mission mission, IProgressListener progressListener) throws Exception {
+    public void executeMissionAsync(Mission mission, IProgressListener progressListener) throws Exception {
         switch (mission.getPurpose()) {
             case ACCURACY:
-                executeAccuracyMission(mission, progressListener); break;
+                executeAccuracyMissionSync(mission, progressListener); break;
 //            case PERFORMANCE:
-//                return executePerformanceMission(mission, progressListener); break;
+//                return executePerformanceMissionSync(mission, progressListener); break;
             default:
                 throw new Exception("Wrong Purpose");
         }
     }
 
-    private void executeAccuracyMission(Mission mission, IProgressListener progressListener) throws IOException {
+    private void executeAccuracyMissionSync(Mission mission, IProgressListener progressListener) throws IOException {
         mContext = mission.getActivity();
         mMission = mission;
         mProgressListener = progressListener;
@@ -76,36 +75,35 @@ public final class TFJSInterpreter extends SyncInterpreter {
     }
 
     @Override
-    protected void loadModelFile(String path) throws IOException {
-        ((Activity) mContext).runOnUiThread(()->{
-            mWebView.loadUrl(String.format("javascript:loadModelFile(\"%s\")", getMission().getModelFilePath()));
-        });
-    }
-
-    @JavascriptInterface
-    public void onWindowLoaded() throws IOException {
-
-        loadModelFile(getMission().getModelFilePath());
-    }
-
-    @JavascriptInterface
-    public void onModelLoaded() {
-        configSession(getMission().getDevice());
+    protected void loadModelFileAsync(String path) {
+        ((Activity) mContext).runOnUiThread(()->
+                mWebView.loadUrl(String.format("javascript:loadModelFile(\"%s\")", getMission().getModelFilePath())));
     }
 
     @Override
-    protected void configSession(Device device) {
+    @JavascriptInterface
+    public void onWindowLoaded(){
+        loadModelFileAsync(getMission().getModelFilePath());
+    }
+
+    @Override
+    @JavascriptInterface
+    public void onModelLoaded() throws IOException {
+        configSessionAsync(getMission().getDevice());
+    }
+
+    @Override
+    protected void configSessionAsync(Device device) {
         String backend = "cpu";
         if (device == IInterpreter.Device.WEBGL) {
-            useGPU = true;
             backend = "webgl";
         }
         String finalBackend = backend;
-        ((Activity) mContext).runOnUiThread(()->{
-            mWebView.loadUrl(String.format("javascript:setBackend(\"%s\")", finalBackend));
-        });
+        ((Activity) mContext).runOnUiThread(()->
+                mWebView.loadUrl(String.format("javascript:setBackend(\"%s\")", finalBackend)));
     }
 
+    @Override
     @JavascriptInterface
     public void onBackendRegistered() {
         nStartTime = SystemClock.uptimeMillis();
@@ -120,22 +118,22 @@ public final class TFJSInterpreter extends SyncInterpreter {
         long now = SystemClock.uptimeMillis();
         if (now - nStartTime < nSeconds * 1000 && nLoopCount < dataAmount){
             String dataPath = getMission().getDataPathList().get(nLoopCount);
-            recognizeImage(dataPath);
+            recognizeImageAsync(dataPath);
         } else {
             publishResults(mAccuracyResult);
             releaseResources();
         }
     }
 
+    @Override
     @SuppressLint("DefaultLocale")
-    private void recognizeImage(String picPath) {
-        ((Activity) mContext).runOnUiThread(()->{
-            mWebView.loadUrl(
-                    String.format("javascript:recognizeImage(\"%s\",%d,%d)",
-                    picPath, getMission().getnImageSizeX(), getMission().getnImageSizeX()));
-        });
+    protected void recognizeImageAsync(String picPath) {
+        ((Activity) mContext).runOnUiThread(()-> mWebView.loadUrl(
+                String.format("javascript:recognizeImage(\"%s\",%d,%d)",
+                picPath, getMission().getnImageSizeX(), getMission().getnImageSizeX())));
     }
 
+    @Override
     @JavascriptInterface
     public void onInferenceFinished(float [] result) {
         List<Recognition> recognitions = result2recognitions(result);
@@ -144,7 +142,7 @@ public final class TFJSInterpreter extends SyncInterpreter {
         doInferenceLoop();
     }
 
-    @SuppressLint("JavascriptInterface")
+    @SuppressLint("SetJavaScriptEnabled")
     private void initWebView(){
         mWebView = new WebView(mContext);
         WebSettings webSettings = mWebView.getSettings();
@@ -168,13 +166,13 @@ public final class TFJSInterpreter extends SyncInterpreter {
                 try {
                     if (url.contains("model.json")) {
                         return new WebResourceResponse("application/json", "utf-8",
-                                mContext.getAssets().open(uri.getPath().substring(1)));
+                                mContext.getAssets().open(Objects.requireNonNull(uri.getPath()).substring(1)));
                     } else if (url.contains(".bin")) {
                         return new WebResourceResponse("application/octet-stream", "utf-8",
-                                mContext.getAssets().open(uri.getPath().substring(1)));
+                                mContext.getAssets().open(Objects.requireNonNull(uri.getPath()).substring(1)));
                     } else if (url.contains(".jpeg")) {
                         return new WebResourceResponse("image/jpeg", "utf-8",
-                                mContext.getAssets().open(uri.getPath().substring(1)));
+                                mContext.getAssets().open(Objects.requireNonNull(uri.getPath()).substring(1)));
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -244,10 +242,6 @@ public final class TFJSInterpreter extends SyncInterpreter {
     @Override
     protected void publishResults(AccuracyResult result) {
         long now = SystemClock.uptimeMillis();
-        @SuppressLint("DefaultLocale")
-        String msg = String.format("Top 1 accuracy is %.2f%%, top 5 accuracy is %.2f%%",
-                (float)(result.top1count) * 100 / result.total,
-                (float)(result.top5count) * 100 / result.total);
         mProgressListener.onFinish(nLoopCount, now - nStartTime);
     }
 
@@ -269,10 +263,6 @@ public final class TFJSInterpreter extends SyncInterpreter {
 
     private Mission getMission() {
         return mMission;
-    }
-
-    private IProgressListener getProgressListener() {
-        return mProgressListener;
     }
 
     private List<Recognition> result2recognitions(float [] result) {

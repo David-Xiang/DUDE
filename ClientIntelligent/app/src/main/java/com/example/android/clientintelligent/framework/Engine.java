@@ -6,7 +6,6 @@ import com.example.android.clientintelligent.framework.interfaces.IEngine;
 import com.example.android.clientintelligent.framework.interfaces.IInterpreter;
 import com.example.android.clientintelligent.framework.interfaces.IProgressListener;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,10 +55,10 @@ public abstract class Engine implements IEngine {
         }
 
         try {
-            if (interpreter instanceof AsyncInterpreter) {
-                ((AsyncInterpreter) interpreter).buildTask(mission, progressListener).execute();
-            } else if (interpreter instanceof SyncInterpreter) {
-                ((SyncInterpreter) interpreter).executeMission(mission, progressListener);
+            if (interpreter instanceof Interpreter) {
+                ((Interpreter) interpreter).buildTask(mission, progressListener).execute();
+            } else if (interpreter instanceof AsyncInterpreter) {
+                ((AsyncInterpreter) interpreter).executeMissionAsync(mission, progressListener);
             }
             return true;
         } catch (Exception e) {

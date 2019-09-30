@@ -3,7 +3,7 @@ package com.example.android.clientintelligent.interpreter.mnn;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.example.android.clientintelligent.framework.AsyncInterpreter;
+import com.example.android.clientintelligent.framework.Interpreter;
 import com.example.android.clientintelligent.framework.Mission;
 import com.example.android.clientintelligent.framework.interfaces.IProgressListener;
 
@@ -13,7 +13,7 @@ import java.util.List;
 
 import static com.example.android.clientintelligent.framework.interfaces.IInterpreter.Device.VULKAN;
 
-public class MNNInterpreter extends AsyncInterpreter {
+public class MNNInterpreter extends Interpreter {
     private static final String TAG = "MNNInterpreter";
 
     public MNNInterpreter(Context context) {

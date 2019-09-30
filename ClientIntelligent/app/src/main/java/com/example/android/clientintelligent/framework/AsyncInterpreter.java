@@ -1,11 +1,11 @@
 package com.example.android.clientintelligent.framework;
 
 import android.content.Context;
-import android.os.AsyncTask;
 
 import com.example.android.clientintelligent.framework.interfaces.IInterpreter;
 import com.example.android.clientintelligent.framework.interfaces.IProgressListener;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,5 +40,27 @@ public abstract class AsyncInterpreter implements IInterpreter {
                 .collect(Collectors.toList());
     }
 
-    public abstract AsyncTask buildTask(Mission mission, IProgressListener progressListener) throws Exception;
+    public abstract void executeMissionAsync(Mission mission, IProgressListener progressListener) throws Exception;
+    protected abstract void loadLabelList(String path) throws IOException;
+    protected abstract void loadLabelIndexList(String path) throws IOException;
+
+    protected abstract void loadModelFileAsync(String path);
+    protected abstract void configSessionAsync(IInterpreter.Device device);
+    protected abstract void recognizeImageAsync(String picPath);
+
+    public abstract void onWindowLoaded();
+    public abstract void onModelLoaded() throws IOException;
+    public abstract void onBackendRegistered();
+    public abstract void onInferenceFinished(float [] result);
+
+
+    protected abstract void processRecognitions(int index, List<Recognition> recognitions, AccuracyResult result);
+    protected abstract void publishResults(AccuracyResult result);
+    protected abstract void releaseResources();
+
+    public class AccuracyResult {
+        public int total = 0;
+        public int top1count = 0;
+        public int top5count = 0;
+    }
 }

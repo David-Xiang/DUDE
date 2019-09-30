@@ -1,8 +1,3 @@
-const sleep = (timeout) => new Promise((res, rej) => {
-  setTimeout(res, timeout);
-});
-
-
 let model;
 let host = "https://astupidmockhost/";
 
