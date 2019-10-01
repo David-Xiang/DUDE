@@ -109,7 +109,7 @@ public final class MNNPerformanceTask extends PerformanceTask {
         long now = SystemClock.uptimeMillis();
         Bitmap bitmap;
 
-        while(now - nStartTime < nSeconds * 100) {
+        while(now - nStartTime < nSeconds * 1000) {
             bitmap = loadValidImage(count);
 
             MNNImageProcess.convertBitmap(bitmap, mInputTensor, mImgConfig, mMatrix);

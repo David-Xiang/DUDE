@@ -191,8 +191,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) { }
         });
-        mTimeSeekBar.setMax(30000);
-        mTimeSeekBar.setProgress(30000);
+        //mTimeSeekBar.setMax(30000);
+        mTimeSeekBar.setProgress(30);
 
         mThreadSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @SuppressLint("DefaultLocale")
@@ -216,7 +216,6 @@ public class MainActivity extends AppCompatActivity
                 mPurposeTextView.setText("Performance");
             }
         });
-        mSwitch.setChecked(true);
 
         mStartButton.setOnClickListener(v -> {
             int time = mTimeSeekBar.getProgress();
@@ -317,7 +316,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onProgress(int progress, String msg) {
         mProgressBar.setProgress(progress);
-        if (msg != null){
+        if (msg != null && !msg.trim().equals("")){
             Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
         }
     }

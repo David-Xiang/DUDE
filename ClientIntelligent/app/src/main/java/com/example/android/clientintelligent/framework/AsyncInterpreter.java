@@ -50,8 +50,9 @@ public abstract class AsyncInterpreter implements IInterpreter {
     public abstract void onWindowLoaded();
     public abstract void onModelLoaded() throws IOException;
     public abstract void onBackendRegistered();
-    public abstract void onInferenceFinished(float [] result);
-
+    public abstract void onAccuracyTaskFinished(float [] result);
+    public abstract void onPerformanceTaskFinished(int count, int elapsedTime);
+    public abstract void onProgress(int progress);
 
     protected abstract void processRecognitions(int index, List<Recognition> recognitions, AccuracyResult result);
     protected abstract void publishResults(AccuracyResult result);

@@ -47,22 +47,19 @@ public final class TFJSInterpreter extends AsyncInterpreter {
 
     @Override
     public void executeMissionAsync(Mission mission, IProgressListener progressListener) throws Exception {
+        mMission = mission;
+        mProgressListener = progressListener;
         switch (mission.getPurpose()) {
             case ACCURACY:
-                executeAccuracyMissionSync(mission, progressListener); break;
-//            case PERFORMANCE:
-//                return executePerformanceMissionSync(mission, progressListener); break;
+                executeAccuracyMissionSync(); break;
+            case PERFORMANCE:
+                executePerformanceMissionSync(); break;
             default:
                 throw new Exception("Wrong Purpose");
         }
     }
 
-    private void executeAccuracyMissionSync(Mission mission, IProgressListener progressListener) {
-        mMission = mission;
-        mProgressListener = progressListener;
-
-        initWebView();
-
+    private void executeAccuracyMissionSync() {
         try {
             loadLabelList(getMission().getLabelFilePath());
             loadLabelIndexList(getMission().getTrueLabelIndexPath());
@@ -70,6 +67,12 @@ public final class TFJSInterpreter extends AsyncInterpreter {
             e.printStackTrace();
             mProgressListener.onError("Error in loading files!");
         }
+
+        initWebView();
+    }
+
+    private void executePerformanceMissionSync() {
+        initWebView();
     }
 
     @Override
@@ -106,12 +109,16 @@ public final class TFJSInterpreter extends AsyncInterpreter {
     public void onBackendRegistered() {
         nStartTime = SystemClock.uptimeMillis();
         nSeconds = getMission().getnTime();
-        mAccuracyResult = new AccuracyResult();
-        nLoopCount = 0;
-        doInferenceLoop();
+        if (getMission().getPurpose().equals(Mission.Purpose.ACCURACY)){
+            mAccuracyResult = new AccuracyResult();
+            nLoopCount = 0;
+            doAccuracyTask();
+        } else {
+            doPerformanceTask();
+        }
     }
 
-    private void doInferenceLoop() {
+    private void doAccuracyTask() {
         int dataAmount = getMission().getDataPathList().size();
         long now = SystemClock.uptimeMillis();
         if (now - nStartTime < nSeconds * 1000 && nLoopCount < dataAmount){
@@ -123,21 +130,56 @@ public final class TFJSInterpreter extends AsyncInterpreter {
         }
     }
 
+    @SuppressLint("DefaultLocale")
+    private void doPerformanceTask() {
+        long now = SystemClock.uptimeMillis();
+        String dataPath = getMission().getDataPathList().get(0);
+        ((Activity) getContext()).runOnUiThread(
+                ()-> mWebView.loadUrl(
+                    String.format("javascript:performanceTask(\"%s\",%d,%d,%d,%d)",
+                                    dataPath,
+                                    getMission().getnImageSizeX(),
+                                    getMission().getnImageSizeY(),
+                                    getMission().getChannelsPerPixel(),
+                                    nSeconds)
+                )
+        );
+    }
+
     @Override
     @SuppressLint("DefaultLocale")
     protected void recognizeImageAsync(String picPath) {
-        ((Activity) getContext()).runOnUiThread(()-> mWebView.loadUrl(
-                String.format("javascript:recognizeImage(\"%s\",%d,%d)",
-                picPath, getMission().getnImageSizeX(), getMission().getnImageSizeX())));
+        ((Activity) getContext()).runOnUiThread(
+                ()-> mWebView.loadUrl(
+                    String.format("javascript:recognizeImage(\"%s\",%d,%d,%d)",
+                                    picPath,
+                                    getMission().getnImageSizeX(),
+                                    getMission().getnImageSizeY(),
+                                    getMission().getChannelsPerPixel())
+                )
+        );
     }
 
     @Override
     @JavascriptInterface
-    public void onInferenceFinished(float [] result) {
+    public void onAccuracyTaskFinished(float [] result) {
         List<Recognition> recognitions = result2recognitions(result);
         processRecognitions(nLoopCount, recognitions, mAccuracyResult);
         nLoopCount = nLoopCount + 1;
-        doInferenceLoop();
+        doAccuracyTask();
+    }
+
+    @Override
+    @JavascriptInterface
+    public void onPerformanceTaskFinished(int count, int elapsedTime) {
+        mProgressListener.onFinish(count, elapsedTime);
+        releaseResources();
+    }
+
+    @Override
+    @JavascriptInterface
+    public void onProgress(int progress) {
+        mProgressListener.onProgress(progress, null);
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -149,7 +191,7 @@ public final class TFJSInterpreter extends AsyncInterpreter {
         webSettings.setAllowFileAccess(true);
         webSettings.setAllowContentAccess(true);
         webSettings.setAllowUniversalAccessFromFileURLs(true);
-        // mWebView.setWebContentsDebuggingEnabled(true);
+        //mWebView.setWebContentsDebuggingEnabled(true);
         mWebView.addJavascriptInterface(this, "Android");
 
         // intercept data & model requests
@@ -169,6 +211,9 @@ public final class TFJSInterpreter extends AsyncInterpreter {
                                 getContext().getAssets().open(Objects.requireNonNull(uri.getPath()).substring(1)));
                     } else if (url.contains(".jpeg")) {
                         return new WebResourceResponse("image/jpeg", "utf-8",
+                                getContext().getAssets().open(Objects.requireNonNull(uri.getPath()).substring(1)));
+                    } else if (url.contains(".png")) {
+                        return new WebResourceResponse("image/png", "utf-8",
                                 getContext().getAssets().open(Objects.requireNonNull(uri.getPath()).substring(1)));
                     }
                 } catch (IOException e) {

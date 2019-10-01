@@ -70,7 +70,7 @@ public class TFLiteInterpreter extends Interpreter {
         ArrayList<ByteBuffer> images = new ArrayList<>();
 
         // convert data
-        for (int s = 0; s < mission.getDataPathList().size(); s++){
+        for (int s = 0; s < Math.min(mission.getDataPathList().size(), 10); s++){
             InputStream in = getContext().getAssets().open(mission.getDataPathList().get(s));
             Bitmap bitmap = BitmapFactory.decodeStream(in);
             in.close();
