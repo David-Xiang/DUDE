@@ -9,7 +9,7 @@ import android.os.SystemClock;
 import android.util.Log;
 
 import com.example.android.clientintelligent.framework.AccuracyTask;
-import com.example.android.clientintelligent.framework.Interpreter;
+import com.example.android.clientintelligent.framework.SyncInterpreter;
 import com.example.android.clientintelligent.framework.Mission;
 import com.example.android.clientintelligent.framework.Recognition;
 import com.example.android.clientintelligent.framework.interfaces.IProgressListener;
@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.PriorityQueue;
 
-public class NCNNInterpreter extends Interpreter {
+public class NCNNInterpreter extends SyncInterpreter {
     private static final String TAG = "NCNNInterpreter";
 
     public NCNNInterpreter(Context context) {

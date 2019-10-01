@@ -54,8 +54,8 @@ public abstract class Engine implements IEngine {
         }
 
         try {
-            if (interpreter instanceof Interpreter) {
-                ((Interpreter) interpreter).buildTask(mission, progressListener).execute();
+            if (interpreter instanceof SyncInterpreter) {
+                ((SyncInterpreter) interpreter).buildTask(mission, progressListener).execute();
             } else if (interpreter instanceof AsyncInterpreter) {
                 ((AsyncInterpreter) interpreter).executeMissionAsync(mission, progressListener);
             }
