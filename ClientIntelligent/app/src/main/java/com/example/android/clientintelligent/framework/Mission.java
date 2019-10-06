@@ -82,4 +82,8 @@ public class Mission {
     public Purpose getPurpose() {
         return purpose;
     }
+
+    public void setModelFilePath(String modelFilePath) {
+        mModel.setFilePath(modelFilePath);
+    }
 }

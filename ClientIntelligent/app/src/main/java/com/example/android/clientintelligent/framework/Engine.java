@@ -19,7 +19,11 @@ public abstract class Engine implements IEngine {
         mContext = context;
         initInterpreters();
         initData();
-        initModels();
+        try {
+            initModels();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -72,5 +76,5 @@ public abstract class Engine implements IEngine {
 
     public abstract void initInterpreters();
     public abstract void initData();
-    public abstract void initModels();
+    public abstract void initModels() throws Exception;
 }

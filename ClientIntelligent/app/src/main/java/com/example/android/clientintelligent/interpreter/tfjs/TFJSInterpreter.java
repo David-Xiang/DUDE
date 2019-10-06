@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
+import android.os.Environment;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -21,6 +22,8 @@ import com.example.android.clientintelligent.framework.interfaces.IInterpreter;
 import com.example.android.clientintelligent.framework.interfaces.IProgressListener;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -203,12 +206,15 @@ public final class TFJSInterpreter extends AsyncInterpreter {
                 String url = uri.toString().toLowerCase();
                 Log.i(TAG, "shouldInterceptRequest: Url = " + url);
                 try {
+                    // bin & json from cache dir
                     if (url.contains(".json")) {
                         return new WebResourceResponse("application/json", "utf-8",
-                                getContext().getAssets().open(Objects.requireNonNull(uri.getPath()).substring(1)));
+                                new FileInputStream(new File(Environment.getExternalStorageDirectory(),
+                                        "/CIBench/"+Objects.requireNonNull(uri.getPath()).substring(1))));
                     } else if (url.contains(".bin")) {
                         return new WebResourceResponse("application/octet-stream", "utf-8",
-                                getContext().getAssets().open(Objects.requireNonNull(uri.getPath()).substring(1)));
+                                new FileInputStream(new File(Environment.getExternalStorageDirectory(),
+                                        "/CIBench/"+Objects.requireNonNull(uri.getPath()).substring(1))));
                     } else if (url.contains(".jpeg")) {
                         return new WebResourceResponse("image/jpeg", "utf-8",
                                 getContext().getAssets().open(Objects.requireNonNull(uri.getPath()).substring(1)));

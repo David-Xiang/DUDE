@@ -60,6 +60,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
     implementation 'com.google.guava:guava:28.0-jre'
+    implementation 'com.alibaba:fastjson:1.1.71.android'
 
     // for client intelligent
     implementation 'org.tensorflow:tensorflow-lite:0.0.0-nightly'

@@ -11,7 +11,7 @@ public class Model {
 
     private Mode mMode;
     private Data mData;
-    private final String mFilePath;
+    private String mFilePath;
 
     public Model(Data mData, String mFilePath, Mode mode) {
         this.mData = mData;
@@ -55,4 +55,8 @@ public class Model {
     }
 
     public String getTrueLabelIndexPath() {return mData.getTrueLabelIndexPath();}
+
+    public void setFilePath(String filePath) {
+        mFilePath = filePath;
+    }
 }

@@ -116,9 +116,11 @@ public final class MNNAccuracyTask extends AccuracyTask {
     protected void loadModelFile(String modelPath) throws IOException {
         // create net mInstance
         String modelFilePath = getMission().getModelFilePath();
-        String cacheModelPath = mContext.getCacheDir() +
-                modelFilePath.substring(modelFilePath.lastIndexOf("/")+1);
-        FileUtil.copyAssetResource2File(mContext, modelFilePath, cacheModelPath);
+        String cacheModelPath = String.format("%s/%s",
+                mContext.getCacheDir(),
+                modelFilePath.substring(modelFilePath.lastIndexOf("/")+1));
+        Log.i(TAG, "loadModelFile(): cacheModelPath = " + cacheModelPath);
+        FileUtil.copyExternalResource2File(modelFilePath, cacheModelPath);
         mInstance = MNNNetInstance.createFromFile(cacheModelPath);
     }
 

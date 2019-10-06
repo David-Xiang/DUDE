@@ -10,6 +10,8 @@ import com.example.android.clientintelligent.framework.Recognition;
 import com.example.android.clientintelligent.framework.Mission;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -106,12 +108,10 @@ public abstract class BaseClassifier {
 
     /** Memory-map the model file in Assets. */
     private MappedByteBuffer loadModelFile(Activity activity) throws IOException {
-        AssetFileDescriptor fileDescriptor = activity.getAssets().openFd(getModelPath());
-        FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
+        FileInputStream inputStream = new FileInputStream(new File(getModelPath()));
+        FileDescriptor fileDescriptor = inputStream.getFD();
         FileChannel fileChannel = inputStream.getChannel();
-        long startOffset = fileDescriptor.getStartOffset();
-        long declaredLength = fileDescriptor.getDeclaredLength();
-        return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
+        return fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, fileChannel.size());
     }
 
     /** Writes Image data into a {@code ByteBuffer}. */

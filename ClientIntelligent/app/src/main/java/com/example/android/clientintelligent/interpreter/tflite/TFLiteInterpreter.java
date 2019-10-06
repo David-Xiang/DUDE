@@ -8,12 +8,13 @@ import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.util.Log;
 
-import com.example.android.clientintelligent.framework.SyncInterpreter;
-import com.example.android.clientintelligent.framework.Model;
-import com.example.android.clientintelligent.framework.Task;
-import com.example.android.clientintelligent.framework.Recognition;
 import com.example.android.clientintelligent.framework.Mission;
+import com.example.android.clientintelligent.framework.Model;
+import com.example.android.clientintelligent.framework.Recognition;
+import com.example.android.clientintelligent.framework.SyncInterpreter;
+import com.example.android.clientintelligent.framework.Task;
 import com.example.android.clientintelligent.framework.interfaces.IProgressListener;
+import com.example.android.clientintelligent.utils.FileUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -137,7 +138,15 @@ public class TFLiteInterpreter extends SyncInterpreter {
         protected Object doInBackground(Object... objects) {
             TFLiteClassifier classifier;
 
+            String modelFilePath = getMission().getModelFilePath();
+            String cacheModelPath = String.format("%s/%s",
+                    getContext().getCacheDir(),
+                    modelFilePath.substring(modelFilePath.lastIndexOf("/")+1));
+            Log.i(TAG, "loadModelFile(): cacheModelPath = " + cacheModelPath);
+
             try {
+                FileUtil.copyExternalResource2File(modelFilePath, cacheModelPath);
+                getMission().setModelFilePath(cacheModelPath);
                 if (getMission().getModelMode() == Model.Mode.FLOAT32
                         || getMission().getModelMode() == Model.Mode.FLOAT16){
                     classifier = new FloatTFLiteClassifier(getMission());
@@ -218,7 +227,16 @@ public class TFLiteInterpreter extends SyncInterpreter {
         protected Object doInBackground(Object... objects) {
             TFLiteClassifier classifier;
 
+            String modelFilePath = getMission().getModelFilePath();
+            String cacheModelPath = String.format("%s/%s",
+                    getContext().getCacheDir(),
+                    modelFilePath.substring(modelFilePath.lastIndexOf("/")+1));
+            Log.i(TAG, "loadModelFile(): cacheModelPath = " + cacheModelPath);
+
             try {
+                FileUtil.copyExternalResource2File(modelFilePath, cacheModelPath);
+                getMission().setModelFilePath(cacheModelPath);
+
                 if (getMission().getModelMode() == Model.Mode.FLOAT32
                         || getMission().getModelMode() == Model.Mode.FLOAT16){
                     classifier = new FloatTFLiteClassifier(getMission());

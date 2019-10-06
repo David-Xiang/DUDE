@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.os.SystemClock;
+import android.util.Log;
 
 import com.example.android.clientintelligent.framework.Mission;
 import com.example.android.clientintelligent.framework.PerformanceTask;
@@ -35,9 +36,11 @@ public final class MNNPerformanceTask extends PerformanceTask {
     protected void loadModelFile(String path) throws IOException {
         // create net mInstance
         String modelFilePath = getMission().getModelFilePath();
-        String cacheModelPath = mContext.getCacheDir() +
-                modelFilePath.substring(modelFilePath.lastIndexOf("/")+1);
-        FileUtil.copyAssetResource2File(mContext, modelFilePath, cacheModelPath);
+        String cacheModelPath = String.format("%s/%s",
+                mContext.getCacheDir(),
+                modelFilePath.substring(modelFilePath.lastIndexOf("/")+1));
+        Log.i(TAG, "loadModelFile(): cacheModelPath = " + cacheModelPath);
+        FileUtil.copyExternalResource2File(modelFilePath, cacheModelPath);
         mInstance = MNNNetInstance.createFromFile(cacheModelPath);
     }
 

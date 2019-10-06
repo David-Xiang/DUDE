@@ -315,8 +315,10 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onProgress(int progress, String msg) {
+        Log.i(TAG, "onProgress: " + progress);
         mProgressBar.setProgress(progress);
         if (msg != null && !msg.trim().equals("")){
+            Log.i(TAG, "onProgress: msg: " + msg);
             Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
         }
     }
