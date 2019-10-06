@@ -46,8 +46,8 @@ public abstract class Engine implements IEngine {
     }
 
     @Override
-    public void executeTask(IInterpreter interpreter, Mission mission,
-                            IProgressListener progressListener) {
+    public void executeMission(IInterpreter interpreter, Mission mission,
+                               IProgressListener progressListener) {
         if (interpreter == null){
             progressListener.onError("IInterpreter param is null!");
             return;

@@ -239,7 +239,7 @@ public class MainActivity extends AppCompatActivity
             }
             Mission mission = new Mission(
                     MainActivity.this, model, purpose, device, threads, time);
-            mEngine.executeTask(mInterpreter, mission, MainActivity.this);
+            mEngine.executeMission(mInterpreter, mission, MainActivity.this);
         });
     }
 

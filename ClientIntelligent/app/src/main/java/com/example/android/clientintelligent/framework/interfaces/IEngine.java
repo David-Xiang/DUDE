@@ -11,6 +11,6 @@ public interface IEngine {
     Context getContext();
     void addInterpreter(IInterpreter interpreter);
     IInterpreter getInterpreter(String interpreterName);
-    void executeTask(IInterpreter interpreter, Mission task,
-                     IProgressListener progressListener); // 检查task和interpreter compatible
+    void executeMission(IInterpreter interpreter, Mission mission,
+                        IProgressListener progressListener);
 }
