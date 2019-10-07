@@ -5,8 +5,8 @@ import com.example.android.clientintelligent.framework.Mission;
 import java.io.IOException;
 
 public abstract class TFLiteClassifier extends BaseClassifier {
-    TFLiteClassifier(Mission mission) throws IOException {
-        super(mission.getActivity(), mission);
+    TFLiteClassifier(Mission mission, String modelPath) throws IOException {
+        super(mission.getActivity(), mission, modelPath);
     }
 
     @Override
@@ -17,11 +17,6 @@ public abstract class TFLiteClassifier extends BaseClassifier {
     @Override
     public int getImageSizeY() {
         return mission.getnImageSizeY();
-    }
-
-    @Override
-    protected String getModelPath() {
-        return mission.getModelFilePath();
     }
 
     @Override

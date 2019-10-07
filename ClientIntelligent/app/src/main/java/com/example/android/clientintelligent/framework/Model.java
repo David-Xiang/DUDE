@@ -55,8 +55,4 @@ public class Model {
     }
 
     public String getTrueLabelIndexPath() {return mData.getTrueLabelIndexPath();}
-
-    public void setFilePath(String filePath) {
-        mFilePath = filePath;
-    }
 }

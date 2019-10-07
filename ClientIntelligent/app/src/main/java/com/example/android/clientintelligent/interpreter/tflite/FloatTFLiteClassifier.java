@@ -12,8 +12,8 @@ public class FloatTFLiteClassifier extends TFLiteClassifier{
 
     private float[][] labelProbArray;
 
-    FloatTFLiteClassifier(Mission mission) throws IOException {
-        super(mission);
+    FloatTFLiteClassifier(Mission mission, String modelFilePath) throws IOException {
+        super(mission, modelFilePath);
         labelProbArray = new float[1][getNumLabels()];
     }
 

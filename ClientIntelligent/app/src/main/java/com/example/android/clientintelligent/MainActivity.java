@@ -75,6 +75,11 @@ public class MainActivity extends AppCompatActivity
 
         mEngine = new EngineImpl(this);
         initMainPageView();
+
+        // for accuracy task
+//        mTimeSeekBar.setMax(30000);
+//        mTimeSeekBar.setProgress(30000);
+//        mSwitch.setChecked(true);
     }
 
     private void initRootViews(){
@@ -191,7 +196,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) { }
         });
-        //mTimeSeekBar.setMax(30000);
+        mTimeSeekBar.setMax(300);
         mTimeSeekBar.setProgress(30);
 
         mThreadSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {

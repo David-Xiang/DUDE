@@ -146,12 +146,11 @@ public class TFLiteInterpreter extends SyncInterpreter {
 
             try {
                 FileUtil.copyExternalResource2File(modelFilePath, cacheModelPath);
-                getMission().setModelFilePath(cacheModelPath);
                 if (getMission().getModelMode() == Model.Mode.FLOAT32
                         || getMission().getModelMode() == Model.Mode.FLOAT16){
-                    classifier = new FloatTFLiteClassifier(getMission());
+                    classifier = new FloatTFLiteClassifier(getMission(), cacheModelPath);
                 } else if (getMission().getModelMode() == Model.Mode.QUANTIZED) {
-                    classifier = new QuantTFLiteClassifier(getMission());
+                    classifier = new QuantTFLiteClassifier(getMission(), cacheModelPath);
                 } else {
                     Log.w(TAG, "doInBackground: Wrong mission model!");
                     return null;
@@ -235,13 +234,12 @@ public class TFLiteInterpreter extends SyncInterpreter {
 
             try {
                 FileUtil.copyExternalResource2File(modelFilePath, cacheModelPath);
-                getMission().setModelFilePath(cacheModelPath);
 
                 if (getMission().getModelMode() == Model.Mode.FLOAT32
                         || getMission().getModelMode() == Model.Mode.FLOAT16){
-                    classifier = new FloatTFLiteClassifier(getMission());
+                    classifier = new FloatTFLiteClassifier(getMission(), cacheModelPath);
                 } else if (getMission().getModelMode() == Model.Mode.QUANTIZED) {
-                    classifier = new QuantTFLiteClassifier(getMission());
+                    classifier = new QuantTFLiteClassifier(getMission(), cacheModelPath);
                 } else {
                     mProgressListener.onError("doInBackground: Wrong mission model!");
                     return null;

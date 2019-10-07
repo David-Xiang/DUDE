@@ -39,6 +39,7 @@ public abstract class BaseClassifier {
     private static final int DIM_BATCH_SIZE = 1;
 
     protected final Mission mission;
+    protected final String modelPath; // 区别于mission的原始模型路径，这里存移动到cache之后的模型路径
 
     /** Preallocated buffers for storing image data in. */
     private final int[] intValues;
@@ -58,8 +59,9 @@ public abstract class BaseClassifier {
     /** A ByteBuffer to hold image data, to be feed into Tensorflow Lite as inputs. */
     ByteBuffer imgData;
 
-    protected BaseClassifier(Activity activity, Mission mission) throws IOException {
+    protected BaseClassifier(Activity activity, Mission mission, String modelPath) throws IOException {
         this.mission = mission;
+        this.modelPath = modelPath;
         tfliteModel = loadModelFile(activity);
         intValues = new int[getImageSizeX() * getImageSizeY()];
         Interpreter.Options tfliteOptions = new Interpreter.Options();
@@ -190,7 +192,9 @@ public abstract class BaseClassifier {
     /**
      * Get the name of the model file stored in Assets.
      */
-    protected abstract String getModelPath();
+    protected String getModelPath() {
+        return modelPath;
+    }
 
     /**
      * Get the name of the label file stored in Assets.
