@@ -104,7 +104,16 @@ public class EngineImpl extends Engine {
             String modelFilePath = jsonObject.getString("model_file_path");
             String interpreter = jsonObject.getString("interpreter");
             String dataset = jsonObject.getString("dataset");
-            getInterpreter(interpreter).addModel(new Model(mDataMap.get(dataset), modelFilePath, Model.Mode.FLOAT32));
+
+            String dataType = jsonObject.getString("data_type");
+            dataType = dataType == null ? "" : dataType;
+            Model.Mode mode;
+            switch (dataType) {
+                case "float16": mode = Model.Mode.FLOAT16; break;
+                case "quantized": mode = Model.Mode.QUANTIZED; break;
+                default: mode = Model.Mode.FLOAT32;
+            }
+            getInterpreter(interpreter).addModel(new Model(mDataMap.get(dataset), modelFilePath, mode));
         }
     }
 }
