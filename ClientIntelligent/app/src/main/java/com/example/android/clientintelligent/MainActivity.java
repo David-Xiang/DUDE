@@ -157,6 +157,8 @@ public class MainActivity extends AppCompatActivity
                                     )
                                 .collect(Collectors.toList()));
                 mModelSpinner.setAdapter(modelAdapter);
+
+                mSwitch.setChecked(false);
             }
 
             @Override
