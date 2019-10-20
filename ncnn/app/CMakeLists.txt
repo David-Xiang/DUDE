@@ -18,7 +18,6 @@ set_target_properties(
 )
 
 find_library( android-lib android )
-include(AndroidNdkModules)
 
 file(GLOB_RECURSE CPP_SRCS src/main/jni/*.cpp )
 add_library( ncnncore SHARED ${CPP_SRCS} )

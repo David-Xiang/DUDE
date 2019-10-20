@@ -13,7 +13,7 @@ android {
             // Specifies the ABI configurations of your native
             // libraries Gradle should build and package with your APK.
             abiFilters  'armeabi-v7a'
-            version "3.15.3"
+            version "3.15.4"
         }
     }
     buildTypes {
@@ -25,7 +25,7 @@ android {
     externalNativeBuild {
         cmake {
             path "CMakeLists.txt"
-            version "3.15.3"
+            version "3.15.4"
         }
     }
 

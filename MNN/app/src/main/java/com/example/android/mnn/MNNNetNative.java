@@ -12,7 +12,7 @@ public class MNNNetNative {
         try {
             System.loadLibrary("MNN_CL");
             //System.loadLibrary("MNN_GL");
-            System.loadLibrary("MNN_Vulkan");
+            //System.loadLibrary("MNN_Vulkan");
         } catch (Throwable ce) {
             Log.w(TAG, "load MNN GPU so exception=%s", ce);
         }
