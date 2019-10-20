@@ -1,6 +1,5 @@
-package com.example.android.clientintelligent.framework;
+package com.example.android.clientintelligent.framework.pojo;
 
-import android.app.Activity;
 import android.content.Context;
 
 import com.example.android.clientintelligent.framework.interfaces.IInterpreter;

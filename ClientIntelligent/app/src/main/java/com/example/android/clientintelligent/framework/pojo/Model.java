@@ -1,8 +1,6 @@
-package com.example.android.clientintelligent.framework;
+package com.example.android.clientintelligent.framework.pojo;
 
 import android.util.Log;
-
-import java.util.List;
 
 public class Model {
     private static final String TAG = "Model";

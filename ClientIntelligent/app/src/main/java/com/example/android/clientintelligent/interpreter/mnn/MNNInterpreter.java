@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.example.android.clientintelligent.framework.SyncInterpreter;
-import com.example.android.clientintelligent.framework.Mission;
+import com.example.android.clientintelligent.framework.pojo.Mission;
 import com.example.android.clientintelligent.framework.interfaces.IProgressListener;
 
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package com.example.android.clientintelligent.framework;
+package com.example.android.clientintelligent.framework.pojo;
 
 import java.util.List;
 

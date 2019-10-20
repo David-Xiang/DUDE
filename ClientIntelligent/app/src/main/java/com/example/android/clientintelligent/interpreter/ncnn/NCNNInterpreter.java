@@ -10,8 +10,8 @@ import android.util.Log;
 
 import com.example.android.clientintelligent.framework.AccuracyTask;
 import com.example.android.clientintelligent.framework.SyncInterpreter;
-import com.example.android.clientintelligent.framework.Mission;
-import com.example.android.clientintelligent.framework.Recognition;
+import com.example.android.clientintelligent.framework.pojo.Mission;
+import com.example.android.clientintelligent.framework.pojo.Recognition;
 import com.example.android.clientintelligent.framework.interfaces.IProgressListener;
 
 import java.io.BufferedReader;

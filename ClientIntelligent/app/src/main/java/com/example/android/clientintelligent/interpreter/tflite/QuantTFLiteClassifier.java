@@ -1,6 +1,6 @@
 package com.example.android.clientintelligent.interpreter.tflite;
 
-import com.example.android.clientintelligent.framework.Mission;
+import com.example.android.clientintelligent.framework.pojo.Mission;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;

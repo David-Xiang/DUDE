@@ -1,6 +1,4 @@
-package com.example.android.clientintelligent.framework;
-
-import java.util.List;
+package com.example.android.clientintelligent.framework.pojo;
 
 public class MetaData {
     private final int nImageSizeX;

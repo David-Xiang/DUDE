@@ -4,6 +4,9 @@ import android.content.Context;
 
 import com.example.android.clientintelligent.framework.interfaces.IInterpreter;
 import com.example.android.clientintelligent.framework.interfaces.IProgressListener;
+import com.example.android.clientintelligent.framework.pojo.Mission;
+import com.example.android.clientintelligent.framework.pojo.Model;
+import com.example.android.clientintelligent.framework.pojo.Recognition;
 
 import java.io.IOException;
 import java.util.ArrayList;

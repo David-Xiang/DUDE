@@ -1,4 +1,4 @@
-package com.example.android.clientintelligent.utils;
+package com.example.android.clientintelligent.util;
 
 import android.content.Context;
 import android.os.Environment;

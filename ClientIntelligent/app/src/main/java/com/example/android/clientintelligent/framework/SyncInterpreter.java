@@ -5,6 +5,8 @@ import android.os.AsyncTask;
 
 import com.example.android.clientintelligent.framework.interfaces.IInterpreter;
 import com.example.android.clientintelligent.framework.interfaces.IProgressListener;
+import com.example.android.clientintelligent.framework.pojo.Mission;
+import com.example.android.clientintelligent.framework.pojo.Model;
 
 import java.util.ArrayList;
 import java.util.List;

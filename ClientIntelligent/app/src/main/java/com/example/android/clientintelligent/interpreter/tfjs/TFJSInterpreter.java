@@ -15,8 +15,8 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.example.android.clientintelligent.framework.Mission;
-import com.example.android.clientintelligent.framework.Recognition;
+import com.example.android.clientintelligent.framework.pojo.Mission;
+import com.example.android.clientintelligent.framework.pojo.Recognition;
 import com.example.android.clientintelligent.framework.AsyncInterpreter;
 import com.example.android.clientintelligent.framework.interfaces.IInterpreter;
 import com.example.android.clientintelligent.framework.interfaces.IProgressListener;

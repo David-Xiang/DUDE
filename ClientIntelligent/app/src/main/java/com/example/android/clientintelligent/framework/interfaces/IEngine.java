@@ -2,9 +2,9 @@ package com.example.android.clientintelligent.framework.interfaces;
 
 import android.content.Context;
 
-import com.example.android.clientintelligent.framework.Data;
-import com.example.android.clientintelligent.framework.Mission;
-import com.example.android.clientintelligent.framework.Model;
+import com.example.android.clientintelligent.framework.pojo.Data;
+import com.example.android.clientintelligent.framework.pojo.Mission;
+import com.example.android.clientintelligent.framework.pojo.Model;
 
 import java.util.List;
 

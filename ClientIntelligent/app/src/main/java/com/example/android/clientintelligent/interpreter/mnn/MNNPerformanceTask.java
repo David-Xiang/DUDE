@@ -7,11 +7,11 @@ import android.graphics.Matrix;
 import android.os.SystemClock;
 import android.util.Log;
 
-import com.example.android.clientintelligent.framework.Mission;
+import com.example.android.clientintelligent.framework.pojo.Mission;
 import com.example.android.clientintelligent.framework.PerformanceTask;
 import com.example.android.clientintelligent.framework.interfaces.IInterpreter;
 import com.example.android.clientintelligent.framework.interfaces.IProgressListener;
-import com.example.android.clientintelligent.utils.FileUtil;
+import com.example.android.clientintelligent.util.FileUtil;
 
 import java.io.IOException;
 import java.util.List;

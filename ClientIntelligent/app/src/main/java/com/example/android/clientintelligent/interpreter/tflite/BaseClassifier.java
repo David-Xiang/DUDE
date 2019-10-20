@@ -1,14 +1,12 @@
 package com.example.android.clientintelligent.interpreter.tflite;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.util.Log;
 
-import com.example.android.clientintelligent.framework.Model;
-import com.example.android.clientintelligent.framework.Recognition;
-import com.example.android.clientintelligent.framework.Mission;
+import com.example.android.clientintelligent.framework.pojo.Model;
+import com.example.android.clientintelligent.framework.pojo.Recognition;
+import com.example.android.clientintelligent.framework.pojo.Mission;
 
 import java.io.BufferedReader;
 import java.io.File;

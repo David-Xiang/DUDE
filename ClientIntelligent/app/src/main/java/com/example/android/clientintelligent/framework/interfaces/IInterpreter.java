@@ -1,6 +1,6 @@
 package com.example.android.clientintelligent.framework.interfaces;
 
-import com.example.android.clientintelligent.framework.Model;
+import com.example.android.clientintelligent.framework.pojo.Model;
 
 import java.util.List;
 
