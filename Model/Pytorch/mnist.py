@@ -3,8 +3,7 @@ import argparse
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import torch.optim as optim
-from torchvision import datasets, transforms
+from thop import profile
 
 from torch.autograd import Variable
 
@@ -32,38 +31,6 @@ class Net(nn.Module):
             x = F.relu(x)
         x = self.fc[self.num](x)
         return F.softmax(x, dim=1)
-    
-def train(args, model, device, train_loader, optimizer, epoch):
-    model.train()
-    for batch_idx, (data, target) in enumerate(train_loader):
-        data, target = data.to(device), target.to(device)
-        optimizer.zero_grad()
-        output = model(data)
-        loss = F.nll_loss(output, target)
-        loss.backward()
-        optimizer.step()
-        if batch_idx % args.log_interval == 0:
-            print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
-                epoch, batch_idx * len(data), len(train_loader.dataset),
-                100. * batch_idx / len(train_loader), loss.item()))
-
-def test(args, model, device, test_loader):
-    model.eval()
-    test_loss = 0
-    correct = 0
-    with torch.no_grad():
-        for data, target in test_loader:
-            data, target = data.to(device), target.to(device)
-            output = model(data)
-            test_loss += F.nll_loss(output, target, reduction='sum').item() # sum up batch loss
-            pred = output.argmax(dim=1, keepdim=True) # get the index of the max log-probability
-            correct += pred.eq(target.view_as(pred)).sum().item()
-
-    test_loss /= len(test_loader.dataset)
-
-    print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
-        test_loss, correct, len(test_loader.dataset),
-        100. * correct / len(test_loader.dataset)))
 
 def main():
     # Training settings
@@ -71,25 +38,11 @@ def main():
     parser.add_argument("-n", "--num", type=int, required=True, help="Number of hidden layers")
     parser.add_argument("-s", "--size", type=int, required=True, help="Size of hidden layers")
     
-    parser.add_argument('--batch-size', type=int, default=64, metavar='N',
-                        help='input batch size for training (default: 64)')
-    parser.add_argument('--test-batch-size', type=int, default=1000, metavar='N',
-                        help='input batch size for testing (default: 1000)')
-    parser.add_argument('--epochs', type=int, default=1, metavar='N',
-                        help='number of epochs to train (default: 10)')
-    parser.add_argument('--lr', type=float, default=0.01, metavar='LR',
-                        help='learning rate (default: 0.01)')
-    parser.add_argument('--momentum', type=float, default=0.5, metavar='M',
-                        help='SGD momentum (default: 0.5)')
     parser.add_argument('--no-cuda', action='store_true', default=False,
                         help='disables CUDA training')
     parser.add_argument('--seed', type=int, default=1, metavar='S',
                         help='random seed (default: 1)')
-    parser.add_argument('--log-interval', type=int, default=10, metavar='N',
-                        help='how many batches to wait before logging training status')
     
-    parser.add_argument('--save-model', action='store_true', default=False,
-                        help='For Saving the current Model')
     args = parser.parse_args()
     use_cuda = not args.no_cuda and torch.cuda.is_available()
 
@@ -97,8 +50,8 @@ def main():
 
     device = torch.device("cuda" if use_cuda else "cpu")
     
-    kwargs = {'num_workers': 1, 'pin_memory': True} if use_cuda else {}
-    kwargs = {}
+    # kwargs = {'num_workers': 1, 'pin_memory': True} if use_cuda else {}
+    # kwargs = {}
     # train_loader = torch.utils.data.DataLoader(
     #     datasets.MNIST('../../Data', train=True, download=True,
     #                    transform=transforms.Compose([
@@ -115,7 +68,6 @@ def main():
 
 
     model = Net(args.num, args.size).to(device)
-    optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum)
 
     # for epoch in range(1, args.epochs + 1):
     #     train(args, model, device, train_loader, optimizer, epoch)
@@ -126,10 +78,17 @@ def main():
     # Input to the model
     x = Variable(torch.randn(batch_size, 1, 28, 28), requires_grad=True)
 
+
+    name = "mnist-%d-%d" % (args.num, args.size)
+    inputs = torch.randn(1, 1, 28, 28)
+    flops, params = profile(model, inputs=(inputs,))
+    with open("flops.txt", "a") as f:
+        f.write("%s: %s flops\n" % (name, str(flops)))
+    print("Flops : " + str(flops))
     # Export the model
     torch_out = torch.onnx._export(model,             # model being run
                                 x,                       # model input (or a tuple for multiple inputs)
-                                "mnist-%d-%d.onnx" % (args.num, args.size),       # where to save the model (can be a file or file-like object)
+                                "%s.onnx" % (name),       # where to save the model (can be a file or file-like object)
                                 export_params=True)      # store the trained parameter weights inside the model file
 
     # import onnx
