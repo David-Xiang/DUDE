@@ -37,7 +37,7 @@ public final class MNNAccuracyTask extends AccuracyTask {
     MNNAccuracyTask(Mission mission, IProgressListener progressListener,
                     int seconds) {
         super(mission, progressListener, seconds);
-        mContext = mission.getActivity();
+        mContext = mission.getContext();
     }
 
     @Override

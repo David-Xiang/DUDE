@@ -29,7 +29,7 @@ public final class MNNPerformanceTask extends PerformanceTask {
 
     MNNPerformanceTask(Mission mission, IProgressListener progressListener, int seconds) {
         super(mission, progressListener, seconds);
-        mContext = mission.getActivity();
+        mContext = mission.getContext();
     }
 
     @Override

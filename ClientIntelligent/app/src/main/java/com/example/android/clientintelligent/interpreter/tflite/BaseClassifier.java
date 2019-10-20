@@ -1,6 +1,7 @@
 package com.example.android.clientintelligent.interpreter.tflite;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.util.Log;
@@ -59,10 +60,10 @@ public abstract class BaseClassifier {
     /** A ByteBuffer to hold image data, to be feed into Tensorflow Lite as inputs. */
     ByteBuffer imgData;
 
-    protected BaseClassifier(Activity activity, Mission mission, String modelPath) throws IOException {
+    protected BaseClassifier(Context context, Mission mission, String modelPath) throws IOException {
         this.mission = mission;
         this.modelPath = modelPath;
-        tfliteModel = loadModelFile(activity);
+        tfliteModel = loadModelFile();
         intValues = new int[getImageSizeX() * getImageSizeY()];
         Interpreter.Options tfliteOptions = new Interpreter.Options();
         switch (mission.getDevice()) {
@@ -81,7 +82,7 @@ public abstract class BaseClassifier {
             tfliteOptions.setAllowFp16PrecisionForFp32(true);
         }
         tflite = new Interpreter(tfliteModel, tfliteOptions);
-        labels = loadLabelList(activity);
+        labels = loadLabelList(context);
         imgData =
                 ByteBuffer.allocateDirect(
                         DIM_BATCH_SIZE
@@ -95,11 +96,11 @@ public abstract class BaseClassifier {
     }
 
     /** Reads label list from Assets. */
-    private List<String> loadLabelList(Activity activity) throws IOException {
+    private List<String> loadLabelList(Context context) throws IOException {
         List<String> labels = new ArrayList<>();
         BufferedReader reader =
                 new BufferedReader(
-                        new InputStreamReader(activity.getAssets().open(getLabelPath())));
+                        new InputStreamReader(context.getAssets().open(getLabelPath())));
         String line;
         while ((line = reader.readLine()) != null) {
             labels.add(line);
@@ -109,7 +110,7 @@ public abstract class BaseClassifier {
     }
 
     /** Memory-map the model file in Assets. */
-    private MappedByteBuffer loadModelFile(Activity activity) throws IOException {
+    private MappedByteBuffer loadModelFile() throws IOException {
         FileInputStream inputStream = new FileInputStream(new File(getModelPath()));
         FileDescriptor fileDescriptor = inputStream.getFD();
         FileChannel fileChannel = inputStream.getChannel();

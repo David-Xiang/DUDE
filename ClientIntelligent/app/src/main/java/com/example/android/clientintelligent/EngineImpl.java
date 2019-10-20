@@ -10,7 +10,9 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.example.android.clientintelligent.framework.Data;
 import com.example.android.clientintelligent.framework.Engine;
+import com.example.android.clientintelligent.framework.Mission;
 import com.example.android.clientintelligent.framework.Model;
+import com.example.android.clientintelligent.framework.interfaces.IInterpreter;
 import com.example.android.clientintelligent.interpreter.mnn.MNNInterpreter;
 import com.example.android.clientintelligent.interpreter.tfjs.TFJSInterpreter;
 import com.example.android.clientintelligent.interpreter.tflite.TFLiteInterpreter;
@@ -29,6 +31,7 @@ import java.util.Objects;
 public class EngineImpl extends Engine {
     private static final String TAG = "EngineImpl";
     private Map<String, Data> mDataMap;
+    private Map<Model, Data> mModelDataMap;
 
     EngineImpl(Context context) {
         super(context);
@@ -46,6 +49,7 @@ public class EngineImpl extends Engine {
     @Override
     public void initData() {
         mDataMap = new HashMap<>();
+        mModelDataMap = new HashMap<>();
 
         // mnist
         List<String> mnistDataPathList = Arrays.asList(
@@ -113,7 +117,22 @@ public class EngineImpl extends Engine {
                 case "quantized": mode = Model.Mode.QUANTIZED; break;
                 default: mode = Model.Mode.FLOAT32;
             }
-            getInterpreter(interpreter).addModel(new Model(mDataMap.get(dataset), modelFilePath, mode));
+            Model model = new Model(Objects.requireNonNull(mDataMap.get(dataset)).getMetaData(), modelFilePath, mode);
+            getInterpreter(interpreter).addModel(model);
+            mModelDataMap.put(model, Objects.requireNonNull(mDataMap.get(dataset)));
         }
+    }
+
+    @Override
+    public Mission buildMission(Context context, Model model, Data data, Mission.Purpose purpose, IInterpreter.Device device, int threads, int timeLimit) {
+        return new Mission(context, model, data, purpose, device, threads, timeLimit);
+    }
+
+    public Mission buildDefaultMission(Context context, Model model, Mission.Purpose purpose, IInterpreter.Device device, int threads, int timeLimit) {
+        return buildMission(context, model, mModelDataMap.get(model), purpose, device, threads, timeLimit);
+    }
+
+    public Data getDefaultData(Model model) {
+        return mModelDataMap.get(model);
     }
 }

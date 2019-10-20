@@ -1,8 +1,11 @@
 package com.example.android.clientintelligent;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.pm.PackageManager;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -25,23 +28,31 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.android.clientintelligent.framework.Data;
 import com.example.android.clientintelligent.framework.Mission;
 import com.example.android.clientintelligent.framework.Model;
-import com.example.android.clientintelligent.framework.interfaces.IEngine;
 import com.example.android.clientintelligent.framework.interfaces.IInterpreter;
 import com.example.android.clientintelligent.framework.interfaces.IProgressListener;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, IProgressListener {
     private static final String TAG = "MainActivity";
+    private static String[] permissions = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+    private final int mRequestCode = 100;
+    private List<String> mPermissionList = new ArrayList<>();
+
     private static final BiMap<IInterpreter.Device, String> DEVICE_STRING_HASH_MAP;
 
-    private IEngine mEngine;
+    private EngineImpl mEngine;
     private IInterpreter mInterpreter;
     private List<String> mOriginModelPathList;
 
@@ -72,10 +83,48 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initRootViews();
+        initPermission();
+    }
 
+    private void initPermission(){
+        mPermissionList.clear();
+
+        for (String permission : permissions) {
+            if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
+                mPermissionList.add(permission);
+            }
+        }
+
+        if (mPermissionList.size() > 0){
+            requestPermissions(permissions, mRequestCode);
+        } else {
+            initAfterPermission();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        boolean hasAllPermission = true;
+        if (mRequestCode == requestCode)
+        {
+            for (int grantResult : grantResults) {
+                if (grantResult != PackageManager.PERMISSION_GRANTED)
+                    hasAllPermission = false;
+            }
+            if (!hasAllPermission){
+                Snackbar.make(mStartButton,
+                        "Permission required!!!",
+                        Snackbar.LENGTH_INDEFINITE)
+                        .setAction("Gotcha", v -> {initPermission();}).show();
+            }
+        }
+        initAfterPermission();
+    }
+
+    private void initAfterPermission() {
         mEngine = new EngineImpl(this);
         initMainPageView();
-
         // for accuracy task
 //        mTimeSeekBar.setMax(30000);
 //        mTimeSeekBar.setProgress(30000);
@@ -174,7 +223,8 @@ public class MainActivity extends AppCompatActivity
                 Model model = mInterpreter.getModel(
                         mOriginModelPathList.get(
                                 mModelSpinner.getSelectedItemPosition()));
-                if (TextUtils.isEmpty(model.getTrueLabelIndexPath())) {
+                Data data = mEngine.getDefaultData(model);
+                if (TextUtils.isEmpty(data.getTrueLabelIndexPath())) {
                     mSwitch.setEnabled(false);
                 }
             }
@@ -244,8 +294,7 @@ public class MainActivity extends AppCompatActivity
             if (mPurposeTextView.getText().equals("Accuracy")){
                 purpose = Mission.Purpose.ACCURACY;
             }
-            Mission mission = new Mission(
-                    MainActivity.this, model, purpose, device, threads, time);
+            Mission mission = mEngine.buildDefaultMission(MainActivity.this, model, purpose, device, threads, time);
             mEngine.executeMission(mInterpreter, mission, MainActivity.this);
         });
     }

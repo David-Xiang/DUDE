@@ -10,15 +10,15 @@ public class Model {
     public enum Mode {FLOAT32, FLOAT16, QUANTIZED};
 
     private Mode mMode;
-    private Data mData;
+    private MetaData mMetaData;
     private String mFilePath;
 
-    public Model(Data mData, String mFilePath, Mode mode) {
-        this.mData = mData;
+    public Model(MetaData mMetaData, String mFilePath, Mode mode) {
+        this.mMetaData = mMetaData;
         this.mFilePath = mFilePath;
         this.mMode = mode;
-        if (mData == null){
-            Log.e(TAG, "Model: mData is null!");
+        if (mMetaData == null){
+            Log.e(TAG, "Model: mMetaData is null!");
         }
     }
 
@@ -31,28 +31,18 @@ public class Model {
     }
 
     public int getImageSizeX() {
-        return mData.getImageSizeX();
+        return mMetaData.getImageSizeX();
     }
 
     public int getImageSizeY() {
-        return mData.getImageSizeY();
+        return mMetaData.getImageSizeY();
     }
 
     public int getBytesPerChannel() {
-        return mData.getBytesPerChannel();
+        return mMetaData.getBytesPerChannel();
     }
 
     public int getChannelsPerPixel() {
-        return mData.getChannelsPerPixel();
+        return mMetaData.getChannelsPerPixel();
     }
-
-    public List<String> getDataPathList() {
-        return mData.getPathList();
-    }
-
-    public String getLabelFilePath() {
-        return mData.getLabelFilePath();
-    }
-
-    public String getTrueLabelIndexPath() {return mData.getTrueLabelIndexPath();}
 }

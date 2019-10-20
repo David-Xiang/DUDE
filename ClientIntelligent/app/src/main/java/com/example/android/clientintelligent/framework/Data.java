@@ -7,10 +7,7 @@ public class Data {
     private final String mTrueLabelIndexPath;
     private final String mLabelFilePath;
 
-    private final int nImageSizeX;
-    private final int nImageSizeY;
-    private final int nBytesPerChannel;
-    private final int nChannelsPerPixel;
+    private final MetaData mMetaData;
 
     public Data(List<String> mPathList, String mTrueLabelIndexPath,
                 String mLabelFilePath, int nImageSizeX, int nImageSizeY,
@@ -18,10 +15,7 @@ public class Data {
         this.mPathList = mPathList;
         this.mTrueLabelIndexPath = mTrueLabelIndexPath;
         this.mLabelFilePath = mLabelFilePath;
-        this.nImageSizeX = nImageSizeX;
-        this.nImageSizeY = nImageSizeY;
-        this.nBytesPerChannel = nBytesPerChannel;
-        this.nChannelsPerPixel = nChannelsPerPixel;
+        mMetaData = new MetaData(nImageSizeX, nImageSizeY, nBytesPerChannel, nChannelsPerPixel);
     }
 
     public List<String> getPathList() {
@@ -33,22 +27,26 @@ public class Data {
     }
 
     public int getImageSizeX() {
-        return nImageSizeX;
+        return mMetaData.getImageSizeX();
     }
 
     public int getImageSizeY() {
-        return nImageSizeY;
+        return mMetaData.getImageSizeY();
     }
 
     public int getBytesPerChannel() {
-        return nBytesPerChannel;
+        return mMetaData.getBytesPerChannel();
     }
 
     public int getChannelsPerPixel() {
-        return nChannelsPerPixel;
+        return mMetaData.getChannelsPerPixel();
     }
 
     public String getTrueLabelIndexPath() {
         return mTrueLabelIndexPath;
+    }
+
+    public MetaData getMetaData() {
+        return mMetaData;
     }
 }

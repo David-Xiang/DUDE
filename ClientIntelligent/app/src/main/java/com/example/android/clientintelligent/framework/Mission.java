@@ -1,6 +1,7 @@
 package com.example.android.clientintelligent.framework;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.example.android.clientintelligent.framework.interfaces.IInterpreter;
 
@@ -10,7 +11,7 @@ public class Mission {
     public enum Purpose {PERFORMANCE, ACCURACY}
 
     private final Purpose purpose;
-    private final Activity activity;
+    private final Context context;
 
     private final IInterpreter.Device device;
 
@@ -18,11 +19,13 @@ public class Mission {
     private final int nTime;
 
     private final Model mModel;
+    private final Data mData;
 
-    public Mission(Activity activity, Model model,
+    public Mission(Context context, Model model, Data data,
                    Purpose purpose, IInterpreter.Device device, int nThreads, int nTime){
-        this.activity = activity;
+        this.context = context;
         this.mModel = model;
+        this.mData = data;
 
         this.purpose = purpose;
         this.device = device;
@@ -31,8 +34,8 @@ public class Mission {
         this.nTime = nTime;
     }
 
-    public Activity getActivity() {
-        return activity;
+    public Context getContext() {
+        return context;
     }
 
     public String getModelFilePath() {
@@ -40,8 +43,14 @@ public class Mission {
     }
 
     public List<String> getDataPathList() {
-        return mModel.getDataPathList();
+        return mData.getPathList();
     }
+
+    public String getLabelFilePath() {
+        return mData.getLabelFilePath();
+    }
+
+    public String getTrueLabelIndexPath() { return mData.getTrueLabelIndexPath(); }
 
     public int getnThreads() {
         return nThreads;
@@ -59,10 +68,6 @@ public class Mission {
         return mModel.getImageSizeY();
     }
 
-    public String getLabelFilePath() {
-        return mModel.getLabelFilePath();
-    }
-
     public int getBytesPerChannel() {
         return mModel.getBytesPerChannel();
     }
@@ -76,8 +81,6 @@ public class Mission {
     }
 
     public Model.Mode getModelMode() { return mModel.getMode(); }
-
-    public String getTrueLabelIndexPath() { return mModel.getTrueLabelIndexPath(); }
 
     public Purpose getPurpose() {
         return purpose;
