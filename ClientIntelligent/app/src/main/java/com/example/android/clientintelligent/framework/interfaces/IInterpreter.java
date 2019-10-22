@@ -12,5 +12,5 @@ public interface IInterpreter {
 
     void addModel(Model model);
     Model getModel(String modelName);
-    List<String> getModels();
+    List<Model> getModels();
 }

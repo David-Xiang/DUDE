@@ -11,7 +11,6 @@ import com.example.android.clientintelligent.framework.pojo.Recognition;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public abstract class AsyncInterpreter implements IInterpreter {
     private Context mContext;
@@ -35,11 +34,8 @@ public abstract class AsyncInterpreter implements IInterpreter {
                 .orElse(null);
     }
 
-    public List<String> getModels() {
-        return mModels
-                .stream()
-                .map(Model::getFilePath)
-                .collect(Collectors.toList());
+    public List<Model> getModels() {
+        return mModels;
     }
 
     public abstract void executeMissionAsync(Mission mission, IProgressListener progressListener) throws Exception;

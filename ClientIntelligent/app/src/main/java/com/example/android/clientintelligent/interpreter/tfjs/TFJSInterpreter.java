@@ -53,9 +53,9 @@ public final class TFJSInterpreter extends AsyncInterpreter {
         mMission = mission;
         mProgressListener = progressListener;
         switch (mission.getPurpose()) {
-            case ACCURACY:
+            case BENCH_ACCURACY:
                 executeAccuracyMissionSync(); break;
-            case PERFORMANCE:
+            case BENCH_PERFORMANCE:
                 executePerformanceMissionSync(); break;
             default:
                 throw new Exception("Wrong Purpose");
@@ -112,7 +112,7 @@ public final class TFJSInterpreter extends AsyncInterpreter {
     public void onBackendRegistered() {
         nStartTime = SystemClock.uptimeMillis();
         nSeconds = getMission().getnTime();
-        if (getMission().getPurpose().equals(Mission.Purpose.ACCURACY)){
+        if (getMission().getPurpose().equals(Mission.Purpose.BENCH_ACCURACY)){
             mAccuracyResult = new AccuracyResult();
             nLoopCount = 0;
             doAccuracyTask();
@@ -135,7 +135,6 @@ public final class TFJSInterpreter extends AsyncInterpreter {
 
     @SuppressLint("DefaultLocale")
     private void doPerformanceTask() {
-        long now = SystemClock.uptimeMillis();
         String dataPath = getMission().getDataPathList().get(0);
         ((Activity) getContext()).runOnUiThread(
                 ()-> mWebView.loadUrl(

@@ -5,11 +5,17 @@ import android.util.Log;
 public class Model {
     private static final String TAG = "Model";
 
-    public enum Mode {FLOAT32, FLOAT16, QUANTIZED};
+    public enum Mode {FLOAT32, FLOAT16, QUANTIZED}
 
     private Mode mMode;
     private MetaData mMetaData;
     private String mFilePath;
+    private Float mAccuracy;
+
+    public Model(MetaData mMetaData, String mFilePath, Mode mode, float accuracy) {
+        this(mMetaData, mFilePath, mode);
+        mAccuracy = accuracy > 0 && accuracy <= 100 ? accuracy : null;
+    }
 
     public Model(MetaData mMetaData, String mFilePath, Mode mode) {
         this.mMetaData = mMetaData;
@@ -42,5 +48,9 @@ public class Model {
 
     public int getChannelsPerPixel() {
         return mMetaData.getChannelsPerPixel();
+    }
+
+    public Float getAccuracy() {
+        return mAccuracy;
     }
 }

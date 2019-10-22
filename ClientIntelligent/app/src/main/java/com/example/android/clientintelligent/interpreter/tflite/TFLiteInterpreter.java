@@ -1,25 +1,18 @@
 package com.example.android.clientintelligent.interpreter.tflite;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.os.SystemClock;
 import android.util.Log;
 
+import com.example.android.clientintelligent.framework.SyncInterpreter;
+import com.example.android.clientintelligent.framework.interfaces.IProgressListener;
 import com.example.android.clientintelligent.framework.pojo.Mission;
 import com.example.android.clientintelligent.framework.pojo.Model;
-import com.example.android.clientintelligent.framework.pojo.Recognition;
-import com.example.android.clientintelligent.framework.SyncInterpreter;
-import com.example.android.clientintelligent.framework.Task;
-import com.example.android.clientintelligent.framework.interfaces.IProgressListener;
-import com.example.android.clientintelligent.util.FileUtil;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
@@ -51,21 +44,25 @@ public class TFLiteInterpreter extends SyncInterpreter {
     public AsyncTask buildTask(Mission mission, IProgressListener progressListener)
             throws Exception {
         switch (mission.getPurpose()) {
-            case PERFORMANCE:
-                return buildPerformanceTask(mission, progressListener);
-            case ACCURACY:
-                return buildAccuracyTask(mission, progressListener);
+            case BENCH_PERFORMANCE:
+                return buildBenchmarkPerformanceTask(mission, progressListener);
+            case BENCH_ACCURACY:
+                return buildBenchmarkAccuracyTask(mission, progressListener);
+            case APP_ACCURACY:
+            case APP_PERFORMANCE:
+            case APP_BANLANCE:
+                return buildApplicationTask(mission, progressListener);
             default:
                 throw new Exception("Wrong Purpose");
         }
     }
 
-    private AsyncTask buildAccuracyTask(Mission mission, IProgressListener progressListener)
+    private AsyncTask buildBenchmarkAccuracyTask(Mission mission, IProgressListener progressListener)
             throws IOException {
-        return new TFLiteAccuracyTask(mission, progressListener, mission.getnTime());
+        return new TFLiteBenchmarkAccuracyTask(mission, progressListener, mission.getnTime());
     }
 
-    private AsyncTask buildPerformanceTask(Mission mission, IProgressListener progressListener)
+    private AsyncTask buildBenchmarkPerformanceTask(Mission mission, IProgressListener progressListener)
             throws IOException {
         int[] intValues = new int[mission.getnImageSizeX() * mission.getnImageSizeY()];
         ArrayList<ByteBuffer> images = new ArrayList<>();
@@ -94,7 +91,11 @@ public class TFLiteInterpreter extends SyncInterpreter {
             }
             images.add(imgData);
         }
-        return new TFLitePerformanceTask(mission, images, progressListener, mission.getnTime());
+        return new TFLiteBenchmarkPerformanceTask(mission, images, progressListener, mission.getnTime());
+    }
+
+    private AsyncTask buildApplicationTask(Mission mission, IProgressListener progressListener) throws IOException {
+        return new TFLiteApplicationTask(mission, progressListener);
     }
 
     private void addPixelValue(Model.Mode mode, int channels, ByteBuffer imgData,
@@ -112,156 +113,6 @@ public class TFLiteInterpreter extends SyncInterpreter {
             imgData.put((byte) (pixelValue & 0xFF));
         } else {
             Log.w(TAG, "addPixelValue: Wrong model mode!");
-        }
-    }
-
-    @SuppressLint("StaticFieldLeak")
-    private class TFLiteAccuracyTask extends Task {
-        private static final String TAG = "TFLitePerformanceTask";
-        private List<Integer> mLabelIndexList;
-
-        TFLiteAccuracyTask(Mission mission, IProgressListener progressListener, int seconds)
-                throws IOException {
-            super(mission, progressListener, seconds);
-            mLabelIndexList = new ArrayList<>();
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(
-                            getContext().getAssets().open(getMission().getTrueLabelIndexPath())));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                mLabelIndexList.add(Integer.parseInt(line));
-            }
-            reader.close();
-        }
-
-        @Override
-        protected Object doInBackground(Object... objects) {
-            TFLiteClassifier classifier;
-
-            String modelFilePath = getMission().getModelFilePath();
-            String cacheModelPath = String.format("%s/%s",
-                    getContext().getCacheDir(),
-                    modelFilePath.substring(modelFilePath.lastIndexOf("/")+1));
-            Log.i(TAG, "loadModelFile(): cacheModelPath = " + cacheModelPath);
-
-            try {
-                FileUtil.copyExternalResource2File(modelFilePath, cacheModelPath);
-                if (getMission().getModelMode() == Model.Mode.FLOAT32
-                        || getMission().getModelMode() == Model.Mode.FLOAT16){
-                    classifier = new FloatTFLiteClassifier(getMission(), cacheModelPath);
-                } else if (getMission().getModelMode() == Model.Mode.QUANTIZED) {
-                    classifier = new QuantTFLiteClassifier(getMission(), cacheModelPath);
-                } else {
-                    Log.w(TAG, "doInBackground: Wrong mission model!");
-                    return null;
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            }
-
-            int count = 0;
-            int top1count = 0;
-            int top5count = 0;
-            int dataAmount = getMission().getDataPathList().size();
-            long now = SystemClock.uptimeMillis();
-            while(now - nStartTime < nSeconds * 1000 && count < dataAmount){
-                Bitmap bitmap;
-                try {
-                    InputStream in = getContext().getAssets().open(getMission().getDataPathList().get(count));
-                    bitmap = BitmapFactory.decodeStream(in);
-                    in.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    mProgressListener.onError("Error in read data!");
-                    return count;
-                }
-                List<Recognition> recognitionList = classifier.recognizeImage(bitmap);
-                if (mLabelIndexList.get(count) == recognitionList.get(0).getId()){
-                    top1count++;
-                }
-                int finalCount = count;
-                if (recognitionList
-                        .stream()
-                        .map(Recognition::getId)
-                        .anyMatch(n-> n.equals(mLabelIndexList.get(finalCount)))) {
-                    top5count++;
-                }
-                Log.i(TAG, String.format("doInBackground: count = %d, top1count = %d, top5count = %d",
-                        count, top1count, top5count));
-                if (count > 0 && count % 50 == 0){
-                    now = SystemClock.uptimeMillis();
-                    @SuppressLint("DefaultLocale")
-                    String msg = String.format("Top 1 accuracy is %f%%, top 5 accuracy is %f%%",
-                            (float)(top1count) * 100 / count,
-                            (float)(top5count) * 100 / count);
-                    publishProgress((int) ((now - nStartTime) / (nSeconds * 10)), msg);
-                }
-                count++;
-            }
-
-            now = SystemClock.uptimeMillis();
-            @SuppressLint("DefaultLocale")
-            String msg = String.format("Top 1 accuracy is %.2f%%, top 5 accuracy is %.2f%%",
-                    (float)(top1count) * 100 / count,
-                    (float)(top5count) * 100 / count);
-            publishProgress((int) ((now - nStartTime) / (nSeconds * 10)), msg);
-            classifier.close();
-            return count;
-        }
-    }
-
-    @SuppressLint("StaticFieldLeak")
-    private class TFLitePerformanceTask extends Task {
-        private static final String TAG = "TFLitePerformanceTask";
-        private ArrayList<ByteBuffer> mDataArray;
-
-        TFLitePerformanceTask(Mission mission, ArrayList<ByteBuffer> dataArray,
-                              IProgressListener progressListener, int seconds) {
-            super(mission, progressListener, seconds);
-            mDataArray = dataArray;
-        }
-
-        @Override
-        protected Object doInBackground(Object... objects) {
-            TFLiteClassifier classifier;
-
-            String modelFilePath = getMission().getModelFilePath();
-            String cacheModelPath = String.format("%s/%s",
-                    getContext().getCacheDir(),
-                    modelFilePath.substring(modelFilePath.lastIndexOf("/")+1));
-            Log.i(TAG, "loadModelFile(): cacheModelPath = " + cacheModelPath);
-
-            try {
-                FileUtil.copyExternalResource2File(modelFilePath, cacheModelPath);
-
-                if (getMission().getModelMode() == Model.Mode.FLOAT32
-                        || getMission().getModelMode() == Model.Mode.FLOAT16){
-                    classifier = new FloatTFLiteClassifier(getMission(), cacheModelPath);
-                } else if (getMission().getModelMode() == Model.Mode.QUANTIZED) {
-                    classifier = new QuantTFLiteClassifier(getMission(), cacheModelPath);
-                } else {
-                    mProgressListener.onError("doInBackground: Wrong mission model!");
-                    return null;
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            }
-
-            int count = 0;
-            int nImages = mDataArray.size();
-            long now = SystemClock.uptimeMillis();
-            while(now - nStartTime < nSeconds * 1000){
-                classifier.runInference(mDataArray.get(count%nImages));
-                if (count % 50 == 0){
-                    now = SystemClock.uptimeMillis();
-                    publishProgress((int) ((now - nStartTime) / (nSeconds * 10)));
-                }
-                count++;
-            }
-            classifier.close();
-            return count;
         }
     }
 }

@@ -117,7 +117,9 @@ public class EngineImpl extends Engine {
                 case "quantized": mode = Model.Mode.QUANTIZED; break;
                 default: mode = Model.Mode.FLOAT32;
             }
-            Model model = new Model(Objects.requireNonNull(mDataMap.get(dataset)).getMetaData(), modelFilePath, mode);
+            Float accuracy = jsonObject.getFloat("accuracy");
+            accuracy = accuracy == null ? 0 : accuracy;
+            Model model = new Model(Objects.requireNonNull(mDataMap.get(dataset)).getMetaData(), modelFilePath, mode, accuracy);
             getInterpreter(interpreter).addModel(model);
             mModelDataMap.put(model, Objects.requireNonNull(mDataMap.get(dataset)));
         }

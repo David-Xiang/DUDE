@@ -4,13 +4,15 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import com.example.android.clientintelligent.framework.pojo.Mission;
 import com.example.android.clientintelligent.framework.pojo.Model;
 import com.example.android.clientintelligent.framework.pojo.Recognition;
-import com.example.android.clientintelligent.framework.pojo.Mission;
+
+import org.tensorflow.lite.Interpreter;
+import org.tensorflow.lite.gpu.GpuDelegate;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -21,9 +23,6 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.PriorityQueue;
-
-import org.tensorflow.lite.Interpreter;
-import org.tensorflow.lite.gpu.GpuDelegate;
 
 /** A classifier specialized to label images using TensorFlow Lite. */
 public abstract class BaseClassifier {
@@ -39,6 +38,7 @@ public abstract class BaseClassifier {
 
     protected final Mission mission;
     protected final String modelPath; // 区别于mission的原始模型路径，这里存移动到cache之后的模型路径
+    protected final float accuracy;
 
     /** Preallocated buffers for storing image data in. */
     private final int[] intValues;
@@ -58,9 +58,10 @@ public abstract class BaseClassifier {
     /** A ByteBuffer to hold image data, to be feed into Tensorflow Lite as inputs. */
     ByteBuffer imgData;
 
-    protected BaseClassifier(Context context, Mission mission, String modelPath) throws IOException {
+    protected BaseClassifier(Context context, Mission mission, String modelPath, float accuracy) throws IOException {
         this.mission = mission;
         this.modelPath = modelPath;
+        this.accuracy = accuracy;
         tfliteModel = loadModelFile();
         intValues = new int[getImageSizeX() * getImageSizeY()];
         Interpreter.Options tfliteOptions = new Interpreter.Options();
@@ -110,7 +111,6 @@ public abstract class BaseClassifier {
     /** Memory-map the model file in Assets. */
     private MappedByteBuffer loadModelFile() throws IOException {
         FileInputStream inputStream = new FileInputStream(new File(getModelPath()));
-        FileDescriptor fileDescriptor = inputStream.getFD();
         FileChannel fileChannel = inputStream.getChannel();
         return fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, fileChannel.size());
     }
@@ -249,5 +249,12 @@ public abstract class BaseClassifier {
      */
     protected int getNumLabels() {
         return labels.size();
+    }
+
+    /**
+     * Get the total number of labels.
+     */
+    protected float getAccuracy() {
+        return accuracy;
     }
 }

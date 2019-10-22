@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".MainActivity"
-    tools:showIn="@layout/app_bar_main"
+    tools:context=".demo.DemoActivity"
+    tools:showIn="@layout/app_bar_demo"
     android:orientation="vertical">
 
     <ProgressBar
@@ -26,7 +26,7 @@
         <TextView
             android:id="@+id/tv_instruc"
             android:layout_columnSpan="4"
-            android:text="Benchmark Test"
+            android:text="Smart Switch Demo"
             android:padding="5dp"
             android:textSize="24sp"
             android:textAlignment="center"
@@ -48,15 +48,15 @@
             android:layout_height="40dp"/>
 
         <TextView
-            android:id="@+id/tv_model"
-            android:text="Model"
+            android:id="@+id/tv_mode"
+            android:text="Mode"
             android:gravity="center"
             android:layout_columnWeight="1"
             android:layout_columnSpan="1"
             android:layout_height="40dp"/>
 
         <Spinner
-            android:id="@+id/sp_model"
+            android:id="@+id/sp_mode"
             android:layout_columnSpan="3"
             android:layout_columnWeight="3"
             android:gravity="center"
@@ -79,7 +79,7 @@
 
         <TextView
             android:id="@+id/tv_time"
-            android:text="Time"
+            android:text="Time Limit ms/pic"
             android:gravity="center"
             android:layout_columnWeight="1"
             android:layout_columnSpan="1"
@@ -111,29 +111,73 @@
             android:progress="1"
             android:layout_height="40dp" />
 
-        <TextView
-            android:id="@+id/tv_purpose"
-            android:text="Purpose"
-            android:gravity="center"
-            android:layout_columnWeight="1"
-            android:layout_columnSpan="1"
-            android:layout_height="40dp"/>
-
-        <Switch
-            android:id="@+id/switch_purpose"
-            android:layout_columnSpan="1"
-            android:layout_columnWeight="1"
-            android:layout_gravity="start"
-            android:layout_height="40dp" />
-
-        <TextView
-            android:id="@+id/tv_purpose_text"
-            android:text="Performance"
-            android:gravity="center"
-            android:layout_columnWeight="1"
-            android:layout_columnSpan="1"
-            android:layout_height="40dp"/>
-
     </GridLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/ll_res"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/iv_img"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center"/>
+        <TextView
+            android:id="@+id/tv_msg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="40dp"
+            android:textSize="12sp"
+            android:textColor="@color/colorPrimaryDark"
+            android:textAlignment="viewEnd"
+            android:text="Message"/>
+        <TextView
+            android:id="@+id/tv_res1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="40dp"
+            android:textSize="16sp"
+            android:textColor="@color/grey555555"
+            android:textAlignment="viewEnd"
+            android:text="Result1\tAccuracy:0.0%"/>
+        <TextView
+            android:id="@+id/tv_res2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="40dp"
+            android:textSize="12sp"
+            android:textColor="@color/greyaaaaaa"
+            android:textAlignment="viewEnd"
+            android:text="Result2\tAccuracy:0.0%"/>
+        <TextView
+            android:id="@+id/tv_res3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="40dp"
+            android:textSize="12sp"
+            android:textColor="@color/greyaaaaaa"
+            android:textAlignment="viewEnd"
+            android:text="Result3\tAccuracy:0.0%"/>
+        <TextView
+            android:id="@+id/tv_res4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="40dp"
+            android:textSize="12sp"
+            android:textColor="@color/greyaaaaaa"
+            android:textAlignment="viewEnd"
+            android:text="Result4\tAccuracy:0.0%"/>
+        <TextView
+            android:id="@+id/tv_res5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="40dp"
+            android:textSize="12sp"
+            android:textColor="@color/greyaaaaaa"
+            android:textAlignment="viewEnd"
+            android:text="Result5\tAccuracy:0.0%"/>
+    </LinearLayout>
+
 
 </LinearLayout>

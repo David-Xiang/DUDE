@@ -1,12 +1,14 @@
-package com.example.android.clientintelligent;
+package com.example.android.clientintelligent.demo;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -15,36 +17,35 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.android.clientintelligent.demo.DemoActivity;
-import com.example.android.clientintelligent.framework.pojo.Data;
-import com.example.android.clientintelligent.framework.pojo.Mission;
-import com.example.android.clientintelligent.framework.pojo.Model;
+import com.example.android.clientintelligent.MainActivity;
+import com.example.android.clientintelligent.R;
 import com.example.android.clientintelligent.framework.interfaces.IInterpreter;
 import com.example.android.clientintelligent.framework.interfaces.IProgressListener;
+import com.example.android.clientintelligent.framework.pojo.Mission;
+import com.example.android.clientintelligent.framework.pojo.Recognition;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, IProgressListener {
-    private static final String TAG = "MainActivity";
+public class DemoActivity extends AppCompatActivity implements
+        NavigationView.OnNavigationItemSelectedListener, IProgressListener {
+    private static final String TAG = "DemoActivity";
     private static String[] permissions = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -52,23 +53,26 @@ public class MainActivity extends AppCompatActivity
     private final int mRequestCode = 100;
     private List<String> mPermissionList = new ArrayList<>();
 
-    private static final BiMap<IInterpreter.Device, String> DEVICE_STRING_HASH_MAP;
-
-    private EngineImpl mEngine;
+    private DemoEngineImpl mEngine;
     private IInterpreter mInterpreter;
-    private List<String> mOriginModelPathList;
 
     private Spinner mInterpreterSpinner;
     private Spinner mDeviceSpinner;
-    private Spinner mModelSpinner;
+    private Spinner mModeSpinner;
     private ProgressBar mProgressBar;
     private SeekBar mTimeSeekBar;
     private SeekBar mThreadSeekBar;
     private TextView mTimeTextView;
     private TextView mThreadTextView;
-    private TextView mPurposeTextView;
-    private Switch mSwitch;
     private FloatingActionButton mStartButton;
+
+    private LinearLayout mResultLayout;
+    private ImageView mResultImage;
+    private List<TextView> mResultTextViewList;
+    private TextView mMsgTextView;
+
+    private static final BiMap<IInterpreter.Device, String> DEVICE_STRING_HASH_MAP;
+    private static final BiMap<Mission.Purpose, String> PURPOSE_STRING_HASH_MAP;
 
     static {
         DEVICE_STRING_HASH_MAP = HashBiMap.create();
@@ -79,10 +83,14 @@ public class MainActivity extends AppCompatActivity
         DEVICE_STRING_HASH_MAP.put(IInterpreter.Device.OPENCL, "OPENCL");
         DEVICE_STRING_HASH_MAP.put(IInterpreter.Device.OPENGL, "OPENGL");
         DEVICE_STRING_HASH_MAP.put(IInterpreter.Device.WEBGL, "WEBGL");
+        PURPOSE_STRING_HASH_MAP = HashBiMap.create();
+        PURPOSE_STRING_HASH_MAP.put(Mission.Purpose.APP_PERFORMANCE, "Performance Mode");
+        PURPOSE_STRING_HASH_MAP.put(Mission.Purpose.APP_ACCURACY, "Accuracy Mode");
+        PURPOSE_STRING_HASH_MAP.put(Mission.Purpose.APP_BANLANCE, "Balance Mode");
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initRootViews();
         initPermission();
@@ -118,23 +126,19 @@ public class MainActivity extends AppCompatActivity
                 Snackbar.make(mStartButton,
                         "Permission required!!!",
                         Snackbar.LENGTH_INDEFINITE)
-                        .setAction("Gotcha", v -> initPermission()).show();
+                        .setAction("Gotcha", v -> {initPermission();}).show();
             }
         }
         initAfterPermission();
     }
 
     private void initAfterPermission() {
-        mEngine = new EngineImpl(this);
+        mEngine = new DemoEngineImpl(this);
         initMainPageView();
-        // for accuracy task
-//        mTimeSeekBar.setMax(30000);
-//        mTimeSeekBar.setProgress(30000);
-//        mSwitch.setChecked(true);
     }
 
     private void initRootViews(){
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_demo);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mStartButton = findViewById(R.id.fab);
@@ -147,19 +151,27 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-    @SuppressLint("SetTextI18n")
     private void initMainPageView(){
         mInterpreterSpinner = findViewById(R.id.sp_interpreter);
         mDeviceSpinner = findViewById(R.id.sp_device);
-        mModelSpinner = findViewById(R.id.sp_model);
+        mModeSpinner = findViewById(R.id.sp_mode);
         mProgressBar = findViewById(R.id.pb_progress);
         mTimeSeekBar = findViewById(R.id.sb_time);
         mThreadSeekBar = findViewById(R.id.sb_thread);
         mTimeTextView = findViewById(R.id.tv_time);
         mThreadTextView = findViewById(R.id.tv_thread);
-        mPurposeTextView = findViewById(R.id.tv_purpose_text);
-        mSwitch = findViewById(R.id.switch_purpose);
 
+        mResultLayout = findViewById(R.id.ll_res);
+        mResultLayout.setVisibility(View.GONE);
+        mResultImage = findViewById(R.id.iv_img);
+        mResultTextViewList = Arrays.asList(
+                findViewById(R.id.tv_res1),
+                findViewById(R.id.tv_res2),
+                findViewById(R.id.tv_res3),
+                findViewById(R.id.tv_res4),
+                findViewById(R.id.tv_res5)
+        );
+        mMsgTextView = findViewById(R.id.tv_msg);
 
         ArrayAdapter<String> interpreterAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, mEngine.getInterpreterList());
@@ -168,7 +180,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 mInterpreter = mEngine.getInterpreter(mEngine.getInterpreterList().get(position));
-                ArrayAdapter<String> deviceAdapter = new ArrayAdapter<>(MainActivity.this,
+                ArrayAdapter<String> deviceAdapter = new ArrayAdapter<>(DemoActivity.this,
                         android.R.layout.simple_spinner_item,
                         mInterpreter
                                 .getDevices()
@@ -196,42 +208,10 @@ public class MainActivity extends AppCompatActivity
                     public void onNothingSelected(AdapterView<?> parent) { }
                 });
 
-
-                mOriginModelPathList = mInterpreter.getModels()
-                                        .stream()
-                                        .map(Model::getFilePath)
-                                        .collect(Collectors.toList());
-                ArrayAdapter<String> modelAdapter = new ArrayAdapter<>(MainActivity.this,
+                ArrayAdapter<String> modeAdapter = new ArrayAdapter<>(DemoActivity.this,
                         android.R.layout.simple_spinner_item,
-                        mOriginModelPathList
-                                .stream()
-                                .map(s->s.substring(
-                                            s.lastIndexOf("/")+1,
-                                            s.lastIndexOf("."))
-                                    )
-                                .collect(Collectors.toList()));
-                mModelSpinner.setAdapter(modelAdapter);
-
-                mSwitch.setChecked(false);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-        mModelSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Model model = mInterpreter.getModel(
-                        mOriginModelPathList.get(
-                                mModelSpinner.getSelectedItemPosition()));
-                Data data = mEngine.getDefaultData(model);
-                if (TextUtils.isEmpty(data.getTrueLabelIndexPath())) {
-                    mSwitch.setEnabled(false);
-                }
+                        Arrays.asList("Performance Mode", "Accuracy Mode", "Balance Mode"));
+                mModeSpinner.setAdapter(modeAdapter);
             }
 
             @Override
@@ -244,7 +224,7 @@ public class MainActivity extends AppCompatActivity
             @SuppressLint("DefaultLocale")
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                mTimeTextView.setText(String.format("Time: %ds", progress));
+                mTimeTextView.setText(String.format("Time Limit \n%s ms/pic", progress));
             }
 
             @Override
@@ -253,8 +233,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) { }
         });
-        mTimeSeekBar.setMax(300);
-        mTimeSeekBar.setProgress(30);
+        mTimeSeekBar.setMax(2000);
+        mTimeSeekBar.setProgress(1000);
 
         mThreadSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @SuppressLint("DefaultLocale")
@@ -271,69 +251,26 @@ public class MainActivity extends AppCompatActivity
         });
         mThreadSeekBar.setProgress(1);
 
-        mSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked) {
-                mPurposeTextView.setText("Accuracy");
-            } else {
-                mPurposeTextView.setText("Performance");
-            }
-        });
-
         mStartButton.setOnClickListener(v -> {
             int time = mTimeSeekBar.getProgress();
             int threads = mThreadSeekBar.getProgress();
             String deviceName = ((ArrayAdapter<String>)mDeviceSpinner.getAdapter())
                     .getItem(mDeviceSpinner.getSelectedItemPosition());
             IInterpreter.Device device = DEVICE_STRING_HASH_MAP.inverse().get(deviceName);
-            Model model = mInterpreter.getModel(
-                                        mOriginModelPathList.get(
-                                            mModelSpinner.getSelectedItemPosition()));
+            String modeName = ((ArrayAdapter<String>)mModeSpinner.getAdapter())
+                    .getItem(mModeSpinner.getSelectedItemPosition());
+            Mission.Purpose purpose = PURPOSE_STRING_HASH_MAP.inverse().get(modeName);
 
             if (time == 0 || device == null || (device == IInterpreter.Device.CPU && threads == 0) ||
-                    mInterpreter == null || model == null){
+                    mInterpreter == null || purpose == null){
                 Snackbar.make(v, "Oops, sth's wrong...", Snackbar.LENGTH_SHORT).show();
                 return;
             }
 
-            Mission.Purpose purpose = Mission.Purpose.BENCH_PERFORMANCE;
-            if (mPurposeTextView.getText().equals("Accuracy")){
-                purpose = Mission.Purpose.BENCH_ACCURACY;
-            }
-            Mission mission = mEngine.buildDefaultMission(MainActivity.this, model, purpose, device, threads, time);
-            mEngine.executeMission(mInterpreter, mission, MainActivity.this);
+            mResultLayout.setVisibility(View.VISIBLE);
+            Mission mission = mEngine.buildSmartSwitchMission(DemoActivity.this, mInterpreter, purpose, device, threads, time);
+            mEngine.executeMission(mInterpreter, mission, DemoActivity.this);
         });
-    }
-
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -343,10 +280,10 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-            // Do nothing
-        } else if (id == R.id.nav_demo) {
-            Intent intent = new Intent(MainActivity.this, DemoActivity.class);
+            Intent intent = new Intent(DemoActivity.this, MainActivity.class);
             startActivity(intent);
+        } else if (id == R.id.nav_demo) {
+            // do nothing
         } else if (id == R.id.nav_share) {
 
         }
@@ -356,50 +293,57 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d(TAG, "onResume: Enter");
-    }
 
     @Override
-    public synchronized void onPause() {
-        Log.d(TAG, "onPause: Enter");
-
-        super.onPause();
+    public void onMsg(String msg) {
+        runOnUiThread(()-> mMsgTextView.setText(msg));
     }
 
+    @SuppressLint("DefaultLocale")
     @Override
     public void onProgress(int progress, Object... msgs) {
-        Log.i(TAG, "onProgress: " + progress);
-        mProgressBar.setProgress(progress);
-        if (msgs != null){
+        runOnUiThread(() -> {
+            // msg[0]: String, msg[1] Bitmap, msg[2] List<Recognition>
+            //Log.i(TAG, "onProgress: " + progress);
+            mProgressBar.setProgress(progress);
+            if (msgs == null)
+                return;
+
             String msg = (String)msgs[0];
             if (!msg.trim().equals("")) {
                 Log.i(TAG, "onProgress: msg: " + msg);
-                Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+                mMsgTextView.setText(msg);
             }
-        }
+
+            if (msgs.length >= 3) {
+                Bitmap img = (Bitmap) msgs[1];
+                List<Recognition> resultList = (List<Recognition>) msgs[2];
+                mResultImage.setImageBitmap(img);
+                for (int i = 0; i < mResultTextViewList.size(); i++) {
+                    Recognition result = resultList.get(i);
+                    if (result != null) {
+                        mResultTextViewList.get(i).setText(
+                                String.format("%s    Prob: %.2f%%", result.getName(), result.getConfidence()*100));
+                    } else {
+                        mResultTextViewList.get(i).setText("");
+                    }
+                }
+            }
+        });
     }
 
     @SuppressLint("DefaultLocale")
     @Override
     public void onFinish(int count, long enduredTime) {
-        Snackbar.make(mStartButton,
+        runOnUiThread(() -> Snackbar.make(mStartButton,
                 String.format("Finished %d tasks in %d ms!", count ,enduredTime),
                 Snackbar.LENGTH_INDEFINITE)
-                .setAction("Gotcha", v -> {}).show();
+                .setAction("Gotcha", v -> {}).show());
     }
 
     @Override
     public void onError(String msg) {
-        Snackbar.make(mStartButton, msg, Snackbar.LENGTH_INDEFINITE)
-                .setAction("Gotcha", v -> {}).show();
+        runOnUiThread(() -> Snackbar.make(mStartButton, msg, Snackbar.LENGTH_INDEFINITE)
+                .setAction("Gotcha", v -> {}).show());
     }
-
-    @Override
-    public void onMsg(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
-    }
-
 }

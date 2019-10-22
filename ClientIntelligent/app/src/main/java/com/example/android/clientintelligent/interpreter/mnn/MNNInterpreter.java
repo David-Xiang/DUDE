@@ -34,9 +34,9 @@ public class MNNInterpreter extends SyncInterpreter {
     public AsyncTask buildTask(Mission mission, IProgressListener progressListener)
             throws Exception {
         switch (mission.getPurpose()) {
-            case ACCURACY:
+            case BENCH_ACCURACY:
                 return buildAccuracyTask(mission, progressListener);
-            case PERFORMANCE:
+            case BENCH_PERFORMANCE:
                 return buildPerformanceTask(mission, progressListener);
             default:
                 throw new Exception("Wrong Purpose");

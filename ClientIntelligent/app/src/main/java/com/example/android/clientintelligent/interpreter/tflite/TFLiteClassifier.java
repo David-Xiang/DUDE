@@ -5,8 +5,8 @@ import com.example.android.clientintelligent.framework.pojo.Mission;
 import java.io.IOException;
 
 public abstract class TFLiteClassifier extends BaseClassifier {
-    TFLiteClassifier(Mission mission, String modelPath) throws IOException {
-        super(mission.getContext(), mission, modelPath);
+    TFLiteClassifier(Mission mission, String modelPath, Float accuracy) throws IOException {
+        super(mission.getContext(), mission, modelPath, accuracy);
     }
 
     @Override

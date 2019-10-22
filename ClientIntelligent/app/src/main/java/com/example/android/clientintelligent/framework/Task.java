@@ -6,6 +6,8 @@ import android.os.SystemClock;
 import com.example.android.clientintelligent.framework.interfaces.IProgressListener;
 import com.example.android.clientintelligent.framework.pojo.Mission;
 
+import java.util.Arrays;
+
 public abstract class Task extends AsyncTask<Object, Object, Object> {
     protected IProgressListener mProgressListener;
     protected long nStartTime;
@@ -24,10 +26,10 @@ public abstract class Task extends AsyncTask<Object, Object, Object> {
     }
 
     @Override
-    protected void onProgressUpdate(Object... objects) {
+    protected void onProgressUpdate(Object[] objects) {
         super.onProgressUpdate(objects);
         if (objects.length > 1) {
-            mProgressListener.onProgress((int)objects[0], (String)objects[1]);
+            mProgressListener.onProgress((int)objects[0], Arrays.copyOfRange(objects, 1, objects.length+1));
         } else {
             mProgressListener.onProgress((int)objects[0], null);
         }

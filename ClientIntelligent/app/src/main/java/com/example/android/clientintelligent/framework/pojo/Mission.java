@@ -4,10 +4,11 @@ import android.content.Context;
 
 import com.example.android.clientintelligent.framework.interfaces.IInterpreter;
 
+import java.util.Collections;
 import java.util.List;
 
 public class Mission {
-    public enum Purpose {PERFORMANCE, ACCURACY}
+    public enum Purpose {BENCH_PERFORMANCE, BENCH_ACCURACY, APP_PERFORMANCE, APP_ACCURACY, APP_BANLANCE}
 
     private final Purpose purpose;
     private final Context context;
@@ -17,13 +18,13 @@ public class Mission {
     private final int nThreads;
     private final int nTime;
 
-    private final Model mModel;
+    private final List<Model> mModelList;
     private final Data mData;
 
-    public Mission(Context context, Model model, Data data,
+    public Mission(Context context, List<Model> modelList, Data data,
                    Purpose purpose, IInterpreter.Device device, int nThreads, int nTime){
         this.context = context;
-        this.mModel = model;
+        this.mModelList = modelList;
         this.mData = data;
 
         this.purpose = purpose;
@@ -33,12 +34,21 @@ public class Mission {
         this.nTime = nTime;
     }
 
+    public Mission(Context context, Model model, Data data,
+                   Purpose purpose, IInterpreter.Device device, int nThreads, int nTime){
+        this(context, Collections.singletonList(model), data, purpose, device, nThreads, nTime);
+    }
+
     public Context getContext() {
         return context;
     }
 
     public String getModelFilePath() {
-        return mModel.getFilePath();
+        return mModelList.get(0).getFilePath();
+    }
+
+    public List<Model> getModels() {
+        return mModelList;
     }
 
     public List<String> getDataPathList() {
@@ -60,15 +70,15 @@ public class Mission {
     }
 
     public int getnImageSizeX() {
-        return mModel.getImageSizeX();
+        return mModelList.get(0).getImageSizeX();
     }
 
     public int getnImageSizeY() {
-        return mModel.getImageSizeY();
+        return mModelList.get(0).getImageSizeY();
     }
 
     public int getBytesPerChannel() {
-        return mModel.getBytesPerChannel();
+        return mModelList.get(0).getBytesPerChannel();
     }
 
     public IInterpreter.Device getDevice() {
@@ -76,10 +86,10 @@ public class Mission {
     }
 
     public int getChannelsPerPixel() {
-        return mModel.getChannelsPerPixel();
+        return mModelList.get(0).getChannelsPerPixel();
     }
 
-    public Model.Mode getModelMode() { return mModel.getMode(); }
+    public Model.Mode getModelMode() { return mModelList.get(0).getMode(); }
 
     public Purpose getPurpose() {
         return purpose;

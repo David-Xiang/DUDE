@@ -10,7 +10,6 @@ import com.example.android.clientintelligent.framework.pojo.Model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public abstract class SyncInterpreter implements IInterpreter {
     private Context mContext;
@@ -34,11 +33,8 @@ public abstract class SyncInterpreter implements IInterpreter {
                 .orElse(null);
     }
 
-    public List<String> getModels() {
-        return mModels
-                .stream()
-                .map(Model::getFilePath)
-                .collect(Collectors.toList());
+    public List<Model> getModels() {
+        return mModels;
     }
 
     // 虽然是采用AsyncTask在新线程中执行任务，但仍旧是同步的顺序调用代码
