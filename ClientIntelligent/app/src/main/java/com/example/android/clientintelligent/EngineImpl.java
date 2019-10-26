@@ -14,6 +14,7 @@ import com.example.android.clientintelligent.framework.pojo.Mission;
 import com.example.android.clientintelligent.framework.pojo.Model;
 import com.example.android.clientintelligent.framework.interfaces.IInterpreter;
 import com.example.android.clientintelligent.interpreter.mnn.MNNInterpreter;
+import com.example.android.clientintelligent.interpreter.ncnn.NCNNInterpreter;
 import com.example.android.clientintelligent.interpreter.tfjs.TFJSInterpreter;
 import com.example.android.clientintelligent.interpreter.tflite.TFLiteInterpreter;
 
@@ -42,7 +43,7 @@ public class EngineImpl extends Engine {
         addInterpreter(new TFLiteInterpreter(getContext()));
         addInterpreter(new MNNInterpreter(getContext()));
         addInterpreter(new TFJSInterpreter(getContext()));
-//        addInterpreter(new NCNNInterpreter(getContext()));
+        addInterpreter(new NCNNInterpreter(getContext()));
     }
 
     @SuppressLint("DefaultLocale")
@@ -119,9 +120,11 @@ public class EngineImpl extends Engine {
             }
             Float accuracy = jsonObject.getFloat("accuracy");
             accuracy = accuracy == null ? 0 : accuracy;
-            Model model = new Model(Objects.requireNonNull(mDataMap.get(dataset)).getMetaData(), modelFilePath, mode, dataset, accuracy);
-            getInterpreter(interpreter).addModel(model);
-            mModelDataMap.put(model, Objects.requireNonNull(mDataMap.get(dataset)));
+            if (mDataMap.get(dataset) != null) {
+                Model model = new Model(Objects.requireNonNull(mDataMap.get(dataset)).getMetaData(), modelFilePath, mode, dataset, accuracy);
+                getInterpreter(interpreter).addModel(model);
+                mModelDataMap.put(model, Objects.requireNonNull(mDataMap.get(dataset)));
+            }
         }
     }
 

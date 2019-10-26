@@ -42,4 +42,8 @@ public class FileUtil {
         is.close();
         fos.close();
     }
+
+    public static InputStream getExternalResourceInputStream(String externalFile) throws IOException {
+        return new FileInputStream(new File(Environment.getExternalStorageDirectory(), commonDir+externalFile));
+    }
 }

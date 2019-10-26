@@ -14,12 +14,28 @@ static ncnn::PoolAllocator g_workspace_pool_allocator;
 static ncnn::Mat model_param;
 static ncnn::Mat model_bin;
 static ncnn::Net net;
+static char ptr_in[100], ptr_out[100];
+
+char* getCharArrayFromJCharArray(JNIEnv* env, jcharArray jcharArray, int mode) {
+    int len = env->GetArrayLength(jcharArray);
+    char* ptr = ptr_out;
+    if (mode == 0) {
+        ptr = ptr_in;
+    }
+    jchar* jptr = env->GetCharArrayElements(jcharArray, nullptr);
+    for (int i = 0; i < len; i++) {
+        ptr[i] = (char)jptr[i];
+    }
+    env->ReleaseCharArrayElements(jcharArray, jptr, 0);
+    return ptr;
+}
+
+
 
 extern "C" {
 
 //JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void* reserved)
 //{
-//    __android_log_print(ANDROID_LOG_DEBUG, "SqueezeNcnn", "JNI_OnLoad");
 //
 //    ncnn::create_gpu_instance();
 //
@@ -28,12 +44,10 @@ extern "C" {
 //
 //JNIEXPORT void JNI_OnUnload(JavaVM* vm, void* reserved)
 //{
-//    __android_log_print(ANDROID_LOG_DEBUG, "SqueezeNcnn", "JNI_OnUnload");
 //
 //    ncnn::destroy_gpu_instance();
 //}
 
-// public native boolean InitModel(byte[] param, byte[] bin, byte[] words);
 JNIEXPORT jboolean JNICALL Java_com_example_android_clientintelligent_interpreter_ncnn_NCNNNative_InitModel(
         JNIEnv* env, jclass type, jbyteArray param, jbyteArray bin) {
 
@@ -42,8 +56,8 @@ JNIEXPORT jboolean JNICALL Java_com_example_android_clientintelligent_interprete
         int len = env->GetArrayLength(param);
         model_param.create(len, (size_t)1u);
         env->GetByteArrayRegion(param, 0, len, (jbyte*)model_param);
-        int ret = net.load_param((const unsigned char*)model_param);
-        __android_log_print(ANDROID_LOG_DEBUG, "SqueezeNcnn", "load_param %d %d", ret, len);
+        int ret = net.load_param_mem((const char*)model_param);
+        __android_log_print(ANDROID_LOG_DEBUG, "NCNN", "load_param %d %d", ret, len);
     }
 
     // init bin
@@ -52,14 +66,14 @@ JNIEXPORT jboolean JNICALL Java_com_example_android_clientintelligent_interprete
         model_bin.create(len, (size_t)1u);
         env->GetByteArrayRegion(bin, 0, len, (jbyte*)model_bin);
         int ret = net.load_model((const unsigned char*)model_bin);
-        __android_log_print(ANDROID_LOG_DEBUG, "SqueezeNcnn", "load_model %d %d", ret, len);
+        __android_log_print(ANDROID_LOG_DEBUG, "NCNN", "load_model %d %d", ret, len);
     }
 
     return JNI_TRUE;
 }
 
-// public native String Detect(Bitmap bitmap, boolean use_gpu);
-JNIEXPORT jfloatArray JNICALL Java_com_example_android_clientintelligent_interpreter_ncnn_NCNNNative_Detect(JNIEnv* env, jclass type, jobject bitmap, jboolean use_gpu, jint threads)
+JNIEXPORT jfloatArray JNICALL Java_com_example_android_clientintelligent_interpreter_ncnn_NCNNNative_Detect(
+        JNIEnv* env, jclass type, jobject bitmap, jboolean use_gpu, jint threads, jcharArray jin_node, jcharArray jout_node)
 {
     ncnn::Option opt;
     opt.lightmode = true;
@@ -87,9 +101,6 @@ JNIEXPORT jfloatArray JNICALL Java_com_example_android_clientintelligent_interpr
         int width = info.width;
         int height = info.height;
 
-        // todo delete
-        if (width != 224 || height != 224)
-            return NULL;
         if (info.format != ANDROID_BITMAP_FORMAT_RGBA_8888)
             return NULL;
         // todo delete
@@ -105,16 +116,20 @@ JNIEXPORT jfloatArray JNICALL Java_com_example_android_clientintelligent_interpr
     jfloatArray result;
     {
         const float mean_vals[3] = {104.f, 117.f, 123.f};
-        in.substract_mean_normalize(mean_vals, 0);
+        const float normal_vals[3] = {0.017f, 0.017f, 0.017f};
+        in.substract_mean_normalize(mean_vals, normal_vals);
 
         ncnn::Extractor ex = net.create_extractor();
 
         //ex.set_vulkan_compute(use_gpu);
 
-        ex.input("data", in);
+        char* in_node = getCharArrayFromJCharArray(env, jin_node, 0);
+        ex.input(in_node, in);
 
         ncnn::Mat out;
-        ex.extract("prob", out);
+        char* out_node = getCharArrayFromJCharArray(env, jout_node, 1);
+        ex.extract(out_node, out);
+        __android_log_print(ANDROID_LOG_DEBUG, "NCNN", "out width %d", out.w);
 
         result = env->NewFloatArray(out.w);
         jfloat *destDims = env->GetFloatArrayElements(result, NULL);

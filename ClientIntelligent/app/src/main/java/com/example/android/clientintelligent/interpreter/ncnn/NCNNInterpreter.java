@@ -13,11 +13,13 @@ import com.example.android.clientintelligent.framework.SyncInterpreter;
 import com.example.android.clientintelligent.framework.pojo.Mission;
 import com.example.android.clientintelligent.framework.pojo.Recognition;
 import com.example.android.clientintelligent.framework.interfaces.IProgressListener;
+import com.example.android.clientintelligent.util.FileUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -51,6 +53,8 @@ public class NCNNInterpreter extends SyncInterpreter {
         private List<String> mLabels;
         private List<Integer> mLabelIndexList;
         private Boolean useGPU = false;
+        private String mInNodeName;
+        private String mOutNodeName;
         private int nThread = 1;
 
         NCNNAccuracyTask(Mission mission, IProgressListener progressListener, int seconds)
@@ -95,17 +99,31 @@ public class NCNNInterpreter extends SyncInterpreter {
             String paramPath = path.split("\\$")[0];
             String binPath = path.split("\\$")[1];
 
-            InputStream assetsInputStream = getContext().getAssets().open(paramPath);
-            int available = assetsInputStream.available();
+            InputStream inputStream = FileUtil.getExternalResourceInputStream(paramPath);
+            int available = inputStream.available();
             param = new byte[available];
-            int byteCode = assetsInputStream.read(param);
-            assetsInputStream.close();
+            int byteCode = inputStream.read(param);
+            inputStream.close();
 
-            assetsInputStream = getContext().getAssets().open(binPath);
-            available = assetsInputStream.available();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(FileUtil.getExternalResourceInputStream(paramPath)));
+            reader.readLine();
+            reader.readLine();
+            String inputLine = reader.readLine();
+            mInNodeName = inputLine.split("\\s+")[1];
+
+            String lastLine = null;
+            while((inputLine = reader.readLine()) != null) {
+                lastLine = inputLine;
+            }
+            mOutNodeName = lastLine.split("\\s+")[1];
+            Log.i(TAG, "loadModelFile: in_node = " + mInNodeName + " out_node = " + mOutNodeName);
+
+
+            inputStream = FileUtil.getExternalResourceInputStream(binPath);
+            available = inputStream.available();
             bin = new byte[available];
-            byteCode = assetsInputStream.read(bin);
-            assetsInputStream.close();
+            byteCode = inputStream.read(bin);
+            inputStream.close();
 
             NCNNNative.InitModel(param, bin);
         }
@@ -126,7 +144,7 @@ public class NCNNInterpreter extends SyncInterpreter {
         }
 
         protected List<Recognition> recognizeImage(Bitmap bitmap) {
-            float[] result = NCNNNative.Detect(bitmap, useGPU, nThread);
+            float[] result = NCNNNative.Detect(bitmap, useGPU, nThread, mInNodeName.toCharArray(), mOutNodeName.toCharArray());
 
             // 显示结果
             PriorityQueue<Recognition> pq =

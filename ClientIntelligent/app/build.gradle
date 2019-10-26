@@ -4,14 +4,14 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.example.android.clientintelligent"
-        minSdkVersion 24
+        minSdkVersion 26
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
-                arguments "-DANDROID_ARM_NEON=TRUE", "-DANDROID_PLATFORM=android-21", "-DANDROID_STL=c++_shared"
+                arguments "-DANDROID_ARM_NEON=TRUE", "-DANDROID_PLATFORM=android-26", "-DANDROID_STL=c++_shared"
                 abiFilters 'armeabi-v7a'
             }
         }
