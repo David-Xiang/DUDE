@@ -10,17 +10,19 @@ public class Model {
     private Mode mMode;
     private MetaData mMetaData;
     private String mFilePath;
-    private Float mAccuracy;
+    private String mDataSetName;
+    private float mAccuracy;
 
-    public Model(MetaData mMetaData, String mFilePath, Mode mode, float accuracy) {
-        this(mMetaData, mFilePath, mode);
-        mAccuracy = accuracy > 0 && accuracy <= 100 ? accuracy : null;
+    public Model(MetaData mMetaData, String mFilePath, Mode mode, String dataSetName, float accuracy) {
+        this(mMetaData, mFilePath, mode, dataSetName);
+        mAccuracy = accuracy > 0 && accuracy <= 100 ? accuracy : 0;
     }
 
-    public Model(MetaData mMetaData, String mFilePath, Mode mode) {
+    public Model(MetaData mMetaData, String mFilePath, Mode mode, String dataSetName) {
         this.mMetaData = mMetaData;
         this.mFilePath = mFilePath;
         this.mMode = mode;
+        this.mDataSetName = dataSetName;
         if (mMetaData == null){
             Log.e(TAG, "Model: mMetaData is null!");
         }
@@ -52,5 +54,9 @@ public class Model {
 
     public Float getAccuracy() {
         return mAccuracy;
+    }
+
+    public String getDataSetName() {
+        return mDataSetName;
     }
 }

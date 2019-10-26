@@ -10,7 +10,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.example.android.clientintelligent.framework.Engine;
 import com.example.android.clientintelligent.framework.interfaces.IInterpreter;
-import com.example.android.clientintelligent.framework.pojo.Data;
+import com.example.android.clientintelligent.framework.pojo.DataSet;
 import com.example.android.clientintelligent.framework.pojo.Mission;
 import com.example.android.clientintelligent.framework.pojo.Model;
 import com.example.android.clientintelligent.interpreter.tflite.TFLiteInterpreter;
@@ -25,7 +25,7 @@ import java.util.Objects;
 
 public final class DemoEngineImpl extends Engine {
     private static final String TAG = "DemoEngineImpl";
-    private Data data;
+    private DataSet dataSet;
 
     DemoEngineImpl(Context context) {
         super(context);
@@ -44,7 +44,7 @@ public final class DemoEngineImpl extends Engine {
         for (int i = 0; i < 1000; i++){
             ilsvrcDataPathList.add(String.format("ilsvrc2012/images/ILSVRC2012_val_%08d.JPEG", i+1));
         }
-        data = new Data(ilsvrcDataPathList, "ilsvrc2012/ILSVRC2012_validation_ground_truth_mapped.txt",
+        dataSet = new DataSet("ilsvrc", ilsvrcDataPathList, "ilsvrc2012/ILSVRC2012_validation_ground_truth_mapped.txt",
                 "ilsvrc2012/labels.txt", 224, 224, 4, 3);
 
     }
@@ -89,25 +89,27 @@ public final class DemoEngineImpl extends Engine {
             }
             Float accuracy = jsonObject.getFloat("accuracy");
             accuracy = accuracy == null ? 0 : accuracy;
-            Model model = new Model(data.getMetaData(), modelFilePath, mode, accuracy);
-            getInterpreter(interpreter).addModel(model);
+            if (dataset.equals(dataSet.getName())) {
+                Model model = new Model(dataSet.getMetaData(), modelFilePath, mode, dataset, accuracy);
+                getInterpreter(interpreter).addModel(model);
+            }
         }
     }
 
     @Override
-    public Mission buildMission(Context context, Model model, Data data, Mission.Purpose purpose,
+    public Mission buildMission(Context context, Model model, DataSet dataSet, Mission.Purpose purpose,
                                 IInterpreter.Device device, int threads, int timeLimit) {
         return null;
     }
 
-    public Mission buildMission(Context context, List<Model> models, Data data, Mission.Purpose purpose,
-                                       IInterpreter.Device device, int threads, int timeLimit) {
-        return new Mission(context, models, data, purpose, device, threads, timeLimit);
+    public Mission buildMission(Context context, List<Model> models, DataSet dataSet, Mission.Purpose purpose,
+                                IInterpreter.Device device, int threads, int timeLimit) {
+        return new Mission(context, models, dataSet, purpose, device, threads, timeLimit);
     }
 
     public Mission buildSmartSwitchMission(Context context, IInterpreter interpreter,
                                            Mission.Purpose purpose, IInterpreter.Device device,
                                            int threads, int timeLimit) {
-        return this.buildMission(context, interpreter.getModels(), data, purpose, device, threads, timeLimit);
+        return this.buildMission(context, interpreter.getModels(), dataSet, purpose, device, threads, timeLimit);
     }
 }

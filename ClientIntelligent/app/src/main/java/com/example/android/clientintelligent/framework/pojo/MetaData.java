@@ -13,11 +13,11 @@ public class MetaData {
         this.nChannelsPerPixel = nChannelsPerPixel;
     }
 
-    public MetaData(Data data) {
-        this.nImageSizeX = data.getImageSizeX();
-        this.nImageSizeY = data.getImageSizeY();
-        this.nBytesPerChannel = data.getBytesPerChannel();
-        this.nChannelsPerPixel = data.getChannelsPerPixel();
+    public MetaData(DataSet dataSet) {
+        this.nImageSizeX = dataSet.getImageSizeX();
+        this.nImageSizeY = dataSet.getImageSizeY();
+        this.nBytesPerChannel = dataSet.getBytesPerChannel();
+        this.nChannelsPerPixel = dataSet.getChannelsPerPixel();
     }
 
     public int getImageSizeX() {

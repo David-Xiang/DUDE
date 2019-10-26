@@ -8,7 +8,7 @@ import android.util.Log;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.example.android.clientintelligent.framework.pojo.Data;
+import com.example.android.clientintelligent.framework.pojo.DataSet;
 import com.example.android.clientintelligent.framework.Engine;
 import com.example.android.clientintelligent.framework.pojo.Mission;
 import com.example.android.clientintelligent.framework.pojo.Model;
@@ -30,8 +30,8 @@ import java.util.Objects;
 
 public class EngineImpl extends Engine {
     private static final String TAG = "EngineImpl";
-    private Map<String, Data> mDataMap;
-    private Map<Model, Data> mModelDataMap;
+    private Map<String, DataSet> mDataMap;
+    private Map<Model, DataSet> mModelDataMap;
 
     EngineImpl(Context context) {
         super(context);
@@ -58,7 +58,7 @@ public class EngineImpl extends Engine {
                 "mnist/images/6.png", "mnist/images/7.png", "mnist/images/8.png",
                 "mnist/images/9.png");
 
-        mDataMap.put("mnist", new Data(mnistDataPathList, null,"mnist/labels.txt",
+        mDataMap.put("mnist", new DataSet("mnist", mnistDataPathList, null,"mnist/labels.txt",
                 28, 28, 4, 1));
 
         // ImageNet 224*224
@@ -68,9 +68,9 @@ public class EngineImpl extends Engine {
                 "imagenet224/images/pic6.png", "imagenet224/images/pic7.png", "imagenet224/images/pic8.png",
                 "imagenet224/images/pic9.png"
         );
-        mDataMap.put("imagenet224_quant", new Data(imagenet224DataPathList, "imagenet224/answer.txt","imagenet224/labels.txt",
+        mDataMap.put("imagenet224_quant", new DataSet("imagenet224_quant", imagenet224DataPathList, "imagenet224/answer.txt","imagenet224/labels.txt",
                 224, 224, 1, 3));
-        mDataMap.put("imagenet224", new Data(imagenet224DataPathList, "imagenet224/answer.txt","imagenet224/labels.txt",
+        mDataMap.put("imagenet224", new DataSet("imagenet224", imagenet224DataPathList, "imagenet224/answer.txt","imagenet224/labels.txt",
                 224, 224, 4, 3));
 
         // ILSVRC2012
@@ -78,9 +78,9 @@ public class EngineImpl extends Engine {
         for (int i = 0; i < 1000; i++){
             ilsvrcDataPathList.add(String.format("ilsvrc2012/images/ILSVRC2012_val_%08d.JPEG", i+1));
         }
-        mDataMap.put("ilsvrc_quant", new Data(ilsvrcDataPathList, "ilsvrc2012/ILSVRC2012_validation_ground_truth_mapped.txt","ilsvrc2012/labels.txt",
+        mDataMap.put("ilsvrc_quant", new DataSet("ilsvrc_quant", ilsvrcDataPathList, "ilsvrc2012/ILSVRC2012_validation_ground_truth_mapped.txt","ilsvrc2012/labels.txt",
                 224, 224, 1, 3));
-        mDataMap.put("ilsvrc", new Data(ilsvrcDataPathList, "ilsvrc2012/ILSVRC2012_validation_ground_truth_mapped.txt","ilsvrc2012/labels.txt",
+        mDataMap.put("ilsvrc", new DataSet("ilsvrc", ilsvrcDataPathList, "ilsvrc2012/ILSVRC2012_validation_ground_truth_mapped.txt","ilsvrc2012/labels.txt",
                 224, 224, 4, 3));
     }
 
@@ -119,22 +119,22 @@ public class EngineImpl extends Engine {
             }
             Float accuracy = jsonObject.getFloat("accuracy");
             accuracy = accuracy == null ? 0 : accuracy;
-            Model model = new Model(Objects.requireNonNull(mDataMap.get(dataset)).getMetaData(), modelFilePath, mode, accuracy);
+            Model model = new Model(Objects.requireNonNull(mDataMap.get(dataset)).getMetaData(), modelFilePath, mode, dataset, accuracy);
             getInterpreter(interpreter).addModel(model);
             mModelDataMap.put(model, Objects.requireNonNull(mDataMap.get(dataset)));
         }
     }
 
     @Override
-    public Mission buildMission(Context context, Model model, Data data, Mission.Purpose purpose, IInterpreter.Device device, int threads, int timeLimit) {
-        return new Mission(context, model, data, purpose, device, threads, timeLimit);
+    public Mission buildMission(Context context, Model model, DataSet dataSet, Mission.Purpose purpose, IInterpreter.Device device, int threads, int timeLimit) {
+        return new Mission(context, model, dataSet, purpose, device, threads, timeLimit);
     }
 
     public Mission buildDefaultMission(Context context, Model model, Mission.Purpose purpose, IInterpreter.Device device, int threads, int timeLimit) {
         return buildMission(context, model, mModelDataMap.get(model), purpose, device, threads, timeLimit);
     }
 
-    public Data getDefaultData(Model model) {
+    public DataSet getDefaultData(Model model) {
         return mModelDataMap.get(model);
     }
 }

@@ -30,7 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.clientintelligent.demo.DemoActivity;
-import com.example.android.clientintelligent.framework.pojo.Data;
+import com.example.android.clientintelligent.framework.pojo.DataSet;
 import com.example.android.clientintelligent.framework.pojo.Mission;
 import com.example.android.clientintelligent.framework.pojo.Model;
 import com.example.android.clientintelligent.framework.interfaces.IInterpreter;
@@ -228,8 +228,8 @@ public class MainActivity extends AppCompatActivity
                 Model model = mInterpreter.getModel(
                         mOriginModelPathList.get(
                                 mModelSpinner.getSelectedItemPosition()));
-                Data data = mEngine.getDefaultData(model);
-                if (TextUtils.isEmpty(data.getTrueLabelIndexPath())) {
+                DataSet dataSet = mEngine.getDefaultData(model);
+                if (TextUtils.isEmpty(dataSet.getTrueLabelIndexPath())) {
                     mSwitch.setEnabled(false);
                 }
             }

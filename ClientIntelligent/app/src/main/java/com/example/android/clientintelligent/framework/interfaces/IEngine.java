@@ -2,7 +2,7 @@ package com.example.android.clientintelligent.framework.interfaces;
 
 import android.content.Context;
 
-import com.example.android.clientintelligent.framework.pojo.Data;
+import com.example.android.clientintelligent.framework.pojo.DataSet;
 import com.example.android.clientintelligent.framework.pojo.Mission;
 import com.example.android.clientintelligent.framework.pojo.Model;
 
@@ -15,6 +15,6 @@ public interface IEngine {
     IInterpreter getInterpreter(String interpreterName);
     void executeMission(IInterpreter interpreter, Mission mission,
                         IProgressListener progressListener);
-    Mission buildMission(Context context, Model model, Data data, Mission.Purpose purpose,
+    Mission buildMission(Context context, Model model, DataSet dataSet, Mission.Purpose purpose,
                          IInterpreter.Device device, int threads, int timeLimit);
 }
