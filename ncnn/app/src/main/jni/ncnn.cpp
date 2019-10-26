@@ -54,7 +54,8 @@ JNIEXPORT jboolean JNICALL Java_com_example_android_ncnn_NCNN_Init(JNIEnv* env, 
         int len = env->GetArrayLength(param);
         ncnn_param.create(len, (size_t)1u);
         env->GetByteArrayRegion(param, 0, len, (jbyte*)ncnn_param);
-        int ret = ncnn_net.load_param((const unsigned char*)ncnn_param);
+        __android_log_print(ANDROID_LOG_DEBUG, "NCNN", "param file %s", (const unsigned char*)ncnn_param);
+        int ret = ncnn_net.load_param_mem((const char*)ncnn_param);
         __android_log_print(ANDROID_LOG_DEBUG, "NCNN", "load_param %d %d", ret, len);
     }
 
@@ -131,7 +132,6 @@ JNIEXPORT void JNICALL Java_com_example_android_ncnn_NCNN_Detect(JNIEnv* env, jo
         }
     }
 
-    return;
 }
 
 }
