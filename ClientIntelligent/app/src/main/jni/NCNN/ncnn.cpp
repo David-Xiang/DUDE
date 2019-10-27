@@ -129,7 +129,6 @@ JNIEXPORT jfloatArray JNICALL Java_com_example_android_clientintelligent_interpr
         ncnn::Mat out;
         char* out_node = getCharArrayFromJCharArray(env, jout_node, 1);
         ex.extract(out_node, out);
-        __android_log_print(ANDROID_LOG_DEBUG, "NCNN", "out width %d", out.w);
 
         result = env->NewFloatArray(out.w);
         jfloat *destDims = env->GetFloatArrayElements(result, NULL);
