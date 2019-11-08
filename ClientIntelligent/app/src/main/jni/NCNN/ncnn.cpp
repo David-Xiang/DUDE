@@ -34,19 +34,19 @@ char* getCharArrayFromJCharArray(JNIEnv* env, jcharArray jcharArray, int mode) {
 
 extern "C" {
 
-//JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void* reserved)
-//{
-//
-//    ncnn::create_gpu_instance();
-//
-//    return JNI_VERSION_1_4;
-//}
-//
-//JNIEXPORT void JNI_OnUnload(JavaVM* vm, void* reserved)
-//{
-//
-//    ncnn::destroy_gpu_instance();
-//}
+JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void* reserved)
+{
+
+    ncnn::create_gpu_instance();
+
+    return JNI_VERSION_1_4;
+}
+
+JNIEXPORT void JNI_OnUnload(JavaVM* vm, void* reserved)
+{
+
+    ncnn::destroy_gpu_instance();
+}
 
 JNIEXPORT jboolean JNICALL Java_com_example_android_clientintelligent_interpreter_ncnn_NCNNNative_InitModel(
         JNIEnv* env, jclass type, jbyteArray param, jbyteArray bin) {
@@ -82,13 +82,13 @@ JNIEXPORT jfloatArray JNICALL Java_com_example_android_clientintelligent_interpr
     opt.workspace_allocator = &g_workspace_pool_allocator;
 
     // use vulkan compute
-//    if (use_gpu == JNI_TRUE) {
-//        if (ncnn::get_gpu_count() != 0) {
-//            opt.use_vulkan_compute = true;
-//        } else {
-//            return NULL;
-//        }
-//    }
+    if (use_gpu == JNI_TRUE) {
+        if (ncnn::get_gpu_count() != 0) {
+            opt.use_vulkan_compute = true;
+        } else {
+            return NULL;
+        }
+    }
 
     net.opt = opt;
 

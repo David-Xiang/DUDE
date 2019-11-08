@@ -40,9 +40,9 @@ public class EngineImpl extends Engine {
 
     @Override
     public void initInterpreters() {
-        addInterpreter(new TFLiteInterpreter(getContext()));
-        addInterpreter(new MNNInterpreter(getContext()));
-        addInterpreter(new TFJSInterpreter(getContext()));
+//        addInterpreter(new TFLiteInterpreter(getContext()));
+//        addInterpreter(new MNNInterpreter(getContext()));
+//        addInterpreter(new TFJSInterpreter(getContext()));
         addInterpreter(new NCNNInterpreter(getContext()));
     }
 

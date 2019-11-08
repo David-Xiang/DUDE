@@ -8,7 +8,7 @@ import com.example.android.clientintelligent.framework.interfaces.IProgressListe
 import com.example.android.clientintelligent.framework.pojo.Mission;
 
 import java.io.IOException;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 public class NCNNInterpreter extends SyncInterpreter {
@@ -20,7 +20,7 @@ public class NCNNInterpreter extends SyncInterpreter {
 
     @Override
     public List<Device> getDevices() {
-        return Collections.singletonList(Device.CPU);//, Device.VULKAN);
+        return Arrays.asList(Device.CPU, Device.VULKAN);
     }
 
     @Override
