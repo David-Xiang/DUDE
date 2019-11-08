@@ -102,8 +102,7 @@ JNIEXPORT jfloatArray JNICALL Java_com_example_android_clientintelligent_interpr
         int height = info.height;
 
         if (info.format != ANDROID_BITMAP_FORMAT_RGBA_8888)
-            return NULL;
-        // todo delete
+            return nullptr;
 
         void* indata;
         AndroidBitmap_lockPixels(env, bitmap, &indata);
@@ -131,7 +130,7 @@ JNIEXPORT jfloatArray JNICALL Java_com_example_android_clientintelligent_interpr
         ex.extract(out_node, out);
 
         result = env->NewFloatArray(out.w);
-        jfloat *destDims = env->GetFloatArrayElements(result, NULL);
+        jfloat *destDims = env->GetFloatArrayElements(result, nullptr);
         for (int j = 0; j < out.w; j++) {
             destDims[j] = out[j];
         }
