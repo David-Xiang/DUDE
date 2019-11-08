@@ -22,13 +22,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             ndk {
                 abiFilters 'armeabi-v7a'
-                version "3.15.4"
+                version "3.15.5"
             }
         }
         debug {
             ndk {
                 abiFilters 'armeabi-v7a'
-                version "3.15.4"
+                version "3.15.5"
             }
         }
     }
@@ -42,7 +42,7 @@ android {
     externalNativeBuild {
         cmake {
             path "CMakeLists.txt"
-            version "3.15.4"
+            version "3.15.5"
         }
     }
 
