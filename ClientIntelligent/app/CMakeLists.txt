@@ -52,8 +52,8 @@ file(GLOB_RECURSE CPP_SRCS src/main/jni/ncnn/*.cpp )
 
 find_library( log-lib log)
 
-#find_package(Vulkan REQUIRED)
+find_package(Vulkan REQUIRED)
 
 add_library( ncnncore SHARED ${CPP_SRCS} )
 
-target_link_libraries( ncnncore ncnn ${android-lib} ${log-lib} jnigraphics) # Vulkan::Vulkan)
+target_link_libraries( ncnncore ncnn ${android-lib} ${log-lib} jnigraphics Vulkan::Vulkan)

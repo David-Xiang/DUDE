@@ -70,7 +70,7 @@ public final class NCNNPerformanceTask extends PerformanceTask {
     protected void configSession(IInterpreter.Device device, int nThreads) {
         switch(device){
             case CPU: this.useGPU = false; break;
-            //case VULKAN: break;
+            case VULKAN: this.useGPU = true; break;
             default: mProgressListener.onError("buildTask: Wrong device type!");return;
         }
         this.nThread = nThreads;

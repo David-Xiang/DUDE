@@ -120,7 +120,7 @@ JNIEXPORT jfloatArray JNICALL Java_com_example_android_clientintelligent_interpr
 
         ncnn::Extractor ex = net.create_extractor();
 
-        //ex.set_vulkan_compute(use_gpu);
+        ex.set_vulkan_compute(use_gpu);
 
         char* in_node = getCharArrayFromJCharArray(env, jin_node, 0);
         ex.input(in_node, in);
