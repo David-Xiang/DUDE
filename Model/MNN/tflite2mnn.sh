@@ -1,1 +1,0 @@
-ls *.tflite | xargs -I {} basename {} .tflite | xargs -I {} ../../../MNN/tools/converter/build/MNNConvert -f TFLITE --modelFile {}.tflite --MNNModel {}.mnn --bizCode MNN
