@@ -11,6 +11,10 @@
 static ncnn::UnlockedPoolAllocator g_blob_pool_allocator;
 static ncnn::PoolAllocator g_workspace_pool_allocator;
 
+static ncnn::VulkanDevice* g_vkdev = 0;
+static ncnn::VkAllocator* g_blob_vkallocator = 0;
+static ncnn::VkAllocator* g_staging_vkallocator = 0;
+
 static ncnn::Mat model_param;
 static ncnn::Mat model_bin;
 static ncnn::Net net;
@@ -84,7 +88,20 @@ JNIEXPORT jfloatArray JNICALL Java_com_example_android_clientintelligent_interpr
     // use vulkan compute
     if (use_gpu == JNI_TRUE) {
         if (ncnn::get_gpu_count() != 0) {
+            __android_log_print(ANDROID_LOG_DEBUG, "NCNN", "Enter GPU init");
             opt.use_vulkan_compute = true;
+            g_vkdev = ncnn::get_gpu_device(0);
+
+            g_blob_vkallocator = new ncnn::VkBlobBufferAllocator(g_vkdev);
+            g_staging_vkallocator = new ncnn::VkStagingBufferAllocator(g_vkdev);
+//            g_blob_vkallocator->clear();
+//            g_staging_vkallocator->clear();
+
+            opt.blob_vkallocator = g_blob_vkallocator;
+            opt.workspace_vkallocator = g_blob_vkallocator;
+            opt.staging_vkallocator = g_staging_vkallocator;
+
+            net.set_vulkan_device(g_vkdev);
         } else {
             return NULL;
         }
@@ -92,6 +109,7 @@ JNIEXPORT jfloatArray JNICALL Java_com_example_android_clientintelligent_interpr
 
     net.opt = opt;
 
+    __android_log_print(ANDROID_LOG_DEBUG, "NCNN", "Detect init");
 
     // ncnn from bitmap
     ncnn::Mat in;
@@ -112,6 +130,8 @@ JNIEXPORT jfloatArray JNICALL Java_com_example_android_clientintelligent_interpr
         AndroidBitmap_unlockPixels(env, bitmap);
     }
 
+    __android_log_print(ANDROID_LOG_DEBUG, "NCNN", "Detect load data");
+
     jfloatArray result;
     {
         const float mean_vals[3] = {104.f, 117.f, 123.f};
@@ -122,12 +142,16 @@ JNIEXPORT jfloatArray JNICALL Java_com_example_android_clientintelligent_interpr
 
         ex.set_vulkan_compute(use_gpu);
 
+        __android_log_print(ANDROID_LOG_DEBUG, "NCNN", "Detect before in");
+
         char* in_node = getCharArrayFromJCharArray(env, jin_node, 0);
         ex.input(in_node, in);
 
         ncnn::Mat out;
         char* out_node = getCharArrayFromJCharArray(env, jout_node, 1);
         ex.extract(out_node, out);
+
+        __android_log_print(ANDROID_LOG_DEBUG, "NCNN", "Detect extract");
 
         result = env->NewFloatArray(out.w);
         jfloat *destDims = env->GetFloatArrayElements(result, nullptr);
