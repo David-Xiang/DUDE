@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.Spinner;
@@ -30,11 +31,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.clientintelligent.demo.DemoActivity;
+import com.example.android.clientintelligent.framework.interfaces.IInterpreter;
+import com.example.android.clientintelligent.framework.interfaces.IProgressListener;
 import com.example.android.clientintelligent.framework.pojo.DataSet;
 import com.example.android.clientintelligent.framework.pojo.Mission;
 import com.example.android.clientintelligent.framework.pojo.Model;
-import com.example.android.clientintelligent.framework.interfaces.IInterpreter;
-import com.example.android.clientintelligent.framework.interfaces.IProgressListener;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
@@ -128,9 +129,9 @@ public class MainActivity extends AppCompatActivity
         mEngine = new EngineImpl(this);
         initMainPageView();
         // for accuracy task
-//        mTimeSeekBar.setMax(30000);
-//        mTimeSeekBar.setProgress(30000);
-//        mSwitch.setChecked(true);
+        mTimeSeekBar.setMax(30000);
+        mTimeSeekBar.setProgress(30000);
+        mSwitch.setChecked(true);
     }
 
     private void initRootViews(){
@@ -159,6 +160,12 @@ public class MainActivity extends AppCompatActivity
         mThreadTextView = findViewById(R.id.tv_thread);
         mPurposeTextView = findViewById(R.id.tv_purpose_text);
         mSwitch = findViewById(R.id.switch_purpose);
+
+        Button mButton = findViewById(R.id.button);
+        mButton.setOnClickListener((v)->{
+            Intent intent = new Intent(MainActivity.this, TVMActivity.class);
+            startActivity(intent);
+        });
 
 
         ArrayAdapter<String> interpreterAdapter = new ArrayAdapter<>(this,

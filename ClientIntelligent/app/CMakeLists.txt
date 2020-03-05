@@ -48,7 +48,7 @@ set_target_properties(
 )
 
 find_library( android-lib android )
-file(GLOB_RECURSE CPP_SRCS src/main/jni/ncnn/*.cpp )
+file(GLOB_RECURSE CPP_SRCS src/main/jni/NCNN/*.cpp )
 
 find_library( log-lib log)
 
@@ -57,3 +57,16 @@ find_package(Vulkan REQUIRED)
 add_library( ncnncore SHARED ${CPP_SRCS} )
 
 target_link_libraries( ncnncore ncnn ${android-lib} ${log-lib} jnigraphics Vulkan::Vulkan)
+
+
+
+add_library( TVM4J SHARED IMPORTED )
+set_target_properties(
+        TVM4J
+        PROPERTIES IMPORTED_LOCATION
+        ${lib_DIR}/${ANDROID_ABI}/libtvm4j_runtime_packed.so
+)
+
+file(GLOB_RECURSE CPP_SRCS src/main/jni/TVM/*.cc )
+add_library( tvmcore SHARED ${CPP_SRCS} )
+
