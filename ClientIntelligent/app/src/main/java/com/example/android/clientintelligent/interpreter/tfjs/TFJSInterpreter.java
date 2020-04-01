@@ -181,7 +181,7 @@ public final class TFJSInterpreter extends AsyncInterpreter {
     @Override
     @JavascriptInterface
     public void onProgress(int progress) {
-        mProgressListener.onProgress(progress, null);
+        mProgressListener.onProgress(progress);
     }
 
     @SuppressLint("SetJavaScriptEnabled")

@@ -31,7 +31,7 @@ public abstract class Task extends AsyncTask<Object, Object, Object> {
         if (objects.length > 1) {
             mProgressListener.onProgress((int)objects[0], Arrays.copyOfRange(objects, 1, objects.length+1));
         } else {
-            mProgressListener.onProgress((int)objects[0], null);
+            mProgressListener.onProgress((int)objects[0]);
         }
     }
 
