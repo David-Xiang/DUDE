@@ -12,12 +12,12 @@ public class DataSet {
 
     public DataSet(String mName, List<String> mPathList, String mTrueLabelIndexPath,
                    String mLabelFilePath, int nImageSizeX, int nImageSizeY,
-                   int nBytesPerChannel, int nChannelsPerPixel) {
+                   int nBytesPerChannel, int nChannelsPerPixel, int nOutputSize) {
         this.mName = mName;
         this.mPathList = mPathList;
         this.mTrueLabelIndexPath = mTrueLabelIndexPath;
         this.mLabelFilePath = mLabelFilePath;
-        mMetaData = new MetaData(nImageSizeX, nImageSizeY, nBytesPerChannel, nChannelsPerPixel);
+        mMetaData = new MetaData(nImageSizeX, nImageSizeY, nBytesPerChannel, nChannelsPerPixel, nOutputSize);
     }
 
     public List<String> getPathList() {
@@ -42,6 +42,10 @@ public class DataSet {
 
     public int getChannelsPerPixel() {
         return mMetaData.getChannelsPerPixel();
+    }
+
+    public int getOutputSize() {
+        return mMetaData.getOutputSize();
     }
 
     public String getTrueLabelIndexPath() {

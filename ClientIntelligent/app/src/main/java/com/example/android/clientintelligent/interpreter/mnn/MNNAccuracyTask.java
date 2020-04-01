@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.example.android.clientintelligent.framework.AccuracyTask;
 import com.example.android.clientintelligent.framework.pojo.Mission;
+import com.example.android.clientintelligent.framework.pojo.Model;
 import com.example.android.clientintelligent.framework.pojo.Recognition;
 import com.example.android.clientintelligent.framework.interfaces.IInterpreter;
 import com.example.android.clientintelligent.framework.interfaces.IProgressListener;
@@ -45,7 +46,7 @@ public final class MNNAccuracyTask extends AccuracyTask {
         try {
             loadLabelList(getMission().getLabelFilePath());
             loadLabelIndexList(getMission().getTrueLabelIndexPath());
-            loadModelFile(getMission().getModelFilePath());
+            loadModelFile(getMission().getModels().get(0));
         } catch (IOException e) {
             e.printStackTrace();
             mProgressListener.onError("Error in loading files!");
@@ -113,7 +114,7 @@ public final class MNNAccuracyTask extends AccuracyTask {
     }
 
     @Override
-    protected void loadModelFile(String modelPath) throws IOException {
+    protected void loadModelFile(Model model) throws IOException {
         // create net mInstance
         String modelFilePath = getMission().getModelFilePath();
         String cacheModelPath = String.format("%s/%s",

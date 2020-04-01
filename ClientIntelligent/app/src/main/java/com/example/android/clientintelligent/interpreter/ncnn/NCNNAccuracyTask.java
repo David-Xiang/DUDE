@@ -10,6 +10,7 @@ import com.example.android.clientintelligent.framework.AccuracyTask;
 import com.example.android.clientintelligent.framework.interfaces.IInterpreter;
 import com.example.android.clientintelligent.framework.interfaces.IProgressListener;
 import com.example.android.clientintelligent.framework.pojo.Mission;
+import com.example.android.clientintelligent.framework.pojo.Model;
 import com.example.android.clientintelligent.framework.pojo.Recognition;
 import com.example.android.clientintelligent.util.FileUtil;
 
@@ -65,11 +66,11 @@ public final class NCNNAccuracyTask extends AccuracyTask {
     }
 
     @Override
-    protected void loadModelFile(String path) throws IOException {
+    protected void loadModelFile(Model model) throws IOException {
         byte[] param;
         byte[] bin;
-        String paramPath = path.split("\\$")[0];
-        String binPath = path.split("\\$")[1];
+        String paramPath = model.getModelPath();
+        String binPath = model.getParamFilePath();
 
         InputStream inputStream = FileUtil.getExternalResourceInputStream(paramPath);
         int available = inputStream.available();
@@ -89,6 +90,7 @@ public final class NCNNAccuracyTask extends AccuracyTask {
         }
         mOutNodeName = lastLine.split("\\s+")[1];
         Log.i(TAG, "loadModelFile: in_node = " + mInNodeName + " out_node = " + mOutNodeName);
+        reader.close();
 
 
         inputStream = FileUtil.getExternalResourceInputStream(binPath);
@@ -185,7 +187,7 @@ public final class NCNNAccuracyTask extends AccuracyTask {
         try {
             loadLabelList(getMission().getLabelFilePath());
             loadLabelIndexList(getMission().getTrueLabelIndexPath());
-            loadModelFile(getMission().getModelFilePath());
+            loadModelFile(getMission().getModels().get(0));
         } catch (IOException e) {
             e.printStackTrace();
             mProgressListener.onError("Error in loading files!");

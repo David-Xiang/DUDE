@@ -7,7 +7,7 @@ set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fopenmp")
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
 
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -fvisibility=hidden -fomit-frame-pointer -fstrict-aliasing -ffunction-sections -fdata-sections -ffast-math -flax-vector-conversions")
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fvisibility=hidden -fvisibility-inlines-hidden -fomit-frame-pointer -fstrict-aliasing -ffunction-sections -fdata-sections -ffast-math -fno-rtti -fno-exceptions -flax-vector-conversions")
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fvisibility=hidden -fvisibility-inlines-hidden -fomit-frame-pointer -fstrict-aliasing -ffunction-sections -fdata-sections -ffast-math -flax-vector-conversions")
 set (CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} -Wl,--gc-sections")
 
 add_library( MNN SHARED IMPORTED )
@@ -48,7 +48,7 @@ set_target_properties(
 )
 
 find_library( android-lib android )
-file(GLOB_RECURSE CPP_SRCS src/main/jni/NCNN/*.cpp )
+file(GLOB_RECURSE CPP_SRCS src/main/jni/NCNN/ncnn.cpp )
 
 find_library( log-lib log)
 
@@ -59,7 +59,6 @@ add_library( ncnncore SHARED ${CPP_SRCS} )
 target_link_libraries( ncnncore ncnn ${android-lib} ${log-lib} jnigraphics Vulkan::Vulkan)
 
 
-
 add_library( TVM4J SHARED IMPORTED )
 set_target_properties(
         TVM4J
@@ -68,5 +67,9 @@ set_target_properties(
 )
 
 file(GLOB_RECURSE CPP_SRCS src/main/jni/TVM/*.cc )
-add_library( tvmcore SHARED ${CPP_SRCS} )
 
+add_definitions(-DTVM4J_ANDROID)
+
+add_library( tvmcore SHARED ${CPP_SRCS})
+
+target_link_libraries( tvmcore TVM4J ${log-lib} ${jnigraphics-lib})

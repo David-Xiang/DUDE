@@ -9,6 +9,7 @@ import com.example.android.clientintelligent.framework.PerformanceTask;
 import com.example.android.clientintelligent.framework.interfaces.IInterpreter;
 import com.example.android.clientintelligent.framework.interfaces.IProgressListener;
 import com.example.android.clientintelligent.framework.pojo.Mission;
+import com.example.android.clientintelligent.framework.pojo.Model;
 import com.example.android.clientintelligent.util.FileUtil;
 
 import java.io.BufferedReader;
@@ -31,19 +32,20 @@ public final class NCNNPerformanceTask extends PerformanceTask {
     }
 
     @Override
-    protected void loadModelFile(String path) throws IOException {
+    protected void loadModelFile(Model model) throws IOException {
         byte[] param;
         byte[] bin;
-        String paramPath = path.split("\\$")[0];
-        String binPath = path.split("\\$")[1];
+        String graphPath = model.getModelPath();
+        String paramBinPath = model.getParamFilePath();
 
-        InputStream inputStream = FileUtil.getExternalResourceInputStream(paramPath);
+
+        InputStream inputStream = FileUtil.getExternalResourceInputStream(graphPath);
         int available = inputStream.available();
         param = new byte[available];
         int byteCode = inputStream.read(param);
         inputStream.close();
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(FileUtil.getExternalResourceInputStream(paramPath)));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(FileUtil.getExternalResourceInputStream(graphPath)));
         reader.readLine();
         reader.readLine();
         String inputLine = reader.readLine();
@@ -55,9 +57,10 @@ public final class NCNNPerformanceTask extends PerformanceTask {
         }
         mOutNodeName = lastLine.split("\\s+")[1];
         Log.i(TAG, "loadModelFile: in_node = " + mInNodeName + " out_node = " + mOutNodeName);
+        reader.close();
 
 
-        inputStream = FileUtil.getExternalResourceInputStream(binPath);
+        inputStream = FileUtil.getExternalResourceInputStream(paramBinPath);
         available = inputStream.available();
         bin = new byte[available];
         byteCode = inputStream.read(bin);
@@ -89,7 +92,7 @@ public final class NCNNPerformanceTask extends PerformanceTask {
     @Override
     protected Object doInBackground(Object... objects) {
         try {
-            loadModelFile(getMission().getModelFilePath());
+            loadModelFile(getMission().getModels().get(0));
             List<String> dataPathList = getMission().getDataPathList();
             mBitmapList = dataPathList.stream()
                     .map(this::readImage)

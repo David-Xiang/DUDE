@@ -5,12 +5,14 @@ public class MetaData {
     private final int nImageSizeY;
     private final int nBytesPerChannel;
     private final int nChannelsPerPixel;
+    private final int nOutputSize;
 
-    public MetaData(int nImageSizeX, int nImageSizeY, int nBytesPerChannel, int nChannelsPerPixel) {
+    public MetaData(int nImageSizeX, int nImageSizeY, int nBytesPerChannel, int nChannelsPerPixel, int nOutputSize) {
         this.nImageSizeX = nImageSizeX;
         this.nImageSizeY = nImageSizeY;
         this.nBytesPerChannel = nBytesPerChannel;
         this.nChannelsPerPixel = nChannelsPerPixel;
+        this.nOutputSize = nOutputSize;
     }
 
     public MetaData(DataSet dataSet) {
@@ -18,6 +20,7 @@ public class MetaData {
         this.nImageSizeY = dataSet.getImageSizeY();
         this.nBytesPerChannel = dataSet.getBytesPerChannel();
         this.nChannelsPerPixel = dataSet.getChannelsPerPixel();
+        this.nOutputSize = dataSet.getOutputSize();
     }
 
     public int getImageSizeX() {
@@ -34,5 +37,9 @@ public class MetaData {
 
     public int getChannelsPerPixel() {
         return nChannelsPerPixel;
+    }
+
+    public int getOutputSize() {
+        return nOutputSize;
     }
 }

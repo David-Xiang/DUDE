@@ -71,7 +71,6 @@ public class TFLiteInterpreter extends SyncInterpreter {
         for (int s = 0; s < Math.min(mission.getDataPathList().size(), 10); s++){
             InputStream in = getContext().getAssets().open(mission.getDataPathList().get(s));
             Bitmap bitmap = BitmapFactory.decodeStream(in);
-            in.close();
             ByteBuffer imgData = ByteBuffer.allocateDirect(
                     mission.getnImageSizeX() *
                     mission.getnImageSizeY() *

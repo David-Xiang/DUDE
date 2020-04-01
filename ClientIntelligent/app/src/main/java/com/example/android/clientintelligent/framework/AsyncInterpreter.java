@@ -28,7 +28,7 @@ public abstract class AsyncInterpreter implements IInterpreter {
     public Model getModel(String modelName) {
         return mModels
                 .stream()
-                .filter(m->m.getFilePath()
+                .filter(m->m.getModelPath()
                             .equals(modelName))
                 .findFirst()
                 .orElse(null);

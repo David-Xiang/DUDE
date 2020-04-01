@@ -7,56 +7,75 @@ public class Model {
 
     public enum Mode {FLOAT32, FLOAT16, QUANTIZED}
 
-    private Mode mMode;
-    private MetaData mMetaData;
-    private String mFilePath;
-    private String mDataSetName;
-    private float mAccuracy;
+    private Mode mode;
+    private MetaData metaData;
+    private String modelPath, paramFilePath, libCpuPath, libGpuPath;
+    private String dataSetName;
+    private float accuracy;
 
-    public Model(MetaData mMetaData, String mFilePath, Mode mode, String dataSetName, float accuracy) {
-        this(mMetaData, mFilePath, mode, dataSetName);
-        mAccuracy = accuracy > 0 && accuracy <= 100 ? accuracy : 0;
+    public Model(MetaData metaData, String mModelPath, String paramFilePath, String libCpuPath, String libGpuPath, Mode mode, String dataSetName, float accuracy) {
+        this(metaData, mModelPath, paramFilePath, libCpuPath, libGpuPath, mode, dataSetName);
+        this.accuracy = accuracy > 0 && accuracy <= 100 ? accuracy : 0;
     }
 
-    public Model(MetaData mMetaData, String mFilePath, Mode mode, String dataSetName) {
-        this.mMetaData = mMetaData;
-        this.mFilePath = mFilePath;
-        this.mMode = mode;
-        this.mDataSetName = dataSetName;
-        if (mMetaData == null){
+    public Model(MetaData metaData, String modelPath, String paramFilePath, String libCpuPath, String libGpuPath, Mode mode, String dataSetName) {
+        this.metaData = metaData;
+        this.modelPath = modelPath;
+        this.paramFilePath = paramFilePath;
+        this.libCpuPath = libCpuPath;
+        this.libGpuPath = libGpuPath;
+        this.mode = mode;
+        this.dataSetName = dataSetName;
+        if (metaData == null){
             Log.e(TAG, "Model: mMetaData is null!");
         }
     }
 
     public Mode getMode() {
-        return mMode;
+        return mode;
     }
 
-    public String getFilePath() {
-        return mFilePath;
+    public String getModelPath() {
+        return modelPath;
     }
 
     public int getImageSizeX() {
-        return mMetaData.getImageSizeX();
+        return metaData.getImageSizeX();
     }
 
     public int getImageSizeY() {
-        return mMetaData.getImageSizeY();
+        return metaData.getImageSizeY();
     }
 
     public int getBytesPerChannel() {
-        return mMetaData.getBytesPerChannel();
+        return metaData.getBytesPerChannel();
     }
 
     public int getChannelsPerPixel() {
-        return mMetaData.getChannelsPerPixel();
+        return metaData.getChannelsPerPixel();
+    }
+
+    public int getOutputSize() {
+        return metaData.getOutputSize();
     }
 
     public Float getAccuracy() {
-        return mAccuracy;
+        return accuracy;
     }
 
     public String getDataSetName() {
-        return mDataSetName;
+        return dataSetName;
+    }
+
+    public String getParamFilePath() {
+        return paramFilePath;
+    }
+
+    public String getLibCpuPath() {
+        return libCpuPath;
+    }
+
+    public String getLibGpuPath() {
+        return libGpuPath;
     }
 }

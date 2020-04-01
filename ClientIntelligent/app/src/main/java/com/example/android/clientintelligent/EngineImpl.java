@@ -8,15 +8,13 @@ import android.util.Log;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.example.android.clientintelligent.framework.pojo.DataSet;
 import com.example.android.clientintelligent.framework.Engine;
+import com.example.android.clientintelligent.framework.interfaces.IInterpreter;
+import com.example.android.clientintelligent.framework.pojo.DataSet;
 import com.example.android.clientintelligent.framework.pojo.Mission;
 import com.example.android.clientintelligent.framework.pojo.Model;
-import com.example.android.clientintelligent.framework.interfaces.IInterpreter;
-import com.example.android.clientintelligent.interpreter.mnn.MNNInterpreter;
 import com.example.android.clientintelligent.interpreter.ncnn.NCNNInterpreter;
-import com.example.android.clientintelligent.interpreter.tfjs.TFJSInterpreter;
-import com.example.android.clientintelligent.interpreter.tflite.TFLiteInterpreter;
+import com.example.android.clientintelligent.interpreter.tvm.TVMInterpreter;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -43,7 +41,8 @@ public class EngineImpl extends Engine {
 //        addInterpreter(new TFLiteInterpreter(getContext()));
 //        addInterpreter(new MNNInterpreter(getContext()));
 //        addInterpreter(new TFJSInterpreter(getContext()));
-        addInterpreter(new NCNNInterpreter(getContext()));
+//        addInterpreter(new NCNNInterpreter(getContext()));
+        addInterpreter(new TVMInterpreter(getContext()));
     }
 
     @SuppressLint("DefaultLocale")
@@ -60,7 +59,7 @@ public class EngineImpl extends Engine {
                 "mnist/images/9.png");
 
         mDataMap.put("mnist", new DataSet("mnist", mnistDataPathList, null,"mnist/labels.txt",
-                28, 28, 4, 1));
+                28, 28, 4, 1, 10));
 
         // ImageNet 224*224
         List<String> imagenet224DataPathList = Arrays.asList(
@@ -70,9 +69,9 @@ public class EngineImpl extends Engine {
                 "imagenet224/images/pic9.png"
         );
         mDataMap.put("imagenet224_quant", new DataSet("imagenet224_quant", imagenet224DataPathList, "imagenet224/answer.txt","imagenet224/labels.txt",
-                224, 224, 1, 3));
+                224, 224, 1, 3, 1000));
         mDataMap.put("imagenet224", new DataSet("imagenet224", imagenet224DataPathList, "imagenet224/answer.txt","imagenet224/labels.txt",
-                224, 224, 4, 3));
+                224, 224, 4, 3, 1000));
 
         // ILSVRC2012
         List<String> ilsvrcDataPathList = new ArrayList<>();
@@ -80,9 +79,9 @@ public class EngineImpl extends Engine {
             ilsvrcDataPathList.add(String.format("ilsvrc2012/images/ILSVRC2012_val_%08d.JPEG", i+1));
         }
         mDataMap.put("ilsvrc_quant", new DataSet("ilsvrc_quant", ilsvrcDataPathList, "ilsvrc2012/ILSVRC2012_validation_ground_truth_mapped.txt","ilsvrc2012/labels.txt",
-                224, 224, 1, 3));
+                224, 224, 1, 3, 1000));
         mDataMap.put("ilsvrc", new DataSet("ilsvrc", ilsvrcDataPathList, "ilsvrc2012/ILSVRC2012_validation_ground_truth_mapped.txt","ilsvrc2012/labels.txt",
-                224, 224, 4, 3));
+                224, 224, 4, 3, 1000));
     }
 
     @Override
@@ -106,7 +105,10 @@ public class EngineImpl extends Engine {
         for (Object o : jsonArray) {
             JSONObject jsonObject = (JSONObject) o;
             String modelName = jsonObject.getString("model_name");
-            String modelFilePath = jsonObject.getString("model_file_path");
+            String modelFilePath = jsonObject.getString("model_file_path"); // graph
+            String paramFilePath = jsonObject.getString("param_file_path"); // parameters
+            String libCpuPath = jsonObject.getString("lib_cpu_path"); // lib.so for tvm
+            String libGpuPath = jsonObject.getString("lib_gpu_path"); // lib.so for tvm
             String interpreter = jsonObject.getString("interpreter");
             String dataset = jsonObject.getString("dataset");
 
@@ -120,12 +122,13 @@ public class EngineImpl extends Engine {
             }
             Float accuracy = jsonObject.getFloat("accuracy");
             accuracy = accuracy == null ? 0 : accuracy;
-            if (mDataMap.get(dataset) != null) {
-                Model model = new Model(Objects.requireNonNull(mDataMap.get(dataset)).getMetaData(), modelFilePath, mode, dataset, accuracy);
+            if (mDataMap.get(dataset) != null && getInterpreter(interpreter) != null) {
+                Model model = new Model(Objects.requireNonNull(mDataMap.get(dataset)).getMetaData(), modelFilePath, paramFilePath, libCpuPath, libGpuPath, mode, dataset, accuracy);
                 getInterpreter(interpreter).addModel(model);
                 mModelDataMap.put(model, Objects.requireNonNull(mDataMap.get(dataset)));
             }
         }
+        reader.close();
     }
 
     @Override

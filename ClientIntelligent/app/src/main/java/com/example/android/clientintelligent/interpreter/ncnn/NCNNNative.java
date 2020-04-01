@@ -11,6 +11,8 @@ public class NCNNNative {
 
     public static native void Release();
 
+    public static native void Test();
+
     static {
         System.loadLibrary("ncnncore");
     }

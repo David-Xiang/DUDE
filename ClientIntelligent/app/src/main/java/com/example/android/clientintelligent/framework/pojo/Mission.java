@@ -44,7 +44,7 @@ public class Mission {
     }
 
     public String getModelFilePath() {
-        return mModelList.get(0).getFilePath();
+        return mModelList.get(0).getModelPath();
     }
 
     public List<Model> getModels() {
@@ -79,6 +79,10 @@ public class Mission {
 
     public int getBytesPerChannel() {
         return mModelList.get(0).getBytesPerChannel();
+    }
+
+    public int getOutputSize() {
+        return mModelList.get(0).getOutputSize();
     }
 
     public IInterpreter.Device getDevice() {

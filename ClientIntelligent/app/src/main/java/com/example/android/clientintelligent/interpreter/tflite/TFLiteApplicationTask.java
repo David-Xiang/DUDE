@@ -121,7 +121,7 @@ public class TFLiteApplicationTask extends Task {
     private List<TFLiteClassifier> getClassifiers(List<Model> models) {
         return models.stream().map(
                 (Function<Model, TFLiteClassifier>) model -> {
-                    String modelFilePath = model.getFilePath();
+                    String modelFilePath = model.getModelPath();
                     String cacheModelPath = String.format("%s/%s",
                             getMission().getContext().getCacheDir(),
                             modelFilePath.substring(modelFilePath.lastIndexOf("/")+1));

@@ -163,8 +163,7 @@ public class MainActivity extends AppCompatActivity
 
         Button mButton = findViewById(R.id.button);
         mButton.setOnClickListener((v)->{
-            Intent intent = new Intent(MainActivity.this, TVMActivity.class);
-            startActivity(intent);
+
         });
 
 
@@ -206,7 +205,7 @@ public class MainActivity extends AppCompatActivity
 
                 mOriginModelPathList = mInterpreter.getModels()
                                         .stream()
-                                        .map(Model::getFilePath)
+                                        .map(Model::getModelPath)
                                         .collect(Collectors.toList());
                 ArrayAdapter<String> modelAdapter = new ArrayAdapter<>(MainActivity.this,
                         android.R.layout.simple_spinner_item,

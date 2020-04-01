@@ -45,7 +45,7 @@ public final class DemoEngineImpl extends Engine {
             ilsvrcDataPathList.add(String.format("ilsvrc2012/images/ILSVRC2012_val_%08d.JPEG", i+1));
         }
         dataSet = new DataSet("ilsvrc", ilsvrcDataPathList, "ilsvrc2012/ILSVRC2012_validation_ground_truth_mapped.txt",
-                "ilsvrc2012/labels.txt", 224, 224, 4, 3);
+                "ilsvrc2012/labels.txt", 224, 224, 4, 3, 1000);
 
     }
 
@@ -75,8 +75,10 @@ public final class DemoEngineImpl extends Engine {
                 continue;
             }
 
-            String modelName = jsonObject.getString("model_name");
-            String modelFilePath = jsonObject.getString("model_file_path");
+            String modelFilePath = jsonObject.getString("model_file_path"); // graph
+            String paramFilePath = jsonObject.getString("param_file_path"); // parameters
+            String libCpuPath = jsonObject.getString("lib_cpu_path"); // lib.so for tvm
+            String libGpuPath = jsonObject.getString("lib_gpu_path"); // lib.so for tvm
             String dataset = jsonObject.getString("dataset");
 
             String dataType = jsonObject.getString("data_type");
@@ -90,7 +92,7 @@ public final class DemoEngineImpl extends Engine {
             Float accuracy = jsonObject.getFloat("accuracy");
             accuracy = accuracy == null ? 0 : accuracy;
             if (dataset.equals(dataSet.getName())) {
-                Model model = new Model(dataSet.getMetaData(), modelFilePath, mode, dataset, accuracy);
+                Model model = new Model(dataSet.getMetaData(), modelFilePath, paramFilePath, libCpuPath, libGpuPath, mode, dataset, accuracy);
                 getInterpreter(interpreter).addModel(model);
             }
         }

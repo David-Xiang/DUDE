@@ -11,6 +11,7 @@ import com.example.android.clientintelligent.framework.pojo.Mission;
 import com.example.android.clientintelligent.framework.PerformanceTask;
 import com.example.android.clientintelligent.framework.interfaces.IInterpreter;
 import com.example.android.clientintelligent.framework.interfaces.IProgressListener;
+import com.example.android.clientintelligent.framework.pojo.Model;
 import com.example.android.clientintelligent.util.FileUtil;
 
 import java.io.IOException;
@@ -33,9 +34,9 @@ public final class MNNPerformanceTask extends PerformanceTask {
     }
 
     @Override
-    protected void loadModelFile(String path) throws IOException {
+    protected void loadModelFile(Model model) throws IOException {
         // create net mInstance
-        String modelFilePath = getMission().getModelFilePath();
+        String modelFilePath = model.getModelPath();
         String cacheModelPath = String.format("%s/%s",
                 mContext.getCacheDir(),
                 modelFilePath.substring(modelFilePath.lastIndexOf("/")+1));
@@ -95,7 +96,7 @@ public final class MNNPerformanceTask extends PerformanceTask {
     @Override
     protected Object doInBackground(Object... objects) {
         try {
-            loadModelFile(getMission().getModelFilePath());
+            loadModelFile(getMission().getModels().get(0));
             List<String> dataPathList = getMission().getDataPathList();
             mBitmapList = dataPathList.stream()
                     .map(this::readImage)
